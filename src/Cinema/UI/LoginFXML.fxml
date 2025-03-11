@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="601.0" prefWidth="786.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.LoginController">
+   <children>
+      <AnchorPane prefHeight="601.0" prefWidth="358.0" style="-fx-background-color: #4A95D2;">
+         <children>
+            <ImageView fitHeight="105.0" fitWidth="101.0" layoutX="123.0" layoutY="187.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@image/icon-library.png" />
+               </image>
+            </ImageView>
+            <Label alignment="CENTER" layoutX="66.0" layoutY="301.0" text="Library Management System" textFill="#f5f2f2">
+               <font>
+                  <Font name="Segoe UI" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="128.0" layoutY="337.0" text="Read More Easily" textFill="WHITE">
+               <font>
+                  <Font name="Segoe UI" size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <TextField fx:id="txtUsername" layoutX="434.0" layoutY="188.0" prefHeight="36.0" prefWidth="280.0" promptText="Username" />
+      <Button fx:id="btnSignin" layoutX="595.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="36.0" prefWidth="119.0" text="Sign in" />
+      <Label fx:id="btnForgot" layoutX="434.0" layoutY="326.0" text="Forgot Password ?" textFill="#0c39ff" />
+      <Button fx:id="btnFB" layoutX="434.0" layoutY="398.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="280.0" style="-fx-background-color: #3F51B5;" text="Sign in with Facebook" textFill="WHITE">
+         <graphic>
+            <ImageView fitHeight="29.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@image/icons8-facebook-48.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
+      <Button fx:id="btnGG" layoutX="434.0" layoutY="447.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="280.0" text="Sign in with Google">
+         <graphic>
+            <ImageView fitHeight="24.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@image/Google%20icon.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
+      <Separator layoutX="434.0" layoutY="381.0" prefHeight="3.0" prefWidth="280.0" />
+      <Label alignment="CENTER" layoutX="559.0" layoutY="370.0" prefHeight="23.0" prefWidth="31.0" style="-fx-background-color: #ffff;" text="Or" />
+      <Label layoutX="465.0" layoutY="524.0" text="Do not have account ?" />
+      <Label layoutX="612.0" layoutY="524.0" text="Sign Up" textFill="#0c39ff" />
+      <ImageView fitHeight="89.0" fitWidth="125.0" layoutX="530.0" layoutY="68.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/icons8-login-96.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="lblErrors" layoutX="434.0" layoutY="279.0" prefHeight="30.0" prefWidth="280.0" textFill="#dd4040" />
+      <StackPane layoutX="435.0" layoutY="238.0" prefHeight="49.0" prefWidth="280.0">
+         <children>
+            <TextField fx:id="txtPasswordVisible" prefHeight="37.0" prefWidth="280.0" />
+            <PasswordField fx:id="txtPassword" prefHeight="36.0" prefWidth="280.0" promptText="Password" />
+         </children>
+      </StackPane>
+      <ImageView fx:id="iconEye" fitHeight="23.0" fitWidth="22.0" layoutX="682.0" layoutY="251.0" onMouseClicked="#togglePasswordVisibility" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/icons8-hide-24.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

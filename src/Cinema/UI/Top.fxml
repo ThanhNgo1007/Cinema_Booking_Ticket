@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<HBox fx:id="hbox_top" alignment="CENTER" prefHeight="24.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.UI.TopController">
+   <children>
+      <StackPane prefHeight="40.0" prefWidth="99.0">
+         <children>
+            <Label text="MENU">
+               <graphic>
+                  <ImageView fx:id="btn_menuback" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-menu-30.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
+         </children>
+      </StackPane>
+      <Pane prefHeight="49.0" prefWidth="429.0" HBox.hgrow="ALWAYS" />
+      <Label alignment="CENTER" text="HOME " />
+      <Pane layoutX="64.0" layoutY="10.0" prefHeight="43.0" prefWidth="416.0" HBox.hgrow="ALWAYS" />
+      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../image/icons8-vietnam-50.png" />
+         </image>
+         <HBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </HBox.margin>
+      </ImageView>
+   </children>
+</HBox>
