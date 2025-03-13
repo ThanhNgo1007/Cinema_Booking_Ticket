@@ -26,6 +26,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -36,12 +37,19 @@ public class MovieStatusController {
 	private Parent root;
 
 	@FXML
-	private Text movieActors, movieAvailableSeat, movieDescription;
+	private Text movieActors, movieDescription, director;
 	@FXML
-	private Text movieTitle, movieGener, movieReleaseDate, movieTime;
+	private Text movieTitle, movieGener, movieReleaseDate, movieTime, rating;
 
 	@FXML
-	private Button bookTicketButtonClicked, goBackButtonClicked;
+	private Button bookTicketButtonClicked;
+	
+	@FXML
+	private ImageView goBackButtonClicked;
+	
+    @FXML
+    private Button trailerButton;
+
 
 	@FXML
 	private Pane movieImg;
@@ -59,21 +67,22 @@ public class MovieStatusController {
     private Text firstClassTicket;
 
     // Thay đổi URL để kết nối MySQL
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/cinema_db"; 
+    private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB"; 
     private static final String DB_USER = "root"; // Thay bằng username của bạn
-    private static final String DB_PASSWORD = "your_password"; // Thay bằng mật khẩu của bạn
+    private static final String DB_PASSWORD = ""; // Thay bằng mật khẩu của bạn
     private String movieTrailerUrl;
 
-	public void handleBackBtnClicked(ActionEvent event) throws IOException {
-		root = FXMLLoader.load(getClass().getResource("/application/fxml/Home.fxml"));
-		stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		double currentWidth = stage.getWidth();
-		double currentHeight = stage.getHeight();
-		scene = new Scene(root, currentWidth, currentHeight);
-
-		stage.setMaximized(true);
-		stage.setScene(scene);
-		stage.show();
+	public void handleBackBtnClicked(MouseEvent event) throws IOException {
+		// Lấy cửa sổ hiện tại (cửa sổ MovieStatus)
+	    Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	    
+	    // Lấy cửa sổ gốc (FilmUI) đã bị làm mờ
+	    Stage parentStage = (Stage) currentStage.getOwner();
+	    
+	        parentStage.getScene().getRoot().setEffect(null);
+	    
+	    // Đóng cửa sổ hiện tại
+	    currentStage.close();
 	}
 
 	public void handleBookTicketBtnClicked(ActionEvent event) throws IOException {
@@ -102,33 +111,34 @@ public class MovieStatusController {
 		
 	}
 
-	public void setMovieData(String name, String gener, String movietime, String releaseDate ) {
+	public void setMovieData(String ID, String name, String gener, String duration, String releaseDate ) {
 		try {
 			
 			movieTitle.setText(name);
 			movieGener.setText(gener);
-			movieTime.setText(movietime);
+			movieTime.setText(duration);
 			movieReleaseDate.setText(releaseDate);
 
-			setMovieDetails(name);
+			setMovieDetails(ID);
 
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 	}
 
-	public void setMovieDetails(String movieTitle) {
-		String searchQuery = "SELECT * FROM movies WHERE name = ?";
-		List<Movie> searchResults = searchMoviesInDatabase(searchQuery, movieTitle);
+	public void setMovieDetails(String movieID) {
+		String searchQuery = "SELECT * FROM movies WHERE id = ?";
+		List<Movie> searchResults = searchMoviesInDatabase(searchQuery, movieID);
         
 		if (!searchResults.isEmpty()) {
 			Movie selectedMovie = searchResults.get(0);
 
 			movieDescription.setText(selectedMovie.getMovieDescription());
-			movieAvailableSeat.setText(String.valueOf(selectedMovie.getTotalSeat() - selectedMovie.getBookedSeat()));
 			movieActors.setText(selectedMovie.getMovieActor());
+			director.setText(selectedMovie.getDirector());
 			movieTrailerUrl = selectedMovie.getMovieTrailer(); // Lấy trailer từ DB
 			moviePoster.setImage(selectedMovie.getMoviePoster());
+			rating.setText(selectedMovie.getMovieRating());
 			
 		} else {
 			System.out.println("Movie not found!");
