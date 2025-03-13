@@ -1,11 +1,13 @@
 package Cinema.database;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import Cinema.database.JSONUtility.MovieData;
@@ -14,9 +16,9 @@ import Cinema.database.JSONUtility.User;
 public class DBUtility {
 
     // Update these with your MySQL credentials
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/movie_ticket_booking";
-    private static final String USERNAME = "your_username";
-    private static final String PASSWORD = "your_password";
+    private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "";
 
     // validate login, encrypt password and store data in userdata.json
     public static Boolean validateLogin(String email, String password) {
@@ -27,9 +29,9 @@ public class DBUtility {
         String encryptedPassword = EncryptionDecryption.encrypt(password);
 
         try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
 
-            String query = "SELECT * FROM USERS WHERE emailAddress = ? AND password = ?";
+            String query = "SELECT * FROM users WHERE email = ? AND password = ?";
             pstmt = conn.prepareStatement(query);
             pstmt.setString(1, email);
             pstmt.setString(2, encryptedPassword);
@@ -68,7 +70,7 @@ public class DBUtility {
         try {
             conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 
-            String query = "SELECT * FROM USERS WHERE emailAddress = ?";
+            String query = "SELECT * FROM users WHERE email = ?";
             pstmt = conn.prepareStatement(query);
             pstmt.setString(1, email);
 
@@ -98,7 +100,7 @@ public class DBUtility {
 
             String encryptedPassword = EncryptionDecryption.encrypt(password);
 
-            String updateQuery = "UPDATE USERS SET password = ? WHERE emailAddress = ?";
+            String updateQuery = "UPDATE USERS SET password = ? WHERE email = ?";
             pstmt = conn.prepareStatement(updateQuery);
             pstmt.setString(1, encryptedPassword);
             pstmt.setString(2, email);
@@ -123,14 +125,14 @@ public class DBUtility {
         PreparedStatement pstmt = null;
 
         try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
 
             String encryptedPassword = EncryptionDecryption.encrypt(password);
             String[] parsedName = Form.parseFullName(fullName);
             String firstName = (parsedName != null && parsedName.length > 0) ? parsedName[0] : null;
-            String lastName = (parsedName != null && parsedName.length > 1) ? parsedName[1] : null;
+            String lastName = (parsedName != null && parsedName.length > 1) ? String.join(" ", Arrays.copyOfRange(parsedName, 1, parsedName.length)) : null;
 
-            String insertQuery = "INSERT INTO USERS (firstName, lastName, emailAddress, password) VALUES (?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(insertQuery);
             pstmt.setString(1, firstName);
             pstmt.setString(2, lastName);
@@ -156,18 +158,16 @@ public class DBUtility {
         try {
             while (rs.next()) {
                 String getMovieName = rs.getString("name");
+                String getMovieID = rs.getString("id");
                 String getMovieDescription = rs.getString("description");
                 String getMovieRating = rs.getString("ratings");
                 String getMovieGener = rs.getString("gener");
-                String getMoviePosterURL = rs.getString("posterImage");
-                String getMovieRealeseDateTime = rs.getString("releaseDate");
-                int getBoookedSeat = rs.getInt("bookedSeatsCount");
-                int getTotalSeat = rs.getInt("totalNumberOfSeats");
-                String getActorsList = rs.getString("actorsList");
-
-                SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                SimpleDateFormat sdfOutput = new SimpleDateFormat("dd-MM-yyyy");
-                String getMovieRealeseDate = sdfOutput.format(sdfInput.parse(getMovieRealeseDateTime.toString()));
+                InputStream getMoviePoster = rs.getBinaryStream("posterImage");
+                String getActorsList = rs.getString("actorList");
+                String getMovieRealeseDate = rs.getString("releaseDate");
+                String getDirector = rs.getString("director");
+                String getMovieDuration = rs.getString("duration");
+                String getMovieTrailer = rs.getString("trailer");
 
                 Movie movie = new Movie();
                 movie.setMovieName(getMovieName);
@@ -175,10 +175,12 @@ public class DBUtility {
                 movie.setMovieRating(getMovieRating);
                 movie.setMovieGener(getMovieGener);
                 movie.setMovieRealeseDate(getMovieRealeseDate);
-                movie.setBookedSeat(getBoookedSeat);
-                movie.setMoviePoster(getMoviePosterURL);
-                movie.setTotalSeat(getTotalSeat);
+                movie.setMoviePosterFromBlob(getMoviePoster);
                 movie.setMovieActor(getActorsList);
+                movie.setMovieID(getMovieID);
+                movie.setDirector(getDirector);
+                movie.setMovieTime(getMovieDuration);
+                movie.setMovieTrailer(getMovieTrailer);
 
                 movies.add(movie);
             }

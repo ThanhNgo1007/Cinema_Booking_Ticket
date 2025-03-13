@@ -11,69 +11,53 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailUtility {
 
-	private static final String SMTP_HOST = "smtp.gmail.com";
-	private static final int SMTP_PORT = 465;
-	private static final String EMAIL_USERNAME = "amitnare4303@gmail.com";
-	private static final String EMAIL_PASSWORD = System.getenv("EMAIL_PASSWORD");;
+    private static final String SMTP_HOST = "smtp.gmail.com";
+    private static final int SMTP_PORT = 587; // Chuyển sang 587 để dùng STARTTLS
+    private static final String EMAIL_USERNAME = "lckchaser1007@gmail.com";
+    private static final String EMAIL_PASSWORD = "splw lfdb nwut lhnn"; // 🔴 Dùng App Password!
 
-	// used to verify OTP Code with user input
-	public static String validOtpCode;
+    public static String validOtpCode;
 
-	// generate OTP, send Email
-	public static Boolean sendVerificationEmail(String emailAddress) {
-		// Generate OTP
-		String otp = generateOTP();
+    public static Boolean sendVerificationEmail(String emailAddress) {
+        String otp = generateOTP();
+        validOtpCode = otp;
+        String message = "Your verification code is: " + otp;
+        String subject = "Account Verification";
+        return sendEmail(message, subject, emailAddress);
+    }
 
-		// save the OTP code for validation
-		validOtpCode = otp;
+    private static String generateOTP() {
+        return String.format("%06d", (int) (Math.random() * 1000000));
+    }
 
-		// Email message
-		String message = "Your verification code is: " + otp;
-		String subject = "Account Verification";
+    private static Boolean sendEmail(String message, String subject, String to) {
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", SMTP_HOST);
+            props.put("mail.smtp.port", SMTP_PORT);
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true"); // ✅ Bật STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
-		// Send email
-		Boolean isEmailSent = sendEmail(message, subject, emailAddress);
+            Session session = Session.getInstance(props, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(EMAIL_USERNAME, EMAIL_PASSWORD);
+                }
+            });
 
-		return isEmailSent;
-	}
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(EMAIL_USERNAME));
+            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            msg.setSubject(subject);
+            msg.setText(message);
 
-	// generate 6 digit OTP Code
-	private static String generateOTP() {
-		// Generate 6-digit OTP
-		return String.format("%06d", (int) (Math.random() * 1000000));
-	}
-
-	// take messages and sendEmail
-	private static Boolean sendEmail(String message, String subject, String to) {
-
-		try {
-			Properties props = new Properties();
-			props.put("mail.smtp.host", SMTP_HOST);
-			props.put("mail.smtp.port", SMTP_PORT);
-			props.put("mail.smtp.ssl.enable", "true");
-			props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-			props.put("mail.smtp.auth", "true");
-
-			Session session = Session.getInstance(props, new Authenticator() {
-				@Override
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(EMAIL_USERNAME, EMAIL_PASSWORD);
-				}
-			});
-
-			MimeMessage msg = new MimeMessage(session);
-			msg.setFrom(new InternetAddress(EMAIL_USERNAME));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-			msg.setSubject(subject);
-			msg.setText(message);
-
-			Transport.send(msg);
-			System.out.println("Email sent successfully.");
-
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+            Transport.send(msg);
+            System.out.println("Email sent successfully.");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -15,18 +15,18 @@ import java.sql.SQLException;
 
 public class JSONUtility {
 
-	static String path_userdata = "src/application/database/userdata.json";
-	String path_moviedata = "src/application/database/moviedata.json";
+	static String path_userdata = "src/Cinema/database/userdata.json";
+	String path_moviedata = "src/Cinema/database/moviedata.json";
 
 	// take ResultSet and store in userdata.json file
 	public static void storeUserDataFromResultSet(ResultSet rs) throws IOException, SQLException {
 		// Extract user specific data from the ResultSet
 		int userId = rs.getInt("id");
-		String phoneNumber = rs.getString("phoneNumber");
-		String firstName = rs.getString("firstName");
-		String lastName = rs.getString("lastName");
-		String cityName = rs.getString("cityName");
-		String userEmail = rs.getString("emailAddress");
+		String phoneNumber = rs.getString("phone_num");
+		String firstName = rs.getString("first_name");
+		String lastName = rs.getString("last_name");
+		String cityName = rs.getString("city");
+		String userEmail = rs.getString("email");
 
 		// Check for null or empty values and replace with empty string
 		if (phoneNumber == null || phoneNumber.isEmpty()) {
