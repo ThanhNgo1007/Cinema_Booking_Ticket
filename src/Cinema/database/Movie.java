@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class Movie {
-	private String movieID, movieName, movieDescription;
+	private String movieID, movieName, movieDescription, price;
 	private String movieRating, movieTime;
 	private String movieRealeseDate, movieGener;
 	private String Actor, movieTrailer,director;
 	private Image moviePoster;
+	private String createDate, updateDate;
+	private Integer status;
 	
 	public String getMovieName() {
 		return movieName;
@@ -51,13 +53,6 @@ public class Movie {
 		this.movieRating = movieRating;
 	}
 
-	public String getMovieRealeseDate() {
-		return movieRealeseDate;
-	}
-
-	public void setMovieRealeseDate(String movieRealeseDate) {
-		this.movieRealeseDate = movieRealeseDate;
-	}
 
 	public String getMovieGener() {
 		return movieGener;
@@ -105,5 +100,45 @@ public class Movie {
 
 	public void setMovieID(String movieID) {
 		this.movieID = movieID;
+	}
+
+	public String getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getMovieRealeseDate() {
+		return movieRealeseDate;
+	}
+
+	public void setMovieRealeseDate(String movieRealeseDate) {
+		this.movieRealeseDate = movieRealeseDate;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
 	}
 }

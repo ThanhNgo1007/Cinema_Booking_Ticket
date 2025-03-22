@@ -15,13 +15,31 @@ import Cinema.database.JSONUtility.User;
 
 public class DBUtility {
 
-    // Update these with your MySQL credentials
     private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-    // validate login, encrypt password and store data in userdata.json
-    public static Boolean validateLogin(String email, String password) {
+    // Kết quả trả về của validateLogin
+    public static class LoginResult {
+        private boolean isValid;
+        private int isSuperUser;
+
+        public LoginResult(boolean isValid, int isSuperUser) {
+            this.isValid = isValid;
+            this.isSuperUser = isSuperUser;
+        }
+
+        public boolean isValid() {
+            return isValid;
+        }
+
+        public int getIsSuperUser() {
+            return isSuperUser;
+        }
+    }
+
+    // validate login, encrypt password and store data in appropriate JSON file
+    public static LoginResult validateLogin(String email, String password) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -39,18 +57,26 @@ public class DBUtility {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                int isSuperUser = rs.getInt("isSuperUser");
                 try {
-                    JSONUtility.storeUserDataFromResultSet(rs);
+                    // Chỉ lưu vào userdata.json nếu không phải admin
+                    if (isSuperUser == 0) {
+                        JSONUtility.storeUserDataFromResultSet(rs);
+                    }
+                    // Lưu vào admindata.json nếu là admin
+                    if (isSuperUser == 1) {
+                        JSONUtility.storeAdminDataFromResultSet(rs);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return true;
+                return new LoginResult(true, isSuperUser);
             } else {
-                return false;
+                return new LoginResult(false, 0);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return new LoginResult(false, 0);
         } finally {
             try {
                 if (rs != null) rs.close();
@@ -62,6 +88,7 @@ public class DBUtility {
         }
     }
 
+    // Các phương thức khác giữ nguyên
     public static Boolean checkExistinguserEmailAddress(String email) {
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -168,6 +195,7 @@ public class DBUtility {
                 String getDirector = rs.getString("director");
                 String getMovieDuration = rs.getString("duration");
                 String getMovieTrailer = rs.getString("trailer");
+                String getMoviePrice = rs.getString("basePrice");
 
                 Movie movie = new Movie();
                 movie.setMovieName(getMovieName);
@@ -181,6 +209,7 @@ public class DBUtility {
                 movie.setDirector(getDirector);
                 movie.setMovieTime(getMovieDuration);
                 movie.setMovieTrailer(getMovieTrailer);
+                movie.setPrice(getMoviePrice);
 
                 movies.add(movie);
             }
@@ -247,8 +276,8 @@ public class DBUtility {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "SELECT COUNT(*) AS count FROM booked_ticket";
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
+            String sql = "SELECT COUNT(*) AS count FROM bookedTickets";
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 try (ResultSet rs = pstmt.executeQuery()) {
@@ -267,83 +296,5 @@ public class DBUtility {
             }
         }
         return ticketCount;
-    }
-
-    public static int[] countTicketsByType() {
-        int[] ticketCounts = new int[3]; // Index 0: Premium, 1: VIP, 2: Standard
-        Connection conn = null;
-
-        try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "SELECT seatClass, SUM(numberOfSeats) AS totalSeats FROM booked_ticket GROUP BY seatClass";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
-                        String seatClass = rs.getString("seatClass");
-                        int totalSeats = rs.getInt("totalSeats");
-
-                        switch (seatClass) {
-                            case "Premium":
-                                ticketCounts[0] += totalSeats;
-                                break;
-                            case "VIP":
-                                ticketCounts[1] += totalSeats;
-                                break;
-                            case "Standard":
-                                ticketCounts[2] += totalSeats;
-                                break;
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return ticketCounts;
-    }
-
-    public static boolean updateBookingData() {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            JSONUtility json = new JSONUtility();
-            User user = JSONUtility.getUserData();
-            MovieData moviedata = json.getMovieJson();
-
-            String seatsStr = String.join(", ", moviedata.selectedSeats);
-
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String query = "INSERT INTO booked_ticket (userId, movieId, seatNumbers, seatClass, numberOfSeats, showTime, perPrice, totalPrice, currentStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, user.userId);
-            pstmt.setInt(2, moviedata.id);
-            pstmt.setString(3, seatsStr);
-            pstmt.setString(4, "Normal");
-            pstmt.setInt(5, moviedata.selectedSeats.length);
-            pstmt.setString(6, moviedata.timing);
-            pstmt.setInt(7, moviedata.basePrice);
-            pstmt.setInt(8, moviedata.totalPrice);
-            pstmt.setString(9, "Booked");
-
-            int rowsInserted = pstmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            return false;
-        } finally {
-            try {
-                if (pstmt != null) pstmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

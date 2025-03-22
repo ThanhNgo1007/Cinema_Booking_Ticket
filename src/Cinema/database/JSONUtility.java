@@ -7,220 +7,323 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.FileReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JSONUtility {
 
-	static String path_userdata = "src/Cinema/database/userdata.json";
-	String path_moviedata = "src/Cinema/database/moviedata.json";
+    static String path_userdata = "src/Cinema/database/userdata.json";
+    static String path_admindata = "src/Cinema/database/admindata.json"; // Đường dẫn file admindata.json
+    String path_moviedata = "src/Cinema/database/moviedata.json";
 
-	// take ResultSet and store in userdata.json file
-	public static void storeUserDataFromResultSet(ResultSet rs) throws IOException, SQLException {
-		// Extract user specific data from the ResultSet
-		int userId = rs.getInt("id");
-		String phoneNumber = rs.getString("phone_num");
-		String firstName = rs.getString("first_name");
-		String lastName = rs.getString("last_name");
-		String cityName = rs.getString("city");
-		String userEmail = rs.getString("email");
+    // Lưu thông tin người dùng vào userdata.json
+    public static void storeUserDataFromResultSet(ResultSet rs) throws IOException, SQLException {
+        int userId = rs.getInt("id");
+        String phoneNumber = rs.getString("phone_num");
+        String firstName = rs.getString("first_name");
+        String lastName = rs.getString("last_name");
+        String cityName = rs.getString("city");
+        String userEmail = rs.getString("email");
 
-		// Check for null or empty values and replace with empty string
-		if (phoneNumber == null || phoneNumber.isEmpty()) {
-			phoneNumber = "";
-		}
-		if (firstName == null || firstName.isEmpty()) {
-			firstName = "";
-		}
-		if (lastName == null || lastName.isEmpty()) {
-			lastName = "";
-		}
-		if (cityName == null || cityName.isEmpty()) {
-			cityName = "";
-		}
-		if (userEmail == null || userEmail.isEmpty()) {
-			userEmail = "";
-		}
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            phoneNumber = "";
+        }
+        if (firstName == null || firstName.isEmpty()) {
+            firstName = "";
+        }
+        if (lastName == null || lastName.isEmpty()) {
+            lastName = "";
+        }
+        if (cityName == null || cityName.isEmpty()) {
+            cityName = "";
+        }
+        if (userEmail == null || userEmail.isEmpty()) {
+            userEmail = "";
+        }
 
-		// Create Gson object
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName);
+        String jsonString = gson.toJson(user);
 
-		// Create User object
-		User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName);
+        try (FileWriter writer = new FileWriter(path_userdata)) {
+            writer.write(jsonString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		// Convert User object to JSON string
-		String jsonString = gson.toJson(user);
+    // Lưu thông tin admin vào admindata.json
+    public static void storeAdminDataFromResultSet(ResultSet rs) throws IOException, SQLException {
+        int adminId = rs.getInt("id");
+        String phoneNumber = rs.getString("phone_num");
+        String firstName = rs.getString("first_name");
+        String lastName = rs.getString("last_name");
+        String cityName = rs.getString("city");
+        String adminEmail = rs.getString("email");
 
-		// Write JSON string to file
-		try (FileWriter writer = new FileWriter(path_userdata)) {
-			writer.write(jsonString);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
+            phoneNumber = "";
+        }
+        if (firstName == null || firstName.isEmpty()) {
+            firstName = "";
+        }
+        if (lastName == null || lastName.isEmpty()) {
+            lastName = "";
+        }
+        if (cityName == null || cityName.isEmpty()) {
+            cityName = "";
+        }
+        if (adminEmail == null || adminEmail.isEmpty()) {
+            adminEmail = "";
+        }
 
-	// Inner class representing User
-	static class User {
-		public int userId; // Make the field public
-		String firstName, lastName, email, phoneNumber, cityName;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        User admin = new User(adminId, firstName, lastName, adminEmail, phoneNumber, cityName);
+        String jsonString = gson.toJson(admin);
 
-		// Constructor
-		public User(int id, String fname, String lname, String email, String phoneNumber, String cityName) {
-			this.userId = id;
-			this.firstName = fname;
-			this.lastName = lname;
-			this.email = email;
-			this.phoneNumber = phoneNumber;
-			this.cityName = cityName;
-		}
-	}
+        try (FileWriter writer = new FileWriter(path_admindata)) {
+            writer.write(jsonString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+ // Phương thức mới: Lưu dữ liệu người dùng trực tiếp từ tham số
+    public static void storeUserData(int userId, String firstName, String lastName, String email, String phoneNumber, String cityName) throws IOException {
+        // Xử lý giá trị null hoặc rỗng
+        if (phoneNumber == null || phoneNumber.isEmpty()) phoneNumber = "";
+        if (firstName == null || firstName.isEmpty()) firstName = "";
+        if (lastName == null || lastName.isEmpty()) lastName = "";
+        if (cityName == null || cityName.isEmpty()) cityName = "";
+        if (email == null || email.isEmpty()) email = "";
 
-	// check if the userdata.json has userId and email values for auto-login from
-	// welcome screen
-	public static boolean userIsLoggedIn() {
-		// Path to the userdata.json file
-		String filePath = "src/application/database/userdata.json";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        User user = new User(userId, firstName, lastName, email, phoneNumber, cityName);
+        String jsonString = gson.toJson(user);
 
-		// Try-with-resources to automatically close the FileReader
-		try (FileReader reader = new FileReader(filePath)) {
-			// Parse JSON file
-			JsonElement jsonElement = JsonParser.parseReader(reader);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
+        try (FileWriter writer = new FileWriter(path_userdata)) {
+            writer.write(jsonString);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-			// Check if JSON contains userId and email fields
-			return jsonObject.has("userId") && !jsonObject.get("userId").isJsonNull() && jsonObject.has("email")
-					&& !jsonObject.get("email").isJsonNull() && !jsonObject.get("userId").getAsString().isEmpty()
-					&& !jsonObject.get("email").getAsString().isEmpty();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    // Inner class representing User
+    public static class User {
+        public int userId;
+        String firstName, lastName, email, phoneNumber, cityName;
 
-		// If user is not found
-		return false;
-	}
+        public User(int id, String fname, String lname, String email, String phoneNumber, String cityName) {
+            this.userId = id;
+            this.firstName = fname;
+            this.lastName = lname;
+            this.email = email;
+            this.phoneNumber = phoneNumber;
+            this.cityName = cityName;
+        }
 
-	// remove user details from userdata.json for logout from dashboard
-	public static boolean removeValuesAndSave() {
-		// Path to the userdata.json file
-		String filePath = "src/application/database/userdata.json";
+        public int getUserId() {
+            return userId;
+        }
 
-		try {
-			// Read JSON file
-			FileReader reader = new FileReader(filePath);
-			JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
-			reader.close();
+        public String getUserName() {
+            return firstName + lastName;
+        }
+        
+        public String getEmail() {
+        	return email;
+        }
+    }
 
-			// Modify JSON object
-			jsonObject.addProperty("userId", "");
-			jsonObject.addProperty("email", "");
-			jsonObject.addProperty("firstName", "");
-			jsonObject.addProperty("lastName", "");
-			jsonObject.addProperty("phoneNumber", "");
-			jsonObject.addProperty("cityName", "");
+    // Các phương thức khác giữ nguyên
+    public static boolean userIsLoggedIn() {
+        String filePath = "src/application/database/userdata.json";
+        try (FileReader reader = new FileReader(filePath)) {
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            return jsonObject.has("userId") && !jsonObject.get("userId").isJsonNull() && jsonObject.has("email")
+                    && !jsonObject.get("email").isJsonNull() && !jsonObject.get("userId").getAsString().isEmpty()
+                    && !jsonObject.get("email").getAsString().isEmpty();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-			// Write modified JSON back to file
-			FileWriter writer = new FileWriter(filePath);
-			Gson gson = new Gson();
-			gson.toJson(jsonObject, writer);
-			writer.close();
+    public static boolean removeValuesAndSave() {
+        String userFilePath = "src/Cinema/database/userdata.json";
+        String adminFilePath = "src/Cinema/database/admindata.json";
 
-			return true; // Modification successful
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            // Xóa userdata.json
+            FileReader userReader = new FileReader(userFilePath);
+            JsonObject userJsonObject = JsonParser.parseReader(userReader).getAsJsonObject();
+            userReader.close();
 
-		return false; // Modification failed
-	}
+            userJsonObject.addProperty("userId", "");
+            userJsonObject.addProperty("email", "");
+            userJsonObject.addProperty("firstName", "");
+            userJsonObject.addProperty("lastName", "");
+            userJsonObject.addProperty("phoneNumber", "");
+            userJsonObject.addProperty("cityName", "");
 
-	public class MovieData {
-		public int id, price, basePrice, totalPrice = 0;
-		public String name, timing, booked, selected;
-		public String[] bookedSeats = {}, selectedSeats = {};
+            FileWriter userWriter = new FileWriter(userFilePath);
+            Gson gson = new Gson();
+            gson.toJson(userJsonObject, userWriter);
+            userWriter.close();
 
-		// Constructor
-		public MovieData(int id, String name, String timing, String[] booked, int basePrice) {
-			this.id = id;
-			this.name = name;
-			this.timing = timing;
-			this.bookedSeats = booked;
-			this.basePrice = basePrice;
-		}
-	}
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static boolean removeValuesAndSaveAdmin() {
+        String adminFilePath = "src/Cinema/database/admindata.json";
 
-	// Create and store new movie data into JSON
-	public boolean createMovieJson(int id, String name, String timing, String booked, int basePrice) {
-		try {
-			FileWriter writer = new FileWriter(path_moviedata);
-			Gson gson = new Gson();
-			MovieData movieData = new MovieData(id, name, timing, booked.split(","), basePrice);
-			gson.toJson(movieData, writer);
-			writer.close();
-			return true;
-		} catch (IOException e) {
-			System.out.println("Error storing movie data: " + e.getMessage());
-			return false;
-		}
-	}
+        try {
+           
+            Gson gson = new Gson();
+            // Xóa admindata.json
+            FileReader adminReader = new FileReader(adminFilePath);
+            JsonObject adminJsonObject = JsonParser.parseReader(adminReader).getAsJsonObject();
+            adminReader.close();
 
-	// Get movie data from JSON
-	public MovieData getMovieJson() {
-		try {
-			FileReader reader = new FileReader(path_moviedata);
-			// MovieData movieData = gson.fromJson(reader, MovieData.class);
-			JsonElement jsonElement = JsonParser.parseReader(reader);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			JsonArray arr = jsonObject.getAsJsonArray("bookedSeats");
-			String[] booked = new String[arr.size()];
-			for (int i = 0; i < arr.size(); i++) {
-				booked[i] = arr.get(i).getAsString();
-			}
-			MovieData movieData = new MovieData(jsonObject.get("id").getAsInt(), jsonObject.get("name").getAsString(),
-					jsonObject.get("timing").getAsString(), booked, jsonObject.get("basePrice").getAsInt());
-			reader.close();
-			return movieData;
-		} catch (IOException e) {
-			System.out.println("Error getting movie data: " + e.getMessage());
-			return null;
-		}
-	}
+            adminJsonObject.addProperty("userId", "");
+            adminJsonObject.addProperty("email", "");
+            adminJsonObject.addProperty("firstName", "");
+            adminJsonObject.addProperty("lastName", "");
+            adminJsonObject.addProperty("phoneNumber", "");
+            adminJsonObject.addProperty("cityName", "");
 
-	// Update movie data in JSON
-	public boolean updateMovieJson(String[] seats, int price) {
-		try {
-			FileReader reader = new FileReader(path_moviedata);
-			Gson gson = new GsonBuilder().setPrettyPrinting().create(); // For pretty printing JSON
-			MovieData movieData = gson.fromJson(reader, MovieData.class);
-			reader.close();
+            FileWriter adminWriter = new FileWriter(adminFilePath);
+            gson.toJson(adminJsonObject, adminWriter);
+            adminWriter.close();
 
-			// Update fields
-			movieData.selected = String.join(", ", seats);
-			movieData.selectedSeats = seats;
-			movieData.price = price;
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static User getUserData() {
+        try (FileReader reader = new FileReader(path_userdata)) {
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-			FileWriter writer = new FileWriter(path_moviedata);
-			gson.toJson(movieData, writer);
-			writer.close();
-			return true;
-		} catch (IOException e) {
-			System.out.println("Error updating movie data: " + e.getMessage());
-			return false;
-		}
-	}
+            int userId = jsonObject.has("userId") && !jsonObject.get("userId").isJsonNull() ? jsonObject.get("userId").getAsInt() : 0;
+            String firstName = jsonObject.has("firstName") && !jsonObject.get("firstName").isJsonNull() ? jsonObject.get("firstName").getAsString() : "";
+            String lastName = jsonObject.has("lastName") && !jsonObject.get("lastName").isJsonNull() ? jsonObject.get("lastName").getAsString() : "";
+            String email = jsonObject.has("email") && !jsonObject.get("email").isJsonNull() ? jsonObject.get("email").getAsString() : "";
+            String phoneNumber = jsonObject.has("phoneNumber") && !jsonObject.get("phoneNumber").isJsonNull() ? jsonObject.get("phoneNumber").getAsString() : "";
+            String cityName = jsonObject.has("cityName") && !jsonObject.get("cityName").isJsonNull() ? jsonObject.get("cityName").getAsString() : "";
 
-	public static User getUserData(){
-		try {
-			FileReader reader = new FileReader(path_userdata);
-			JsonElement jsonElement = JsonParser.parseReader(reader);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			reader.close();
-			User user = new User(jsonObject.get("userId").getAsInt(), jsonObject.get("firstName").getAsString(), jsonObject.get("lastName").getAsString(), jsonObject.get("email").getAsString(), jsonObject.get("phoneNumber").getAsString(), jsonObject.get("cityName").getAsString());
-			return user;
-		} catch (IOException e) {
-			System.out.println("Error getting user data: " + e.getMessage());
-			return null;
-		}
-	}
+            return new User(userId, firstName, lastName, email, phoneNumber, cityName);
+        } catch (IOException e) {
+            System.err.println("Lỗi lấy dữ liệu người dùng: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static String getUserFirstName() {
+        try {
+            FileReader reader = new FileReader(path_userdata);
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            reader.close();
+
+            return jsonObject.get("firstName").getAsString();
+        } catch (IOException e) {
+            System.out.println("Error getting user data: " + e.getMessage());
+            return "Guest";
+        }
+    }
+
+    public class MovieData {
+        public String id;
+        public int price, basePrice, totalPrice = 0, numberOfSeats = 0;
+        public String name, timing, booked, selected;
+        public String[] bookedSeats = {}, selectedSeats = {};
+
+        public MovieData(String id, String name, String timing, String[] booked, int basePrice) {
+            this.id = id;
+            this.name = name;
+            this.timing = timing;
+            this.bookedSeats = booked;
+            this.basePrice = basePrice;
+        }
+    }
+
+    public boolean createMovieJson(String id, String name, String timing, String booked, int basePrice) {
+        try {
+            FileWriter writer = new FileWriter(path_moviedata);
+            Gson gson = new Gson();
+            MovieData movieData = new MovieData(id, name, timing, booked.split(","), basePrice);
+            gson.toJson(movieData, writer);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error storing movie data: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public MovieData getMovieJson() {
+        try {
+            FileReader reader = new FileReader(path_moviedata);
+            JsonElement jsonElement = JsonParser.parseReader(reader);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            JsonArray arr = jsonObject.getAsJsonArray("bookedSeats");
+            String[] booked = new String[arr.size()];
+            for (int i = 0; i < arr.size(); i++) {
+                booked[i] = arr.get(i).getAsString();
+            }
+            MovieData movieData = new MovieData(
+                jsonObject.get("id").getAsString(),
+                jsonObject.get("name").getAsString(),
+                jsonObject.get("timing").getAsString(),
+                booked,
+                jsonObject.get("basePrice").getAsInt()
+            );
+            movieData.totalPrice = jsonObject.get("totalPrice").getAsInt();
+            movieData.numberOfSeats = jsonObject.has("numberOfSeats") ? jsonObject.get("numberOfSeats").getAsInt() : 0;
+            JsonArray selectedArr = jsonObject.getAsJsonArray("selectedSeats");
+            movieData.selectedSeats = new String[selectedArr.size()];
+            for (int i = 0; i < selectedArr.size(); i++) {
+                movieData.selectedSeats[i] = selectedArr.get(i).getAsString();
+            }
+            reader.close();
+            return movieData;
+        } catch (IOException e) {
+            System.out.println("Error getting movie data: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean updateMovieJson(String[] seats, int price) {
+        try {
+            FileReader reader = new FileReader(path_moviedata);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            MovieData movieData = gson.fromJson(reader, MovieData.class);
+            reader.close();
+
+            movieData.selected = String.join(", ", seats);
+            movieData.selectedSeats = seats;
+            movieData.totalPrice = price;
+            movieData.numberOfSeats = seats.length;
+
+            FileWriter writer = new FileWriter(path_moviedata);
+            gson.toJson(movieData, writer);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error updating movie data: " + e.getMessage());
+            return false;
+        }
+    }
 }

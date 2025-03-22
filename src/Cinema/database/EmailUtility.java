@@ -14,7 +14,7 @@ public class EmailUtility {
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final int SMTP_PORT = 587; // Chuyển sang 587 để dùng STARTTLS
     private static final String EMAIL_USERNAME = "lckchaser1007@gmail.com";
-    private static final String EMAIL_PASSWORD = "splw lfdb nwut lhnn"; // 🔴 Dùng App Password!
+    private static final String EMAIL_PASSWORD = "mvuq rmzq fhwc mqxk"; // 🔴 Dùng App Password!
 
     public static String validOtpCode;
 
