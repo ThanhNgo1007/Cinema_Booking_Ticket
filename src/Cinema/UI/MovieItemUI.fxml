@@ -10,11 +10,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#click" prefHeight="424.0" prefWidth="214.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.MovieItemController">
+<VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#click" prefWidth="214.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.MovieItemController">
    <children>
-      <StackPane prefHeight="250.0" prefWidth="175.0">
+      <StackPane prefHeight="296.0" prefWidth="200.0">
          <children>
-            <ImageView fx:id="setMovieImg" fitHeight="296.0" fitWidth="249.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="setMovieImg" fitHeight="296.0" fitWidth="228.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/movie/payoff_poster_ngt_master_sneak-2_1_.jpg" />
                </image>
@@ -25,12 +25,15 @@
          <VBox.margin>
             <Insets left="5.0" top="5.0" />
          </VBox.margin>
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
       </Text>
-      <Label fx:id="setMovieGener" text="The loai: ">
+      <Text fx:id="setMovieGener" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="200.0">
          <VBox.margin>
-            <Insets left="5.0" />
+            <Insets left="5.0" top="5.0" />
          </VBox.margin>
-      </Label>
+      </Text>
       <Label fx:id="setMovieTime" text="Thoi luong: ">
          <VBox.margin>
             <Insets left="5.0" />
@@ -41,7 +44,7 @@
             <Insets left="5.0" />
          </VBox.margin>
       </Label>
-      <Button mnemonicParsing="false" style="-fx-background-color: RED;" text="BUY TICKET" textFill="#f5f5f5">
+      <Button fx:id="buyTicketButton" mnemonicParsing="false" onMouseClicked="#bookedButtonHandle" style="-fx-background-color: RED;" text="MUA VÉ" textFill="#f5f5f5">
          <graphic>
             <ImageView fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -53,7 +56,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
          <VBox.margin>
-            <Insets bottom="10.0" left="90.0" top="5.0" />
+            <Insets bottom="10.0" left="120.0" top="5.0" />
          </VBox.margin>
       </Button>
    </children>

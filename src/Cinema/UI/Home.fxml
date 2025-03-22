@@ -17,13 +17,13 @@
    <center>
    </center>
    <top>
-      <AnchorPane prefHeight="66.0" prefWidth="1063.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="128.0" prefWidth="1063.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="72.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="128.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <StackPane prefHeight="72.0" prefWidth="154.0">
                      <children>
-                        <Label fx:id="btn_menuback" text="MENU">
+                        <Label fx:id="btn_menuback" prefHeight="50.0" prefWidth="100.0" text="MENU">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -32,13 +32,13 @@
                               </ImageView>
                            </graphic>
                            <StackPane.margin>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="30.0" />
                            </StackPane.margin>
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="btn_menuback1" text="MENU">
+                        <Label fx:id="btn_menuback1" prefHeight="50.0" prefWidth="100.0" text="MENU">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -47,7 +47,7 @@
                               </ImageView>
                            </graphic>
                            <StackPane.margin>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="30.0" />
                            </StackPane.margin>
                            <font>
                               <Font name="System Bold" size="18.0" />
@@ -59,7 +59,7 @@
                      </children>
                   </StackPane>
                   <Pane HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="72.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="127.0" fitWidth="141.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../../image/images-removebg-preview.png" />
                      </image>
@@ -84,9 +84,9 @@
       </AnchorPane>
    </top>
    <left>
-      <AnchorPane fx:id="menuPane" prefHeight="575.0" prefWidth="180.0" style="-fx-background-color: #fdfcf0;" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="menuPane" prefWidth="180.0" style="-fx-background-color: #fdfcf0;" AnchorPane.bottomAnchor="0.0" BorderPane.alignment="TOP_LEFT">
          <children>
-            <VBox alignment="TOP_CENTER" layoutY="-2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="189.0">
+            <VBox alignment="TOP_CENTER" layoutY="-2.0" prefWidth="189.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="65.0" prefWidth="154.0">
                      <children>
@@ -99,22 +99,22 @@
                         <Insets bottom="20.0" />
                      </VBox.margin>
                   </HBox>
-                  <VBox prefHeight="459.0" prefWidth="203.0">
+                  <Label fx:id="home_name" alignment="CENTER" prefHeight="17.0" prefWidth="204.0" text="NAME">
+                     <graphic>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="75.0" text="XIN CHÀO," />
+                     </graphic>
+                     <VBox.margin>
+                        <Insets bottom="40.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <VBox maxHeight="1.7976931348623157E308" prefHeight="350.0" prefWidth="189.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="204.0" text="NAME">
-                           <graphic>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="75.0" text="WELCOME, " />
-                           </graphic>
-                           <VBox.margin>
-                              <Insets bottom="40.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="13.0" />
-                           </font>
-                        </Label>
                         <AnchorPane prefHeight="40.0" prefWidth="189.0">
                            <children>
-                              <Label fx:id="btn_home" prefHeight="44.0" prefWidth="189.0" text="HOME">
+                              <Label fx:id="btn_home" prefHeight="44.0" prefWidth="189.0" text="TRANG CHỦ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -139,7 +139,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="40.0" prefWidth="189.0">
                            <children>
-                              <Label fx:id="btn_movie" prefHeight="44.0" prefWidth="189.0" text="MOVIES">
+                              <Label fx:id="btn_movie" prefHeight="44.0" prefWidth="189.0" text="PHIM ĐANG CHIẾU">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -164,7 +164,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="40.0" prefWidth="189.0">
                            <children>
-                              <Label fx:id="btn_ticket" prefHeight="44.0" prefWidth="189.0" text="YOUR TICKET">
+                              <Label fx:id="btn_ticket" prefHeight="44.0" prefWidth="189.0" text="LỊCH SỬ ĐẶT VÉ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -189,7 +189,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="40.0" prefWidth="189.0">
                            <children>
-                              <Label fx:id="btn_support" prefHeight="44.0" prefWidth="189.0" text="SUPPORT">
+                              <Label fx:id="btn_support" prefHeight="44.0" prefWidth="189.0" text="HỖ TRỢ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -214,7 +214,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="40.0" prefWidth="189.0">
                            <children>
-                              <Label fx:id="btn_account" prefHeight="44.0" prefWidth="189.0" text="YOUR ACCOUNT">
+                              <Label fx:id="btn_account" prefHeight="44.0" prefWidth="189.0" text="TÀI KHOẢN">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -238,7 +238,7 @@
                            </VBox.margin>
                         </AnchorPane>
                         <Pane prefHeight="200.0" prefWidth="200.0" />
-                        <Label alignment="CENTER" text="LOG OUT">
+                        <Label fx:id="logout_btn" alignment="CENTER" onMouseClicked="#logOutButton" text="ĐĂNG XUẤT">
                            <VBox.margin>
                               <Insets left="40.0" />
                            </VBox.margin>

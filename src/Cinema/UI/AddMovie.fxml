@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
@@ -16,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AddMovieController">
    <children>
       <HBox prefHeight="605.0" prefWidth="848.0">
          <children>
@@ -38,85 +37,97 @@
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
                               <Label text="Image: " />
-                              <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="300.0" text="UPLOAD MOVIE IMAGE">
+                              <Button fx:id="uploadImageButton" mnemonicParsing="false" onMouseClicked="#handleUploadImage" prefHeight="25.0" prefWidth="300.0" text="UPLOAD MOVIE IMAGE">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../HelloFX/src/Cinema/image/icons8-upload-24.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
                               </Button>
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Movie ID : " />
-                              <TextField prefHeight="25.0" prefWidth="300.0" promptText="Enter ID" />
+                              <Label text="Movie ID:  " />
+                              <TextField fx:id="movieIdField" prefHeight="25.0" prefWidth="300.0" promptText="Enter ID" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
                               <Label text="Trailer: " />
-                              <TextField prefHeight="25.0" prefWidth="300.0" promptText="Enter Trailer Link" />
+                              <TextField fx:id="trailerField" prefHeight="25.0" prefWidth="300.0" promptText="Enter Trailer Link" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
                               <Label text="Title: " />
-                              <TextField prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
+                              <TextField fx:id="titleField" prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
                               <Label text="Director: " />
-                              <TextField prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
+                              <TextField fx:id="directorField" prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
                               <Label text="Actor/Actress: " />
-                              <TextArea prefHeight="38.0" prefWidth="280.0" promptText="Enter Actor/Actress" wrapText="true" />
+                              <TextArea fx:id="actorField" prefHeight="38.0" prefWidth="280.0" promptText="Enter Actor/Actress" wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Gener: " />
-                              <TextArea prefHeight="38.0" prefWidth="280.0" promptText="Enter gener..." wrapText="true" />
+                              <Label text="Gerne: " />
+                              <TextArea fx:id="genreField" prefHeight="38.0" prefWidth="280.0" promptText="Enter gener..." wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="121.0" prefWidth="369.0">
                            <children>
                               <Label text="Description: " />
-                              <TextArea prefHeight="121.0" prefWidth="280.0" promptText="Description" wrapText="true" />
+                              <TextArea fx:id="descriptionField" prefHeight="121.0" prefWidth="280.0" promptText="Description" wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
                            <children>
                               <Pane prefHeight="25.0" prefWidth="0.0" />
-                              <Label text="Date Realease: " />
-                              <VBox>
-                                 <children>
-                                    <DatePicker prefHeight="25.0" prefWidth="268.0">
-                                       <VBox.margin>
-                                          <Insets right="10.0" />
-                                       </VBox.margin>
-                                    </DatePicker>
-                                 </children>
-                              </VBox>
+                              <Label text="Date Release: " />
+                              <TextField fx:id="dateRelease" prefHeight="26.0" prefWidth="277.0" promptText="Enter date.." />
                               <VBox />
-                           </children>
-                        </HBox>
-                        <HBox alignment="TOP_RIGHT" prefHeight="12.0" prefWidth="377.0">
-                           <children>
-                              <Label text="Show Time: " />
-                              <TextArea prefHeight="13.0" prefWidth="280.0" promptText="Time" wrapText="true" />
+                              <VBox />
                            </children>
                         </HBox>
                         <HBox layoutX="10.0" layoutY="172.0" prefHeight="31.0" prefWidth="372.0">
                            <children>
                               <Label text="Age Rating:  " />
-                              <ComboBox prefHeight="25.0" prefWidth="140.0" />
+                              <ComboBox fx:id="ageRatingComboBox" prefHeight="25.0" prefWidth="140.0" />
                            </children>
                            <VBox.margin>
                               <Insets left="20.0" />
                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
+                           <children>
+                              <Pane prefHeight="25.0" prefWidth="0.0" />
+                              <Label fx:id="duration" text="Duration: " />
+                              <TextField fx:id="durationField" prefHeight="26.0" prefWidth="277.0" promptText="Enter duration of movie" />
+                              <VBox />
+                              <VBox />
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
+                           <children>
+                              <Pane prefHeight="25.0" prefWidth="0.0" />
+                              <Label text="Price: " />
+                              <TextField fx:id="basePrice" prefHeight="26.0" prefWidth="277.0" promptText="Enter price of normal ticket" />
+                              <VBox />
+                              <VBox />
+                           </children>
                         </HBox>
                      </children>
                      <opaqueInsets>
@@ -132,7 +143,7 @@
                <children>
                   <HBox prefHeight="306.0" prefWidth="467.0">
                      <children>
-                        <ImageView fitHeight="301.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="movieImageView" fitHeight="301.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/movie/350x495-darknun.jpg" />
                            </image>
@@ -142,13 +153,13 @@
                         </ImageView>
                         <VBox prefHeight="301.0" prefWidth="268.0" spacing="20.0">
                            <children>
-                              <Label text="Title" />
-                              <Label text="Date: " />
-                              <Label text="Time: " />
-                              <Label text="Director:" />
-                              <Label text="Actor/ Actress: " />
-                              <Label text="Gener: " />
-                              <Label text="Rated: " />
+                              <Label fx:id="titleLabel" text="Title" />
+                              <Label fx:id="dateLabel" text="Date: " />
+                              <Label fx:id="timeLabel" text="Time: " />
+                              <Label fx:id="directorLabel" text="Director:" />
+                              <Label fx:id="actorLabel" text="Actor/ Actress: " />
+                              <Label fx:id="genreLabel" text="Genre: " />
+                              <Label fx:id="ratedLabel" text="Rated: " />
                            </children>
                            <HBox.margin>
                               <Insets top="15.0" />
@@ -156,25 +167,21 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <Label text="Description">
+                  <Label fx:id="descriptionLabel" text="Description">
                      <VBox.margin>
-                        <Insets bottom="30.0" />
+                        <Insets bottom="30.0" left="20.0" />
                      </VBox.margin>
                   </Label>
                   <Pane prefHeight="200.0" prefWidth="200.0" />
-                  <HBox alignment="BOTTOM_CENTER" prefHeight="25.0" prefWidth="467.0">
+                  <HBox alignment="BOTTOM_CENTER" prefHeight="52.0" prefWidth="445.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Add Movie">
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Pane prefHeight="200.0" prefWidth="200.0" />
-                        <Button mnemonicParsing="false" prefWidth="120.0" text="Show All Movie">
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onMouseClicked="#handleBackBtnClicked" prefHeight="46.0" prefWidth="120.0" style="-fx-background-color: RED;" text="CANCEL" textFill="WHITE">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
+                        <Pane prefHeight="44.0" prefWidth="124.0" />
+                        <Button mnemonicParsing="false" onMouseClicked="#handleAddMovie" prefHeight="46.0" prefWidth="129.0" style="-fx-background-color: GREEN;" text="APPLY" textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />

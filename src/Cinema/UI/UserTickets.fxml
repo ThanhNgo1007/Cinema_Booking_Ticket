@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #f5f5f5;" stylesheets="@../../resource/css/UserTickets.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.UserTicketsController">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="800.0">
+         <children>
+            <Label fx:id="backButton" text="Về trang chủ" />
+            <Pane prefHeight="14.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="VÉ ĐÃ ĐẶT" />
+            <Pane prefHeight="38.0" prefWidth="305.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+
+      <!-- Container cho các thành phần lọc -->
+      <HBox fx:id="filterContainer" alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 10px;">
+         <Label text="Kiểu lọc:" />
+         <ComboBox fx:id="filterTypeComboBox" prefWidth="150.0" promptText="Chọn kiểu lọc" />
+         <!-- DatePicker cho lọc theo ngày -->
+         <DatePicker fx:id="datePicker" managed="false" prefWidth="150.0" visible="false" />
+         
+         <!-- ComboBox cho lọc theo tháng và năm -->
+         <Label fx:id="monthLabel" managed="false" text="Tháng:" visible="false" />
+         <ComboBox fx:id="monthFilter" managed="false" prefWidth="100.0" promptText="Tất cả" visible="false" />
+         <Label fx:id="yearLabelForMonth" managed="false" text="Năm:" visible="false" />
+         <ComboBox fx:id="yearFilterForMonth" managed="false" prefWidth="100.0" promptText="Tất cả" visible="false" />
+         
+         <!-- ComboBox cho lọc theo năm -->
+         <Label fx:id="yearLabel" managed="false" text="Năm:" visible="false" />
+         <ComboBox fx:id="yearFilter" managed="false" prefWidth="100.0" promptText="Tất cả" visible="false" />
+      </HBox>
+      
+      <!-- Bộ chọn kiểu lọc và sắp xếp -->
+      <HBox alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="800.0" spacing="15.0" style="-fx-padding: 10px;">
+         <ComboBox fx:id="sortTypeComboBox" prefWidth="200.0" promptText="Chọn kiểu sắp xếp" style="-fx-background-color: transparent; -fx-border-color: black;" />
+      </HBox>
+
+      <!-- TableView hiển thị vé đã đặt -->
+      <TableView fx:id="ticketTable" prefHeight="400.0" prefWidth="800.0">
+         <columns>
+            <TableColumn fx:id="colTicketId" prefWidth="83.10192894935608" text="Mã số vé" />
+            <TableColumn fx:id="colMovieName" prefWidth="241.69717407226562" text="Tên phim" />
+            <TableColumn fx:id="colTotalPrice" prefWidth="153.79690551757812" text="Tổng giá vé" />
+            <TableColumn fx:id="colSeats" prefWidth="152.20309448242188" text="Ghế đã đặt" />
+            <TableColumn fx:id="colShowtime" prefWidth="166.80499267578125" text="Giờ chiếu" />
+         </columns>
+         <placeholder>
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #e74c3c;" text="Không có vé nào được tìm thấy." />
+         </placeholder>
+      </TableView>
+   </children>
+</VBox>

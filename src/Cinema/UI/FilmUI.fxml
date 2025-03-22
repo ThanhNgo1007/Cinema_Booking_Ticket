@@ -14,13 +14,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<ScrollPane fitToWidth="true" prefHeight="597.0" prefWidth="852.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.ShowAllMoviesController">
+<ScrollPane fitToWidth="true" style="-fx-background-color: #fdfcf0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.ShowAllMoviesController">
    <content>
-      <VBox alignment="CENTER">
+      <VBox alignment="CENTER" style="-fx-background-color: #fdfcf0;">
          <children>
             <HBox alignment="CENTER" fillHeight="false" prefHeight="96.0" prefWidth="282.0" VBox.vgrow="NEVER">
                <children>
-                  <TextField fx:id="getMovieSearchInput" onKeyPressed="#searchMovies" prefHeight="36.0" prefWidth="377.0" promptText="Search Movie" style="-fx-border-color: grey  transparent  grey  grey; -fx-border-radius: 50 0 0 50; -fx-background-color: transparent;">
+                  <TextField fx:id="getMovieSearchInput" onKeyPressed="#searchMovies" prefHeight="36.0" prefWidth="377.0" promptText="Tìm kiếm theo tên phim hoặc thể loại ..." style="-fx-border-color: grey  transparent  grey  grey; -fx-border-radius: 50 0 0 50; -fx-background-color: transparent;">
                      <cursor>
                         <Cursor fx:constant="TEXT" />
                      </cursor>

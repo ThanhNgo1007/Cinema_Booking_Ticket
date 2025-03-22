@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox alignment="CENTER" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AddShowtimeController">
+    <children>
+        <Label text="Thêm lịch chiếu" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        
+        <Label fx:id="movieNameLabel" text="Phim: [Tên phim]" style="-fx-font-size: 14px;" />
+        
+        <HBox spacing="10">
+            <Label text="ID lịch chiếu:" style="-fx-font-size: 14px;" />
+            <TextField fx:id="showtimeIdField" promptText="Nhập ID lịch chiếu" style="-fx-pref-width: 150px;" />
+        </HBox>
+        
+        <HBox spacing="10">
+            <Label text="Ngày chiếu:" style="-fx-font-size: 14px;" />
+            <TextField fx:id="showDateField" promptText="YYYY-MM-DD" style="-fx-pref-width: 150px;" />
+        </HBox>
+        
+        <HBox spacing="10">
+            <Label text="Giờ chiếu:" style="-fx-font-size: 14px;" />
+            <TextField fx:id="showTimeField" promptText="HH:MM" style="-fx-pref-width: 150px;" />
+        </HBox>
+        
+        <HBox spacing="10">
+            <Label text="Tổng số ghế:" style="-fx-font-size: 14px;" />
+            <Label text="150" style="-fx-font-size: 14px; -fx-text-fill: #555;" />
+        </HBox>
+        
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Thêm" onAction="#addShowtime" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+            <Button text="Hủy" onAction="#closeWindow" style="-fx-background-color: #f44336; -fx-text-fill: white;" />
+        </HBox>
+    </children>
+</VBox>

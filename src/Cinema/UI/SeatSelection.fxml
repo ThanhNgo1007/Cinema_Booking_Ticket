@@ -10,30 +10,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="700.0" minWidth="1200.0" style="-fx-background-color: #1F1F1F;" stylesheets="@../css/SelectSeats.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.SelectSeats">
+
+<AnchorPane minHeight="700.0" minWidth="1200.0" style="-fx-background-color: #1F1F1F;" stylesheets="@../../resource/css/SelectSeats.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.SelectSeats">
    <children>
-      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" vbarPolicy="ALWAYS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="800.0" prefWidth="1365.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
         <content>
-          <AnchorPane fx:id="seatsPane" style="-fx-background-color: #1F1F1F;">
+          <AnchorPane fx:id="seatsPane" prefHeight="769.0" prefWidth="1272.0" style="-fx-background-color: #1F1F1F;">
                <children>
-                  <Label contentDisplay="CENTER" layoutX="701.0" layoutY="32.0" style="-fx-background-color: #2f243a; -fx-padding: 4 12; -fx-background-radius: 8;" text="Select Seats" textAlignment="CENTER" textFill="RED">
+                  <Label contentDisplay="CENTER" layoutX="572.0" style="-fx-background-color: #2f243a; -fx-padding: 4 12; -fx-background-radius: 8;" text="CHỌN GHẾ NGỒI" textAlignment="CENTER" textFill="RED" AnchorPane.bottomAnchor="894.0">
                      <font>
                         <Font name="Verdana" size="24.0" />
                      </font>
                   </Label>
-                  <HBox layoutX="104.0" layoutY="142.0" spacing="20.0">
+                  <HBox layoutX="31.0" layoutY="43.0" prefHeight="744.0" prefWidth="1286.0" spacing="20.0">
                      <children>
-                        <VBox>
+                        <VBox prefHeight="690.0" prefWidth="1122.0">
                            <children>
-                              <HBox fx:id="premiumHbox" layoutX="10.0" layoutY="10.0">
+                              <HBox fx:id="premiumHbox" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="1267.0">
                                  <children>
-                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                    <VBox prefHeight="200.0" prefWidth="134.0">
                                        <children>
-                                          <Label text="Premium" textFill="#f5f5f5">
-                                             <font>
-                                                <Font name="Bell MT" size="18.0" />
-                                             </font>
-                                          </Label>
                                           <Label fx:id="premiumPrice" layoutX="10.0" layoutY="10.0" text="USD 370" textFill="#f5f5f5">
                                              <font>
                                                 <Font name="Bell MT" size="18.0" />
@@ -45,13 +41,8 @@
                               </HBox>
                               <HBox fx:id="normalHbox">
                                  <children>
-                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                    <VBox prefHeight="200.0" prefWidth="137.0">
                                        <children>
-                                          <Label text="Normal" textFill="#f5f5f5">
-                                             <font>
-                                                <Font name="Bell MT" size="18.0" />
-                                             </font>
-                                          </Label>
                                           <Label fx:id="normalPrice" layoutX="10.0" layoutY="10.0" text="USD 300" textFill="#f5f5f5">
                                              <font>
                                                 <Font name="Bell MT" size="18.0" />
@@ -61,15 +52,10 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox fx:id="vipHbox">
+                              <HBox fx:id="vipHbox" prefHeight="200.0" prefWidth="1118.0">
                                  <children>
-                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                    <VBox prefHeight="200.0" prefWidth="141.0">
                                        <children>
-                                          <Label text="Normal" textFill="#f5f5f5">
-                                             <font>
-                                                <Font name="Bell MT" size="18.0" />
-                                             </font>
-                                          </Label>
                                           <Label fx:id="vipPrice" layoutX="10.0" layoutY="10.0" text="USD 420" textFill="#f5f5f5">
                                              <font>
                                                 <Font name="Bell MT" size="18.0" />
@@ -81,28 +67,28 @@
                               </HBox>
                               <Label prefHeight="3.0" prefWidth="900.0" style="-fx-background-color: #00dfff; -fx-effect: dropshadow(three-pass-box ,  #00dfff4e, 5, 0.5, 2, 2) dropshadow(three-pass-box , #00dfff4e, 5, 0.5, -2, -2);;">
                                  <VBox.margin>
-                                    <Insets left="100.0" />
+                                    <Insets left="150.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font size="1.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="610.0" prefHeight="6.0" prefWidth="900.0" text="Screen" textAlignment="CENTER" textFill="#f2ff00">
+                              <Label alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="610.0" prefHeight="6.0" prefWidth="900.0" text="MÀN HÌNH" textAlignment="CENTER" textFill="#f2ff00">
                                  <VBox.margin>
-                                    <Insets left="100.0" top="5.0" />
+                                    <Insets left="150.0" top="5.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font name="Verdana" size="14.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="CENTER" spacing="24.0">
+                              <HBox alignment="CENTER" prefHeight="40.0" prefWidth="906.0" spacing="24.0">
                                  <children>
-                                    <Button fx:id="proceedToPaymentBtn" alignment="CENTER" minHeight="40.0" mnemonicParsing="false" onAction="#handleProceedToPaymentPageClick" style="-fx-background-color: green; -fx-text-fill: #ffffff;" text="Proceed to Payment">
+                                    <Button fx:id="proceedToPaymentBtn" alignment="CENTER" minHeight="40.0" mnemonicParsing="false" onAction="#handleProceedToPaymentPageClick" style="-fx-background-color: green; -fx-text-fill: #ffffff;" text="HOÀN THÀNH">
                                        <font>
                                           <Font name="Calibri Bold" size="18.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="cancelBtn" alignment="CENTER" minHeight="40.0" mnemonicParsing="false" onAction="#handleCancelBtnClick" style="-fx-background-color: red; -fx-text-fill: #ffffff;" text="Cancel">
+                                    <Button fx:id="cancelBtn" alignment="CENTER" minHeight="40.0" mnemonicParsing="false" onAction="#handleCancelBtnClick" prefWidth="137.0" style="-fx-background-color: red; -fx-text-fill: #ffffff;" text="HUỶ">
                                        <font>
                                           <Font name="Calibri Bold" size="18.0" />
                                        </font>
@@ -111,15 +97,18 @@
                                  <VBox.margin>
                                     <Insets top="24.0" />
                                  </VBox.margin>
+                                 <padding>
+                                    <Insets left="150.0" />
+                                 </padding>
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox spacing="20.0">
+                        <VBox prefHeight="744.0" prefWidth="226.0" spacing="20.0">
                            <children>
                               <HBox spacing="10.0">
                                  <children>
-                                    <Label prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: green;" />
-                                    <Label layoutX="10.0" layoutY="10.0" text="Available" textFill="WHITE">
+                                    <Label prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #4bd671;" />
+                                    <Label layoutX="10.0" layoutY="10.0" text="Còn trống" textFill="WHITE">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -129,7 +118,7 @@
                               <HBox spacing="10.0">
                                  <children>
                                     <Label prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: blue;" />
-                                    <Label layoutX="10.0" layoutY="10.0" text="Selected" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="10.0" text="Đang chọn" textFill="WHITE">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -139,7 +128,7 @@
                               <HBox spacing="10.0">
                                  <children>
                                     <Label prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: grey;" />
-                                    <Label layoutX="10.0" layoutY="10.0" text="Booked" textFill="WHITE">
+                                    <Label layoutX="10.0" layoutY="10.0" text="Đã được đặt" textFill="WHITE">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -148,12 +137,12 @@
                               </HBox>
                            </children>
                            <padding>
-                              <Insets bottom="100.0" left="200.0" top="300.0" />
+                              <Insets top="300.0" />
                            </padding>
                         </VBox>
                      </children>
                      <padding>
-                        <Insets bottom="100.0" right="100.0" />
+                        <Insets right="100.0" />
                      </padding>
                   </HBox>
                </children>

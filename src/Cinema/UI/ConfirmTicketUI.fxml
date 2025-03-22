@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToHeight="true" prefHeight="496.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.ConfirmTicketController">
+   <content>
+       <VBox fx:id="bookingPane" prefHeight="517.0" prefWidth="799.0" spacing="20.0" style="-fx-background-color: white;">
+         <HBox alignment="CENTER" prefHeight="60.0" prefWidth="799.0" style="-fx-background-color: #231d1c;">
+            <children>
+                 <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="64.0" prefWidth="785.0" style="-fx-font-weight: bold; -fx-font-size: 48px;" text="THANH TOÁN" textFill="WHITE" HBox.hgrow="ALWAYS">
+                  <font>
+                     <Font size="48.0" />
+                  </font>
+               </Label>
+            </children>
+         </HBox>
+         <HBox prefHeight="270.0" prefWidth="799.0" spacing="15.0">
+            <children>
+               <VBox alignment="CENTER_LEFT" prefHeight="274.0" prefWidth="390.0" spacing="20.0" style="-fx-background-color: #fff1ce;">
+                  <children>
+                       <Label fx:id="movieNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Phim chưa có dữ liệu">
+                        <font>
+                           <Font name="System Bold" size="26.0" />
+                        </font>
+                     </Label>
+                       <Label fx:id="showtimeLabel" style="-fx-font-size: 24px;" text="Thời gian chiếu: Chưa có dữ liệu">
+                        <font>
+                           <Font size="26.0" />
+                        </font>
+                     </Label>
+                       <Label fx:id="cinemaLabel" style="-fx-font-size: 24px;" text="Rạp: CGV Sense City" />
+                       <Label fx:id="seatLabel" style="-fx-font-size: 24px;" text="Ghế: Chưa có dữ liệu" />
+                  </children>
+                  <padding>
+                     <Insets left="10.0" />
+                  </padding>
+               </VBox>
+               <VBox alignment="TOP_CENTER" prefWidth="393.0" spacing="15.0">
+                  <children>
+                     <VBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="344.0" style="-fx-border-color: black;">
+                        <children>
+                           <Label alignment="CENTER" prefHeight="38.0" prefWidth="392.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Tong cong">
+                              <font>
+                                 <Font name="System Bold" size="13.0" />
+                              </font>
+                           </Label>
+                           <Label fx:id="totalPriceLabel1" alignment="CENTER" prefHeight="39.0" prefWidth="394.0" style="-fx-background-color: #b9c1c1; -fx-font-size: 24px; -fx-font-weight: bold;" text="Label" textAlignment="CENTER" />
+                        </children>
+                     </VBox>
+                     <VBox prefHeight="80.0" prefWidth="344.0" style="-fx-border-color: black;">
+                        <children>
+                           <Label alignment="CENTER" prefHeight="43.0" prefWidth="406.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Khuyen mai" />
+                           <Label alignment="CENTER" prefHeight="45.0" prefWidth="394.0" style="-fx-background-color: #b9c1c1; -fx-font-size: 24px; -fx-font-weight: bold;" text="0,00 VND" />
+                        </children>
+                     </VBox>
+                     <VBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="344.0" style="-fx-border-color: black;">
+                        <children>
+                           <Label alignment="CENTER" prefHeight="37.0" prefWidth="397.0" style="-fx-background-color: red; -fx-font-size: 24px; -fx-font-weight: 800;" text="Tong so tien thanh toan" textFill="WHITE" />
+                             <Label fx:id="totalPriceLabel" alignment="CENTER" prefHeight="45.0" prefWidth="402.0" style="-fx-font-weight: bold; -fx-background-color: #b9c1c1; -fx-font-size: 24px;" text="Tổng thanh toán: 0 đ" />
+                        </children>
+                     </VBox>
+                  </children>
+               </VBox>
+            </children>
+         </HBox>
+         <HBox alignment="CENTER" prefHeight="114.0" prefWidth="799.0" spacing="60.0">
+            <children>
+                 <Button fx:id="cancelBtn" onAction="#handleCancelBtnClick" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Hủy">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Button>
+                 <Button fx:id="confirmBtn" onAction="#handleConfirmBtnClick" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Xác nhận">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Button>
+            </children>
+         </HBox>
+       </VBox>
+   </content>
+</ScrollPane>

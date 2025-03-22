@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="root" alignment="CENTER" spacing="10" stylesheets="@../../../../HelloFX/src/resource/css/Dashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Dashboard">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <!-- Tiêu đề -->
+    <Label alignment="TOP_CENTER" prefHeight="44.0" prefWidth="591.0" style="-fx-font-size: 36px; -fx-font-family: Noto Sans Kannada; -fx-font-weight: bold;" text="THỐNG KÊ BÁN VÉ VÀ DOANH THU">
+      <font>
+         <Font name="Noto Sans Kannada Regular" size="24.0" />
+      </font></Label>
+
+    <!-- Bộ lọc -->
+    <HBox alignment="CENTER" spacing="10">
+        <Label text="Loại thống kê:" />
+        <ComboBox fx:id="filterTypeCombo" promptText="Chọn loại thống kê">
+        </ComboBox>
+
+        <!-- DatePicker cho ngày cụ thể -->
+        <DatePicker fx:id="datePicker" managed="false" visible="false" />
+
+        <!-- ComboBox cho tháng -->
+        <ComboBox fx:id="monthCombo" managed="false" promptText="Tháng" visible="false">
+        </ComboBox>
+        <!-- ComboBox cho năm (dùng cho tháng/năm) -->
+        <ComboBox fx:id="yearComboForMonth" managed="false" promptText="Năm" visible="false">
+        </ComboBox>
+
+        <!-- ComboBox cho năm (dùng cho năm) -->
+        <ComboBox fx:id="yearCombo" managed="false" promptText="Năm" visible="false">
+        </ComboBox>
+
+        <Label text="Hiển thị:" />
+        <ComboBox fx:id="dataTypeCombo" promptText="Chọn dữ liệu">
+        </ComboBox>
+
+        <Button fx:id="refreshButton" onAction="#refreshCharts" text="Cập nhật" />
+    </HBox>
+
+    <!-- Biểu đồ -->
+    <HBox alignment="CENTER" spacing="20">
+        <!-- Biểu đồ tròn -->
+        <VBox spacing="10">
+            <Label fx:id="pieChartTitle" style="-fx-font-size: 16px;" text="Tỷ lệ theo phim" />
+            <PieChart fx:id="pieChart" prefHeight="400" prefWidth="500" />
+        </VBox>
+
+        <!-- Biểu đồ cột -->
+        <VBox spacing="10">
+            <Label fx:id="barChartTitle" style="-fx-font-size: 16px;" text="Thống kê theo thời gian" />
+            <BarChart fx:id="barChart" prefHeight="400" prefWidth="1000">
+                <xAxis>
+                    <CategoryAxis label="Thời gian" fx:id="xAxis" />
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="yAxis" label="Giá trị" />
+                </yAxis>
+            </BarChart>
+        </VBox>
+    </HBox>
+</VBox>
