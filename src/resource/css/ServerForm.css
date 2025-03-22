@@ -1,0 +1,14 @@
+/* Tùy chỉnh màu nền cho item được chọn trong ListView */
+.list-cell:selected {
+    -fx-background-color: #E0F7FA; /* Màu xanh nhạt */
+}
+
+/* Đảm bảo màu nền mặc định cho item không được chọn */
+.list-cell {
+    -fx-background-color: white;
+}
+
+/* Tùy chọn: Tùy chỉnh màu chữ nếu cần */
+.list-cell:selected .text {
+    -fx-fill: white; /* Màu chữ khi được chọn */
+}

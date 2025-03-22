@@ -1,0 +1,37 @@
+.chart-pie {
+    -fx-pie-label-visible: true;
+    -fx-font-size: 10px;
+}
+
+.chart-bar {
+    -fx-bar-fill: #1E90FF;
+}
+
+.chart-horizontal-zero-line {
+    -fx-stroke: #000000;
+}
+
+.axis {
+    -fx-font-size: 10px;
+}
+
+.axis-label {
+    -fx-font-size: 14px;
+}
+
+.chart-category-axis .axis-label {
+    -fx-font-size: 10px;
+    /* Bỏ xoay nhãn */
+}
+
+.chart-category-axis .tick-mark {
+    -fx-spacing: 10; /* Giảm khoảng cách giữa các nhãn */
+}
+
+.chart-plot-background {
+    -fx-background-color: #f4f4f4;
+}
+
+.combo-box, .date-picker, .button {
+    -fx-font-size: 14px;
+}

@@ -1,0 +1,73 @@
+/* Định dạng cho VBox gốc */
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+/* Định dạng cho tiêu đề "Vé đã đặt" */
+.label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+/* Định dạng cho HBox chứa bộ lọc */
+.hbox {
+    -fx-padding: 10px;
+    -fx-spacing: 15;
+    -fx-alignment: center;
+}
+
+/* Định dạng cho ComboBox bộ lọc */
+.combo-box {
+    -fx-pref-width: 140px;
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d3d3d3;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+.combo-box:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+/* Định dạng cho TableView */
+.table-view {
+    -fx-pref-height: 400px;
+    -fx-pref-width: 800px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d3d3d3;
+    -fx-border-width: 1;
+}
+
+/* Tăng kích thước font chữ cho tiêu đề cột */
+.table-view .column-header .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Tăng kích thước font chữ cho nội dung ô */
+.table-view .table-cell {
+    -fx-font-size: 14px;
+}
+
+/* Tăng chiều cao của hàng */
+.table-view .table-row-cell {
+    -fx-cell-size: 40px;
+}
+
+/* Định dạng cho nút "Quay lại" */
+#backButton {
+    -fx-background-color: #d64b4b;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10 20 10 20;
+}
+
+#backButton:hover {
+    -fx-background-color: #c0392b;
+    -fx-cursor: hand;
+}

@@ -1,0 +1,23 @@
+/* Tăng kích thước font chữ cho tiêu đề cột của TableView nhỏ */
+.showtime-table .column-header .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Tăng kích thước font chữ cho nội dung ô của TableView nhỏ */
+.showtime-table .table-cell {
+    -fx-font-size: 14px;
+}
+
+/* Tăng chiều cao của hàng trong TableView nhỏ */
+.showtime-table .table-row-cell {
+    -fx-cell-size: 40px; /* Tăng chiều cao hàng */
+}
+
+/* Tăng kích thước font chữ và padding cho nút "Thêm lịch chiếu" */
+.add-showtime-button {
+    -fx-font-size: 16px;
+    -fx-padding: 8 16 8 16; /* Tăng padding để nút lớn hơn */
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
