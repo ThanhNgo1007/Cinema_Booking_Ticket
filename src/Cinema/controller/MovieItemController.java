@@ -1,5 +1,7 @@
 package Cinema.controller;
 
+import java.io.IOException;
+
 import Cinema.database.Movie;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +20,7 @@ import javafx.stage.StageStyle;
 
 public class MovieItemController {
 	@FXML
-    private Label setMovieGener;
+    private Text setMovieGener;
 
     @FXML
     private Text setMovieName;
@@ -59,7 +61,25 @@ public class MovieItemController {
         newStage.show();
     }
 
+   public void bookedButtonHandle(MouseEvent e) throws IOException {
+	// Chuyển sang trang chọn suất chiếu và truyền movieID
+       FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/ShowtimeSelection.fxml"));
+       Parent root = loader.load();
+       ShowtimeController controller = loader.getController();
+       
+       // Truyền movieID để lọc suất chiếu
+       controller.setMovieId(movieID);
 
+       // Lấy stage hiện tại (cửa sổ gốc)
+       Stage currentStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+
+       // Tạo cửa sổ mới
+       Stage newStage = new Stage();
+       Scene scene = new Scene(root);
+       newStage.setScene(scene);
+       newStage.show();
+	   
+   }
 //   set to display data to screen
 	public void setData(Movie movie) {
 		movieID = movie.getMovieID();

@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 import Cinema.database.JSONUtility;
 
-public class Controller implements Initializable {
+public class AdminMainPanelController implements Initializable {
 
     @FXML
     private Label btn_menuback;
@@ -35,15 +35,12 @@ public class Controller implements Initializable {
 
     @FXML
     private AnchorPane menuPane;
-    
-    @FXML
-    private Label btn_account;
 
     @FXML
     private Label btn_home;
 
     @FXML
-    private Label btn_movie;
+    private Label btn_addmovie;
 
     @FXML
     private Label btn_support;
@@ -69,21 +66,19 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    	 String firstName = JSONUtility.getUserFirstName(); // Lấy tên từ JSON
-    	    home_name.setText(firstName + " !");
+    	    home_name.setText("ADMIN" + " !");
           
         btn_menuback.setOnMouseClicked(event -> hideMenu());
         btn_menuback1.setOnMouseClicked(event -> showMenu());
         
         // Load nội dung mặc định vào center
-        loadCenterContent("/Cinema/UI/Home_Center.fxml", btn_home);
+        loadCenterContent("/Cinema/UI/Dashboard.fxml", btn_home);
         
      // Gán sự kiện đổi trang cho từng button
-        btn_movie.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/FilmUI.fxml", btn_movie));
-        btn_account.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/AccountSetting.fxml", btn_account));
-        btn_home.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Home_Center.fxml", btn_home));
-        btn_support.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/ClientForm.fxml", btn_support));
-        btn_ticket.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/UserTickets.fxml", btn_ticket));
+        btn_addmovie.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/AdminPanel.fxml", btn_addmovie));
+        btn_home.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Dashboard.fxml", btn_home));
+        btn_support.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/ServerForm.fxml", btn_support));
+        btn_ticket.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Ticket.fxml", btn_ticket));
     }
 
     private void hideMenu() {
@@ -116,15 +111,11 @@ public class Controller implements Initializable {
     }
 
     
-    public void loadCenterContent(String fxmlFile, Label selectedButton) {
+    private void loadCenterContent(String fxmlFile, Label selectedButton) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             mainPane.setCenter(loader.load()); // Đặt nội dung vào center
-         // Nếu đang tải UserTickets.fxml, truyền instance của Controller
-            if (fxmlFile.equals("/Cinema/UI/UserTickets.fxml")) {
-                UserTicketsController userTicketsController = loader.getController();
-                userTicketsController.setParentController(this);
-            }
+            
             // Cập nhật màu button
             updateButtonStyle(selectedButton);
         } catch (IOException e) {
@@ -145,7 +136,7 @@ public class Controller implements Initializable {
     
     public void logOutButton(MouseEvent event) throws IOException {
     	// remove user details from userdata.json file
-    				boolean isUserDataClearedSuccessfully = JSONUtility.removeValuesAndSave();
+    				boolean isUserDataClearedSuccessfully = JSONUtility.removeValuesAndSaveAdmin();
 
     				if (isUserDataClearedSuccessfully) {
     					// Handle logout button click
@@ -162,3 +153,4 @@ public class Controller implements Initializable {
     }
 
 }
+

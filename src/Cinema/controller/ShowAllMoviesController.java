@@ -25,216 +25,134 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
-
 
 public class ShowAllMoviesController implements Initializable {
 
-	@FXML
-	private HBox HBoxpane;
+    @FXML
+    private HBox HBoxpane;
 
-	@FXML
-	private VBox anchorPane;
-	
-	@FXML
-	private TextField getMovieSearchInput;
+    @FXML
+    private VBox anchorPane;
 
-	@FXML
-	private GridPane grid;
+    @FXML
+    private TextField getMovieSearchInput;
 
-	@FXML
-	private ImageView movieSearchBtn;
+    @FXML
+    private GridPane grid;
 
-	@FXML
-	private Button newReleaseBtn, searchBtn;
+    @FXML
+    private ImageView movieSearchBtn;
 
-	@FXML
-	private ScrollPane scrollBar;
+    @FXML
+    private Button newReleaseBtn, searchBtn;
 
-	@FXML
-	private Button trendingMoviesBtn;
+    @FXML
+    private ScrollPane scrollBar;
 
-	@FXML
-	private Button upcomingsMoviesBtn;
+    @FXML
+    private Button trendingMoviesBtn;
+
+    @FXML
+    private Button upcomingsMoviesBtn;
 
     private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
-	private List<Movie> movieList = new ArrayList<>();
+    private List<Movie> movieList = new ArrayList<>();
 
-//   fetch data and display in movieCard
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		List<Movie> moviesFromDatabase = readMoviesDate();
-		movieList.addAll(moviesFromDatabase);
-
-		int col = 0, row = 1;
-		try {
-			for (int i = 0; i < movieList.size(); i++) {
-				FXMLLoader fxmlloder = new FXMLLoader();
-				fxmlloder.setLocation(getClass().getResource("/Cinema/UI/MovieItemUI.fxml"));
-				VBox anchorPane = fxmlloder.load();
-
-				MovieItemController cardController = fxmlloder.getController();
-				cardController.setData(movieList.get(i));
-
-				if (col == 4) {
-					col = 0;
-					row++;
-				}
-				grid.add(anchorPane, col++, row);
-				GridPane.setMargin(anchorPane, new Insets(20)); // top,right,bottom,left
-			}
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
-	}
-	
-	public void handleClickIcon() {
-    	movieSearchBtn.requestFocus();
+    // ⭐ Fetch data from DB and display in movie cards
+    @Override
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        List<Movie> moviesFromDatabase = readMoviesDate();
+        movieList.addAll(moviesFromDatabase);
+        refreshGrid(movieList);
+        getMovieSearchInput.setFocusTraversable(false);
     }
 
-//	DB connection
-	@FXML
-	List<Movie> readMoviesDate() {
-		List<Movie> movieNames = new ArrayList<>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null; // Result Storing Object
+    public void handleClickIcon() {
+        getMovieSearchInput.requestFocus();
+    }
 
-		try {
-//	    	connect your DB
-			con = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
-			
-			String sql = "SELECT * FROM movies";
-			ps = con.prepareStatement(sql);
-			rs = ps.executeQuery();
+    // ⭐ Connect to DB and fetch movie list
+    @FXML
+    List<Movie> readMoviesDate() {
+        List<Movie> movieNames = new ArrayList<>();
+        try (Connection con = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM movies WHERE status = 1");
+             ResultSet rs = ps.executeQuery()) {
 
-//	        getting outsider file function
-			DBUtility.getMoviesData(rs, movieNames);
+            DBUtility.getMoviesData(rs, movieNames);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return movieNames;
+    }
 
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (ps != null)
-					ps.close();
-				if (con != null)
-					con.close();
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-		return movieNames;
-	}
+    // ⭐ Search movies
+    @FXML
+    void searchMovies(KeyEvent event) {
+        String searchQuery = getMovieSearchInput.getText().trim();
+        List<Movie> searchResults = searchMoviesInDatabase(searchQuery);
+        refreshGrid(searchResults);
+    }
 
-//	search movies
-	@FXML
-	void searchMovies(KeyEvent event) {
-		String searchQuery = getMovieSearchInput.getText().trim();
-		List<Movie> searchResults = searchMoviesInDatabase(searchQuery);
-		refreshGrid(searchResults);
-	}
+    List<Movie> searchMoviesInDatabase(String searchQuery) {
+        List<Movie> movieNames = new ArrayList<>();
+        try (Connection con = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM movies WHERE (name LIKE ? OR gener LIKE ?) AND status = 1")) {
 
-	List<Movie> searchMoviesInDatabase(String searchQuery) {
-		List<Movie> movieNames = new ArrayList<>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+            ps.setString(1, "%" + searchQuery + "%");
+            ps.setString(2, "%" + searchQuery + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                DBUtility.getMoviesData(rs, movieNames);
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return movieNames;
+    }
 
-		try {
-			con = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
-		        
-			String sql = "SELECT * FROM movies WHERE name LIKE  ? OR gener LIKE  ?";
-			ps = con.prepareStatement(sql);
-			ps.setString(1, "%" + searchQuery + "%");
-			ps.setString(2, "%" + searchQuery + "%");
-			rs = ps.executeQuery();
+    void refreshGrid(List<Movie> movieData) {
+        grid.getChildren().clear();  // Xóa tất cả item cũ
+        grid.getRowConstraints().clear(); // Xóa RowConstraints cũ để tránh xung đột
 
-//	        getting outsider file function
-			DBUtility.getMoviesData(rs, movieNames);
+        int col = 0, row = 0;
+        try {
+            for (Movie movie : movieData) {
+                FXMLLoader fxmlloder = new FXMLLoader();
+                fxmlloder.setLocation(getClass().getResource("/Cinema/UI/MovieItemUI.fxml"));
+                VBox movieCard = fxmlloder.load();
 
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (ps != null)
-					ps.close();
-				if (con != null)
-					con.close();
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-		return movieNames;
-	}
+                MovieItemController cardController = fxmlloder.getController();
+                cardController.setData(movie);
 
-// Change Grid Content on Movie Search
-	void refreshGrid(List<Movie> searchResults) {
-		grid.getChildren().clear(); // Clear existing grid content
-		int col = 0, row = 1;
-		try {
-			for (int i = 0; i < searchResults.size(); i++) {
-				FXMLLoader fxmlloder = new FXMLLoader();
-				fxmlloder.setLocation(getClass().getResource("/Cinema/UI/MovieItemUI.fxml"));
-				VBox anchorPane = fxmlloder.load();
+                // Thêm movie card vào GridPane
+                grid.add(movieCard, col, row);
+                GridPane.setMargin(movieCard, new Insets(20)); // Đặt margin 20px cho mỗi card
 
-				MovieItemController cardController = fxmlloder.getController();
-				cardController.setData(searchResults.get(i));
+                col++;
+                if (col == 4) { // Khi đủ 4 cột, xuống hàng mới
+                    col = 0;
+                    row++;
+                }
+            }
 
-				if (col == 4) {
-					col = 0;
-					row++;
-				}
-				grid.add(anchorPane, col++, row);
-				GridPane.setMargin(anchorPane, new Insets(20)); // top,right,bottom,left
-			}
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
-	}
+            // Không cần thêm RowConstraints thủ công, để GridPane tự điều chỉnh
+            // Đảm bảo ScrollPane có thể cuộn bằng cách đặt chiều cao tối thiểu
+            grid.setMinHeight(row * 350); // Ước lượng chiều cao dựa trên số hàng (350px mỗi hàng)
 
-	private List<Movie> getMoviesByStatus(String status) {
-		List<Movie> movieNames = new ArrayList<>();
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null; // Result Storing Object
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
 
-		try {
-			con = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
-
-			String sql = "SELECT * FROM movies WHERE status = ?";
-			ps = con.prepareStatement(sql);
-			ps.setString(1, status);
-			rs = ps.executeQuery();
-
-			DBUtility.getMoviesData(rs, movieNames);
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (ps != null)
-					ps.close();
-				if (con != null)
-					con.close();
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}
-		return movieNames;
-	}
-
-//  Refresh Grid Content
-	@FXML
-	void refreshContent(MouseEvent event) {
-		grid.getChildren().clear();
-		initialize(null, null);
-	}
+    // ⭐ Refresh Grid Content
+    @FXML
+    void refreshContent(MouseEvent event) {
+        grid.getChildren().clear();
+        initialize(null, null);
+    }
 }
