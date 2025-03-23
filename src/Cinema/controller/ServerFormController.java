@@ -130,7 +130,7 @@ public class ServerFormController {
             while (rs.next()) {
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
-                String fullName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                String fullName = (firstName != null ? firstName : "")+(lastName != null ? lastName : "");
                 fullName = fullName.trim();
                 if (fullName.isEmpty()) fullName = "Unknown User";
                 String id = rs.getString("id");
@@ -221,7 +221,6 @@ public class ServerFormController {
             }
 
             LocalDateTime timestamp = LocalDateTime.now();
-            saveMessageToDatabase(senderId, adminId, message, timestamp);
 
             // 🛑 Nếu user đang chọn là người gửi, load lại lịch sử chat
                 loadChatHistory(selectedUser); // Load lại toàn bộ tin nhắn
@@ -298,14 +297,17 @@ public class ServerFormController {
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, EXCHANGE_NAME, "admin");
+            System.out.println("Queue " + queueName + " bound to routing key: admin"); // Debug
         }
 
         public void sendMessage(String message, String routingKey) throws IOException {
+            System.out.println("Sending message: " + message + " with routing key: " + routingKey); // Debug
             channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
         }
 
         public void receiveMessages(Consumer consumer) throws IOException {
             channel.basicConsume(queueName, true, consumer);
+            System.out.println("Started consuming from queue: " + queueName); // Debug
         }
 
         public Channel getChannel() {
