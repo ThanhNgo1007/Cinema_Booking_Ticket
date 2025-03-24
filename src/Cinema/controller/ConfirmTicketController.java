@@ -60,10 +60,10 @@ public class ConfirmTicketController {
 
         root = FXMLLoader.load(getClass().getResource("/Cinema/UI/Booked.fxml"));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root, 800, 500); // Kích thước cho Booked.fxml
+        scene = new Scene(root, 900, 600); // Kích thước cho Booked.fxml
 
         stage.setScene(scene);
-        centerStage(stage, 800, 500); // Căn giữa với kích thước 900x600
+        centerStage(stage, 900, 600); // Căn giữa với kích thước 900x600
         stage.show();
     }
 

@@ -1,14 +1,17 @@
 {
-  "id": "LC111",
+  "id": "LC112",
   "price": 0,
   "basePrice": 60000,
-  "totalPrice": 0,
-  "numberOfSeats": 0,
+  "totalPrice": 180000,
+  "numberOfSeats": 2,
   "name": "NHÀ GIA TIÊN",
-  "timing": "09:00, 22-03-2025",
-  "selected": "",
+  "timing": "15:00, 24-03-2025",
+  "selected": "7H, 6H",
   "bookedSeats": [
     ""
   ],
-  "selectedSeats": []
+  "selectedSeats": [
+    "7H",
+    "6H"
+  ]
 }

@@ -19,11 +19,6 @@
             <Image url="@../../../../HelloFX/src/Cinema/image/checked.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="100.0" fitWidth="100.0" layoutX="15.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-y: 15; -fx-translate-x: 15;">
-         <image>
-            <Image url="@../resources/icon.png" />
-         </image>
-      </ImageView>
       <Button alignment="BOTTOM_LEFT" layoutX="301.0" layoutY="446.0" mnemonicParsing="false" onAction="#goBack" style="-fx-background-color: red; -fx-background-radius: 10;" text=" Hoàn Thành" textFill="WHITE">
          <font>
             <Font name="Calibri Bold" size="20.0" />

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -17,11 +18,11 @@
    <center>
    </center>
    <top>
-      <AnchorPane prefHeight="128.0" prefWidth="1063.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="65.0" prefWidth="1063.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="128.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="105.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <StackPane prefHeight="72.0" prefWidth="154.0">
+                  <StackPane prefHeight="59.0" prefWidth="135.0">
                      <children>
                         <Label fx:id="btn_menuback" prefHeight="50.0" prefWidth="100.0" text="MENU">
                            <graphic>
@@ -58,11 +59,14 @@
                         </Label>
                      </children>
                   </StackPane>
-                  <Pane HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="127.0" fitWidth="141.0" pickOnBounds="true" preserveRatio="true">
+                  <Pane prefHeight="105.0" prefWidth="55.0" HBox.hgrow="ALWAYS" />
+                  <ImageView fitHeight="105.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../image/images-removebg-preview.png" />
+                        <Image url="@../image/images-removebg-preview.png" />
                      </image>
+                     <viewport>
+                        <Rectangle2D height="170.0" minX="15.0" minY="15.0" width="200.0" />
+                     </viewport>
                   </ImageView>
                   <Pane layoutX="64.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
                   <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -84,7 +88,7 @@
       </AnchorPane>
    </top>
    <left>
-      <AnchorPane fx:id="menuPane" prefWidth="180.0" style="-fx-background-color: #fdfcf0;" AnchorPane.bottomAnchor="0.0" BorderPane.alignment="TOP_LEFT">
+      <AnchorPane fx:id="menuPane" prefHeight="570.0" prefWidth="189.0" style="-fx-background-color: #fdfcf0;" AnchorPane.bottomAnchor="0.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <VBox alignment="TOP_CENTER" layoutY="-2.0" prefWidth="189.0">
                <children>

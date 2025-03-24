@@ -39,8 +39,8 @@ public class ServerFormController {
 
     private String adminId;
     private RabbitMQService rabbitMQ;
-    private Map<String, String> userMap = new HashMap<>();
-    private String selectedUser; // Lưu trạng thái người dùng hiện tại
+    private Map<String, String> userMap = new HashMap<>(); // Key: userId, Value: username
+    private String selectedUser; // Lưu username của người dùng hiện tại
 
     private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String DB_USER = "root";
@@ -70,14 +70,14 @@ public class ServerFormController {
         }
 
         loadUserList();
-        chatVBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue((Double) newValue));
+        chatVBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue(1.0)); // Cuộn xuống dưới cùng
 
         userListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                selectedUser = newValue; // Cập nhật người dùng được chọn
+                selectedUser = newValue; // Lưu username được chọn
                 loadChatHistory(newValue);
             } else {
-                selectedUser = null; // Xóa trạng thái khi không chọn
+                selectedUser = null;
                 chatVBox.getChildren().clear();
             }
         });
@@ -102,13 +102,13 @@ public class ServerFormController {
         String msgToSend = txtMsg.getText();
         String selectedUser = userListView.getSelectionModel().getSelectedItem();
         if (!msgToSend.isEmpty() && selectedUser != null) {
-            LocalDateTime timestamp = LocalDateTime.now(); // Lấy thời gian hiện tại
+            LocalDateTime timestamp = LocalDateTime.now();
             displayMessage("Admin", msgToSend, timestamp);
 
             try {
-                String userId = userMap.get(selectedUser);
-                System.out.println("Sending message to client: Admin-" + msgToSend + " with routing key: user_" + userId);
-                rabbitMQ.sendMessage("Admin-" + msgToSend, "user_" + userId);
+                String userId = getUserIdFromUsername(selectedUser);
+                System.out.println("Sending message to client: " + adminId + "-" + msgToSend + " with routing key: user_" + userId);
+                rabbitMQ.sendMessage(adminId + "-" + msgToSend, "user_" + userId); // Gửi với adminId
                 saveMessageToDatabase(adminId, userId, msgToSend, timestamp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -127,16 +127,17 @@ public class ServerFormController {
             String sql = "SELECT id, first_name, last_name FROM users WHERE isSuperUser = 0";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
+            userListView.getItems().clear();
             while (rs.next()) {
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
-                String fullName = (firstName != null ? firstName : "")+(lastName != null ? lastName : "");
+                String fullName = (firstName != null ? firstName : "") + (lastName != null ? lastName : "");
                 fullName = fullName.trim();
                 if (fullName.isEmpty()) fullName = "Unknown User";
                 String id = rs.getString("id");
-                userMap.put(fullName, id); // Đảm bảo tất cả người dùng được thêm vào userMap
+                userMap.put(id, fullName); // Key: userId, Value: username
                 userListView.getItems().add(fullName);
-                System.out.println("Added to userMap: " + fullName + " -> " + id); // Debug
+                System.out.println("Added to userMap: " + id + " -> " + fullName);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,7 +152,7 @@ public class ServerFormController {
                 System.err.println("Failed to connect to database");
                 return;
             }
-            String userId = userMap.get(selectedUser);
+            String userId = getUserIdFromUsername(selectedUser);
             String sql = "SELECT sender_id, message_text, send_at FROM messages " +
                          "WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) " +
                          "ORDER BY send_at ASC";
@@ -168,28 +169,26 @@ public class ServerFormController {
                 LocalDateTime sentTime = sendAt != null ? sendAt.toLocalDateTime() : LocalDateTime.now();
                 LocalDate currentDate = sentTime.toLocalDate();
 
-                // Thêm hàng kẻ khi ngày thay đổi
                 if (previousDate == null || !previousDate.equals(currentDate)) {
                     addDateSeparator(currentDate);
                     previousDate = currentDate;
                 }
 
-                displayMessage(senderId.equals(adminId) ? "Admin" : getUserNameFromId(senderId), message, sentTime);
+                displayMessage(senderId.equals(adminId) ? "Admin" : userMap.get(senderId), message, sentTime);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Đảm bảo scroll xuống cuối sau khi load
         Platform.runLater(() -> scrollPain.setVvalue(1.0));
     }
 
-    private String getUserNameFromId(String userId) {
+    private String getUserIdFromUsername(String username) {
         for (Map.Entry<String, String> entry : userMap.entrySet()) {
-            if (entry.getValue().equals(userId)) {
+            if (entry.getValue().equals(username)) {
                 return entry.getKey();
             }
         }
-        return "Unknown User"; // Trả về tên mặc định nếu không tìm thấy
+        return null; // Trả về null nếu không tìm thấy
     }
 
     private void addDateSeparator(LocalDate date) {
@@ -203,7 +202,7 @@ public class ServerFormController {
     }
 
     private void receiveMessage(String msg) {
-        System.out.println("Received message: " + msg); // Debug
+        System.out.println("Received message in receiveMessage: " + msg);
         Platform.runLater(() -> {
             String[] parts = msg.split("-", 2);
             if (parts.length < 2) {
@@ -211,23 +210,20 @@ public class ServerFormController {
                 return;
             }
 
-            String sender = parts[0].trim();
+            String senderId = parts[0].trim(); // sender giờ là userId
             String message = parts[1].trim();
-            String senderId = userMap.get(sender);
-
-            if (senderId == null) {
-                System.err.println("Error: Sender '" + sender + "' not found in userMap.");
-                senderId = "0";
-            }
-
-            LocalDateTime timestamp = LocalDateTime.now();
-
-            // 🛑 Nếu user đang chọn là người gửi, load lại lịch sử chat
-                loadChatHistory(selectedUser); // Load lại toàn bộ tin nhắn
+            String senderName = userMap.get(senderId);
+                if (senderName == null) {
+                    System.err.println("Error: Sender ID '" + senderId + "' not found in userMap.");
+                    senderId = "0";
+                    senderName = "Unknown User";
+                }
+                LocalDateTime timestamp = LocalDateTime.now();
+                
+                    loadChatHistory(selectedUser);
+         
         });
     }
-
-
 
     private void displayMessage(String sender, String message, LocalDateTime timestamp) {
         HBox hBox = new HBox();
@@ -274,14 +270,11 @@ public class ServerFormController {
             stmt.setString(3, messageText);
             stmt.setTimestamp(4, Timestamp.valueOf(timestamp));
             stmt.executeUpdate();
-            System.out.println("Message saved: SenderId=" + senderId + ", ReceiverId=" + receiverId + ", Message=" + messageText); // Debug
+            System.out.println("Message saved: SenderId=" + senderId + ", ReceiverId=" + receiverId + ", Message=" + messageText);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
- 
-
 
     private static class RabbitMQService {
         private static final String EXCHANGE_NAME = "chat_exchange";
@@ -297,17 +290,17 @@ public class ServerFormController {
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             channel.queueDeclare(queueName, false, false, false, null);
             channel.queueBind(queueName, EXCHANGE_NAME, "admin");
-            System.out.println("Queue " + queueName + " bound to routing key: admin"); // Debug
+            System.out.println("Queue " + queueName + " bound to routing key: admin");
         }
 
         public void sendMessage(String message, String routingKey) throws IOException {
-            System.out.println("Sending message: " + message + " with routing key: " + routingKey); // Debug
+            System.out.println("Sending message: " + message + " with routing key: " + routingKey);
             channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
         }
 
         public void receiveMessages(Consumer consumer) throws IOException {
             channel.basicConsume(queueName, true, consumer);
-            System.out.println("Started consuming from queue: " + queueName); // Debug
+            System.out.println("Started consuming from queue: " + queueName);
         }
 
         public Channel getChannel() {

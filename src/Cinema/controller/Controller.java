@@ -77,6 +77,11 @@ public class Controller implements Initializable {
         
         // Load nội dung mặc định vào center
         loadCenterContent("/Cinema/UI/Home_Center.fxml", btn_home);
+        menuPane.setVisible(false);
+        menuPane.setManaged(false);
+        mainPane.setLeft(null); // Xóa menu khỏi layout
+        btn_menuback.setVisible(false);
+        btn_menuback1.setVisible(true);
         
      // Gán sự kiện đổi trang cho từng button
         btn_movie.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/FilmUI.fxml", btn_movie));

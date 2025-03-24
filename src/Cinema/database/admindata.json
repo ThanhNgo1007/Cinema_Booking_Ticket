@@ -1,1 +1,11 @@
-{"userId":"","firstName":"","lastName":"","email":"","phoneNumber":"","cityName":""}
+{
+  "userId": 2,
+  "firstName": "Ngo",
+  "lastName": "Huu Thanh",
+  "email": "thanhb2204966@student.ctu.edu.vn",
+  "phoneNumber": "",
+  "cityName": "",
+  "quan":"",
+  "phuong":"",
+  "homeAddress":""
+}

@@ -171,8 +171,8 @@ public class ClientFormController {
             vBox.getChildren().add(hBoxTime);
 
             try {
-                System.out.println("Sending message to admin: " + clientName + "-" + msgToSend + " with routing key: admin");
-                rabbitMQ.sendMessage(clientName + "-" + msgToSend, "admin");
+                System.out.println("Sending message to admin: " + userId + "-" + msgToSend + " with routing key: admin");
+                rabbitMQ.sendMessage(userId + "-" + msgToSend, "admin"); // Gửi userId thay vì clientName
                 saveMessageToDatabase(userId, adminId, msgToSend);
             } catch (Exception e) {
                 e.printStackTrace();

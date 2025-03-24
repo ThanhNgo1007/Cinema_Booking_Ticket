@@ -1,6 +1,8 @@
 package Cinema.controller;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import Cinema.database.DBUtility;
 import Cinema.database.EmailUtility;
@@ -8,6 +10,7 @@ import Cinema.database.Form;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,10 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class SignUpVerification {
+public class SignUpVerification implements Initializable{
 	private Stage stage;
 	private Scene scene;
 	private Parent root;
@@ -44,6 +50,17 @@ public class SignUpVerification {
 	@FXML
 	private Button btnCreateAccount;
 
+	@FXML
+    private ImageView togglePasswordVisibility;
+	
+	@FXML
+	private TextField inputSignUpPassword1;
+
+    private boolean isPasswordVisible = false;
+
+    private Image eyeOpen;
+    private Image eyeClosed;
+    
 	// validate OTP and password, check OTP Code, create account, move to login
 	@FXML
 	public void createAccount(ActionEvent event) throws IOException {
@@ -114,6 +131,42 @@ public class SignUpVerification {
 		stage.setScene(scene);
 		stage.show();
 
+	}
+
+	@FXML
+    public void togglePasswordVisibility(MouseEvent event) {
+        if (isPasswordVisible) {
+        	inputSignUpPassword.setText(inputSignUpPassword1.getText());
+        	inputSignUpPassword.setVisible(true);
+        	inputSignUpPassword1.setVisible(false);
+            togglePasswordVisibility.setImage(eyeOpen);
+            isPasswordVisible = false;
+        } else {
+        	inputSignUpPassword1.setText(inputSignUpPassword.getText());
+        	inputSignUpPassword.setVisible(false);
+        	inputSignUpPassword1.setVisible(true);
+            togglePasswordVisibility.setImage(eyeClosed);
+            isPasswordVisible = true;
+        }
+    }
+	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		// TODO Auto-generated method stub
+		inputSignUpPassword.setText(null);
+		try {
+            eyeOpen = new Image(getClass().getResource("/Cinema/image/icons8-eye-24.png").toExternalForm());
+            eyeClosed = new Image(getClass().getResource("/Cinema/image/icons8-hide-24.png").toExternalForm());
+            if (togglePasswordVisibility != null) {
+                togglePasswordVisibility.setImage(eyeOpen);
+            } else {
+                System.err.println("togglePasswordVisibility is null!");
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tải hình ảnh: " + e.getMessage());
+            eyeOpen = null;
+            eyeClosed = null;
+        }
 	}
 
 }

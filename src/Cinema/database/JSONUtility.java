@@ -27,6 +27,9 @@ public class JSONUtility {
         String lastName = rs.getString("last_name");
         String cityName = rs.getString("city");
         String userEmail = rs.getString("email");
+        String quan = rs.getString("quan");
+        String phuong = rs.getString("phuong");
+        String homeAddress = rs.getString("homeAddress");
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
             phoneNumber = "";
@@ -43,9 +46,18 @@ public class JSONUtility {
         if (userEmail == null || userEmail.isEmpty()) {
             userEmail = "";
         }
+        if (quan == null || quan.isEmpty()) {
+            quan = "";
+        }
+        if (phuong == null || phuong.isEmpty()) {
+        	phuong = "";
+        }
+        if (homeAddress == null || homeAddress.isEmpty()) {
+            homeAddress = "";
+        }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName);
+        User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName,quan,phuong,homeAddress);
         String jsonString = gson.toJson(user);
 
         try (FileWriter writer = new FileWriter(path_userdata)) {
@@ -63,6 +75,9 @@ public class JSONUtility {
         String lastName = rs.getString("last_name");
         String cityName = rs.getString("city");
         String adminEmail = rs.getString("email");
+        String quan = rs.getString("quan");
+        String huyen = rs.getString("phuong");
+        String homeAddress = rs.getString("homeAddress");
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
             phoneNumber = "";
@@ -79,9 +94,18 @@ public class JSONUtility {
         if (adminEmail == null || adminEmail.isEmpty()) {
             adminEmail = "";
         }
+        if (quan == null || quan.isEmpty()) {
+            quan = "";
+        }
+        if (huyen == null || huyen.isEmpty()) {
+           huyen = "";
+        }
+        if (homeAddress == null || homeAddress.isEmpty()) {
+            homeAddress = "";
+        }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User admin = new User(adminId, firstName, lastName, adminEmail, phoneNumber, cityName);
+        User admin = new User(adminId, firstName, lastName, adminEmail, phoneNumber, cityName,quan,huyen,homeAddress);
         String jsonString = gson.toJson(admin);
 
         try (FileWriter writer = new FileWriter(path_admindata)) {
@@ -92,16 +116,19 @@ public class JSONUtility {
     }
     
  // Phương thức mới: Lưu dữ liệu người dùng trực tiếp từ tham số
-    public static void storeUserData(int userId, String firstName, String lastName, String email, String phoneNumber, String cityName) throws IOException {
+    public static void storeUserData(int userId, String firstName, String lastName, String email, String phoneNumber, String cityName,String quan, String phuong, String homeAddress) throws IOException {
         // Xử lý giá trị null hoặc rỗng
         if (phoneNumber == null || phoneNumber.isEmpty()) phoneNumber = "";
         if (firstName == null || firstName.isEmpty()) firstName = "";
         if (lastName == null || lastName.isEmpty()) lastName = "";
         if (cityName == null || cityName.isEmpty()) cityName = "";
         if (email == null || email.isEmpty()) email = "";
+        if (quan == null || quan.isEmpty()) quan = "";
+        if (phuong == null || phuong.isEmpty()) phuong = "";
+        if (homeAddress == null || homeAddress.isEmpty()) homeAddress = "";
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User user = new User(userId, firstName, lastName, email, phoneNumber, cityName);
+        User user = new User(userId, firstName, lastName, email, phoneNumber, cityName,quan,phuong,homeAddress);
         String jsonString = gson.toJson(user);
 
         try (FileWriter writer = new FileWriter(path_userdata)) {
@@ -114,15 +141,18 @@ public class JSONUtility {
     // Inner class representing User
     public static class User {
         public int userId;
-        String firstName, lastName, email, phoneNumber, cityName;
+        String firstName, lastName, email, phoneNumber, cityName,quan, phuong, homeAddress;
 
-        public User(int id, String fname, String lname, String email, String phoneNumber, String cityName) {
+        public User(int id, String fname, String lname, String email, String phoneNumber, String cityName, String quan, String phuong, String homeAddress) {
             this.userId = id;
             this.firstName = fname;
             this.lastName = lname;
             this.email = email;
             this.phoneNumber = phoneNumber;
             this.cityName = cityName;
+            this.quan = quan;
+            this.phuong = phuong;
+            this.homeAddress = homeAddress;
         }
 
         public int getUserId() {
@@ -169,6 +199,9 @@ public class JSONUtility {
             userJsonObject.addProperty("lastName", "");
             userJsonObject.addProperty("phoneNumber", "");
             userJsonObject.addProperty("cityName", "");
+            userJsonObject.addProperty("quan", "");
+            userJsonObject.addProperty("phuong", "");
+            userJsonObject.addProperty("homeAddress", "");
 
             FileWriter userWriter = new FileWriter(userFilePath);
             Gson gson = new Gson();
@@ -199,6 +232,9 @@ public class JSONUtility {
             adminJsonObject.addProperty("lastName", "");
             adminJsonObject.addProperty("phoneNumber", "");
             adminJsonObject.addProperty("cityName", "");
+            adminJsonObject.addProperty("quan", "");
+            adminJsonObject.addProperty("phuong", "");
+            adminJsonObject.addProperty("homeAddress", "");
 
             FileWriter adminWriter = new FileWriter(adminFilePath);
             gson.toJson(adminJsonObject, adminWriter);
@@ -222,8 +258,10 @@ public class JSONUtility {
             String email = jsonObject.has("email") && !jsonObject.get("email").isJsonNull() ? jsonObject.get("email").getAsString() : "";
             String phoneNumber = jsonObject.has("phoneNumber") && !jsonObject.get("phoneNumber").isJsonNull() ? jsonObject.get("phoneNumber").getAsString() : "";
             String cityName = jsonObject.has("cityName") && !jsonObject.get("cityName").isJsonNull() ? jsonObject.get("cityName").getAsString() : "";
-
-            return new User(userId, firstName, lastName, email, phoneNumber, cityName);
+            String quan = jsonObject.has("quan") && !jsonObject.get("quan").isJsonNull() ? jsonObject.get("quan").getAsString() : "";
+            String huyen = jsonObject.has("phuong") && !jsonObject.get("phuong").isJsonNull() ? jsonObject.get("phuong").getAsString() : "";
+            String homeAddress = jsonObject.has("homeAddress") && !jsonObject.get("homeAddress").isJsonNull() ? jsonObject.get("homeAddress").getAsString() : "";
+            return new User(userId, firstName, lastName, email, phoneNumber, cityName,quan, huyen, homeAddress);
         } catch (IOException e) {
             System.err.println("Lỗi lấy dữ liệu người dùng: " + e.getMessage());
             return null;
