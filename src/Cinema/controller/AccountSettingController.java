@@ -12,6 +12,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import Cinema.database.JSONUtility;
 import Cinema.database.JSONUtility.User;
+import Cinema.util.District;
+import Cinema.util.Province;
+import Cinema.util.Ward;
 import Cinema.database.mysqlconnect;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Alert;
@@ -76,7 +79,7 @@ public class AccountSettingController {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    private List<Province> provinces; // Lưu toàn bộ dữ liệu tỉnh, quận/huyện, phường/xã
+    private List<Province> provinces; // Lưu danh sách tỉnh
 
     @FXML
     public void initialize() {
@@ -92,15 +95,15 @@ public class AccountSettingController {
             emailField.setText("Không xác định được người dùng");
         }
 
-        loadAllDataFromApi();
+        loadProvincesFromApi(); // Tải danh sách tỉnh trực tiếp từ API
         setupChangeListeners();
     }
 
-    private void loadAllDataFromApi() {
-        System.out.println("Loading all data from API with depth=3...");
+    private void loadProvincesFromApi() {
+        System.out.println("Loading provinces from API...");
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://provinces.open-api.vn/api/?depth=3"))
+                .uri(URI.create("https://provinces.open-api.vn/api/")) // Chỉ lấy danh sách tỉnh
                 .GET()
                 .build();
 
@@ -116,82 +119,73 @@ public class AccountSettingController {
 
                 if (initialCity != null && cityNames.contains(initialCity)) {
                     cityField.setValue(initialCity);
-                    updateDistricts(initialCity);
+                    loadDistrictsForProvince(initialCity);
                 } else {
                     cityField.setValue("Thành phố Hà Nội");
-                    updateDistricts("Thành phố Hà Nội");
+                    loadDistrictsForProvince("Thành phố Hà Nội");
                 }
             } else {
                 System.err.println("API call failed with status: " + response.statusCode());
                 cityField.setItems(FXCollections.observableArrayList("Hà Nội", "Hồ Chí Minh", "Đà Nẵng"));
             }
         } catch (Exception e) {
-            System.err.println("Error loading data: " + e.getMessage());
+            System.err.println("Error loading provinces: " + e.getMessage());
             cityField.setItems(FXCollections.observableArrayList("Hà Nội", "Hồ Chí Minh", "Đà Nẵng"));
         }
     }
 
-    private void updateDistricts(String cityName) {
-        System.out.println("Updating districts for city: " + cityName);
+    private void loadDistrictsForProvince(String provinceName) {
+        System.out.println("Loading districts for province: " + provinceName);
         quanField.getItems().clear();
         phuongField.getItems().clear();
 
-        if (provinces == null) {
-            System.err.println("Provinces list is null!");
-            return;
-        }
-
         Province selectedProvince = provinces.stream()
-            .filter(p -> p.getName().equals(cityName))
+            .filter(p -> p.getName().equals(provinceName))
             .findFirst()
             .orElse(null);
 
         if (selectedProvince == null) {
-            System.err.println("No province found for: " + cityName);
+            System.err.println("No province found for: " + provinceName);
             return;
         }
 
-        List<District> districts = selectedProvince.getDistricts();
-        if (districts == null || districts.isEmpty()) {
-            System.err.println("No districts found for province: " + cityName);
-            return;
-        }
+        int provinceCode = selectedProvince.getCode();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/p/" + provinceCode + "?depth=2"))
+                .GET()
+                .build();
 
-        ObservableList<String> districtNames = FXCollections.observableArrayList(
-            districts.stream().map(District::getName).collect(Collectors.toList())
-        );
-        quanField.setItems(districtNames);
-        System.out.println("Loaded " + districtNames.size() + " districts: " + districtNames);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Province provinceData = gson.fromJson(response.body(), Province.class);
+                List<District> districts = provinceData.getDistricts();
+                ObservableList<String> districtNames = FXCollections.observableArrayList(
+                    districts.stream().map(District::getName).collect(Collectors.toList())
+                );
+                quanField.setItems(districtNames);
+                System.out.println("Loaded " + districtNames.size() + " districts: " + districtNames);
 
-        if (initialQuan != null && districtNames.contains(initialQuan)) {
-            quanField.setValue(initialQuan);
-            updateWards(cityName, initialQuan);
-        } else if (!districtNames.isEmpty()) {
-            quanField.setValue(districtNames.get(0));
-            updateWards(cityName, districtNames.get(0));
+                if (initialQuan != null && districtNames.contains(initialQuan)) {
+                    quanField.setValue(initialQuan);
+                    loadWardsForDistrict(initialQuan, districts);
+                } else if (!districtNames.isEmpty()) {
+                    quanField.setValue(districtNames.get(0));
+                    loadWardsForDistrict(districtNames.get(0), districts);
+                }
+            } else {
+                System.err.println("Failed to load districts, status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading districts: " + e.getMessage());
         }
     }
 
-    private void updateWards(String cityName, String districtName) {
-        System.out.println("Updating wards for district: " + districtName + " in city: " + cityName);
+    private void loadWardsForDistrict(String districtName, List<District> districts) {
+        System.out.println("Loading wards for district: " + districtName);
         phuongField.getItems().clear();
 
-        if (provinces == null) {
-            System.err.println("Provinces list is null!");
-            return;
-        }
-
-        Province selectedProvince = provinces.stream()
-            .filter(p -> p.getName().equals(cityName))
-            .findFirst()
-            .orElse(null);
-
-        if (selectedProvince == null) {
-            System.err.println("No province found for: " + cityName);
-            return;
-        }
-
-        District selectedDistrict = selectedProvince.getDistricts().stream()
+        District selectedDistrict = districts.stream()
             .filter(d -> d.getName().equals(districtName))
             .findFirst()
             .orElse(null);
@@ -201,22 +195,33 @@ public class AccountSettingController {
             return;
         }
 
-        List<Ward> wards = selectedDistrict.getWards();
-        if (wards == null || wards.isEmpty()) {
-            System.err.println("No wards found for district: " + districtName);
-            return;
-        }
+        int districtCode = selectedDistrict.getCode();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/d/" + districtCode + "?depth=2"))
+                .GET()
+                .build();
 
-        ObservableList<String> wardNames = FXCollections.observableArrayList(
-            wards.stream().map(Ward::getName).collect(Collectors.toList())
-        );
-        phuongField.setItems(wardNames);
-        System.out.println("Loaded " + wardNames.size() + " wards: " + wardNames);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                District districtData = gson.fromJson(response.body(), District.class);
+                List<Ward> wards = districtData.getWards();
+                ObservableList<String> wardNames = FXCollections.observableArrayList(
+                    wards.stream().map(Ward::getName).collect(Collectors.toList())
+                );
+                phuongField.setItems(wardNames);
+                System.out.println("Loaded " + wardNames.size() + " wards: " + wardNames);
 
-        if (initialPhuong != null && wardNames.contains(initialPhuong)) {
-            phuongField.setValue(initialPhuong);
-        } else if (!wardNames.isEmpty()) {
-            phuongField.setValue(wardNames.get(0));
+                if (initialPhuong != null && wardNames.contains(initialPhuong)) {
+                    phuongField.setValue(initialPhuong);
+                } else if (!wardNames.isEmpty()) {
+                    phuongField.setValue(wardNames.get(0));
+                }
+            } else {
+                System.err.println("Failed to load wards, status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading wards: " + e.getMessage());
         }
     }
 
@@ -252,13 +257,19 @@ public class AccountSettingController {
     private void setupChangeListeners() {
         cityField.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null) {
-                updateDistricts(newValue);
+                loadDistrictsForProvince(newValue);
             }
         });
 
         quanField.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue != null && cityField.getValue() != null) {
-                updateWards(cityField.getValue(), newValue);
+                Province selectedProvince = provinces.stream()
+                    .filter(p -> p.getName().equals(cityField.getValue()))
+                    .findFirst()
+                    .orElse(null);
+                if (selectedProvince != null) {
+                    loadWardsForDistrict(newValue, selectedProvince.getDistricts());
+                }
             }
         });
 
@@ -362,38 +373,6 @@ public class AccountSettingController {
 
     @FXML
     private void handleChangePasswordButton() {
-
-    }
-
-    private static class Province {
-        private String name;
-        private int code;
-        private List<District> districts;
-
-        public String getName() { return name; }
-        public int getCode() { return code; }
-        public List<District> getDistricts() { return districts; }
-    }
-
-    private static class District {
-        private String name;
-        private int code;
-        private String division_type;
-        private List<Ward> wards;
-
-        public String getName() { return name; }
-        public int getCode() { return code; }
-        public String getDivisionType() { return division_type; }
-        public List<Ward> getWards() { return wards; }
-    }
-
-    private static class Ward {
-        private String name;
-        private int code;
-        private String division_type;
-
-        public String getName() { return name; }
-        public int getCode() { return code; }
-        public String getDivisionType() { return division_type; }
+        // Chưa triển khai
     }
 }

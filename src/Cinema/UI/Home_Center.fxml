@@ -15,21 +15,27 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" prefHeight="1352.0" prefWidth="1176.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Home_Center_Controller">
+<ScrollPane fitToWidth="true" prefHeight="1352.0" prefWidth="1176.0" style="-fx-background-color: #fcfdf0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Home_Center_Controller">
    <content>
-      <HBox fx:id="container" alignment="CENTER" prefWidth="1174.0" spacing="20.0">
+      <HBox fx:id="container" alignment="CENTER" prefWidth="1174.0" spacing="20.0" style="-fx-background-color: #fcfdf0;">
          <children>
             <ImageView fx:id="img_side_left" fitHeight="709.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/movie/B_n_sao_c_a_120x600-.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <VBox alignment="CENTER" prefWidth="800.0" spacing="30.0">
                <children>
-                  <ImageView fitHeight="150.0" fitWidth="762.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                  <ImageView fx:id="zalo_banner" fitHeight="150.0" fitWidth="762.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
                      <image>
                         <Image url="@../image/movie/4fc7ffb2701ad975b7eeb73cd924d9b2.jpg" />
                      </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </ImageView>
                   <StackPane fx:id="stackPane">
                      <children>
@@ -87,25 +93,37 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="182.0" prefWidth="762.0">
                      <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="event1" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/movie/t4vv_240x201.jpg" />
                            </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="event2" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/movie/happy_day_oct_28_n_o_240x201.jpg" />
                            </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="event3" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/movie/birthday_popcorn_box_240x201.png" />
                            </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="event4" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/movie/240x201_14_.png" />
                            </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                      </children>
                   </HBox>
@@ -122,10 +140,13 @@
                               <Insets bottom="50.0" right="10.0" top="15.0" />
                            </HBox.margin>
                            <children>
-                              <ImageView fitHeight="250.0" fitWidth="212.0" layoutX="12.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="18.289718627929688" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="19.0">
+                              <ImageView fx:id="event6" fitHeight="250.0" fitWidth="212.0" layoutX="12.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="18.289718627929688" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="19.0">
                                  <image>
                                     <Image url="@../image/movie/214x245.jpg" />
                                  </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </ImageView>
                            </children>
                            <padding>
@@ -137,10 +158,13 @@
                               <Insets bottom="30.0" />
                            </HBox.margin>
                            <children>
-                              <ImageView fitHeight="293.0" fitWidth="522.0" layoutX="17.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="18.69757080078125" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="20.0">
+                              <ImageView fx:id="event5" fitHeight="293.0" fitWidth="522.0" layoutX="17.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="18.69757080078125" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="20.0">
                                  <image>
                                     <Image url="@../image/movie/2024_Dec_U22_N_O_496x267_1.png" />
                                  </image>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </ImageView>
                            </children>
                            <padding>

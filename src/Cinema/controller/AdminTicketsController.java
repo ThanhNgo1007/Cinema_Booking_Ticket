@@ -1,20 +1,22 @@
 package Cinema.controller;
 
-import Cinema.database.JSONUtility;
 import Cinema.database.mysqlconnect;
 import Cinema.util.Ticket;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class UserTicketsController implements Initializable {
+public class AdminTicketsController implements Initializable {
 
     @FXML private ComboBox<String> filterTypeComboBox;
     @FXML private ComboBox<String> sortTypeComboBox;
@@ -47,25 +49,19 @@ public class UserTicketsController implements Initializable {
     @FXML private TableColumn<Ticket, String> colSeats;
     @FXML private TableColumn<Ticket, String> colShowtime;
     @FXML private TableColumn<Ticket, String> colBookingDate;
-    @FXML private TextField searchField;
+    @FXML private TableColumn<Ticket, String> colUserInfo;
+    @FXML private TableColumn<Ticket, String> colStatus;
+    @FXML private TextField searchField; // Thêm ô tìm kiếm
 
     private ObservableList<Ticket> ticketList = FXCollections.observableArrayList();
     private ObservableList<Ticket> filteredTicketList = FXCollections.observableArrayList();
-    private String userID;
+    private Controller parentController;
     private static final String URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Lấy userID từ file userdata.json
-        JSONUtility.User user = JSONUtility.getUserData();
-        if (user != null) {
-            this.userID = String.valueOf(user.getUserId());
-        } else {
-            this.userID = "1"; // Giá trị mặc định nếu không lấy được userID
-        }
-
         // Thiết lập TableView
         setupTable();
 
@@ -87,20 +83,39 @@ public class UserTicketsController implements Initializable {
         yearFilterForMonth.setOnAction(event -> filterAndSortTickets());
         yearFilter.setOnAction(event -> filterAndSortTickets());
 
-        // Xử lý sự kiện khi thay đổi từ khóa tìm kiếm
-        searchField.textProperty().addListener((obs, oldValue, newValue) -> filterAndSortTickets());
-       
+        // Xử lý sự kiện khi người dùng nhập từ khóa tìm kiếm
+        searchField.setOnKeyReleased(event -> {
+            // Chỉ gọi filterAndSortTickets() khi người dùng nhập xong một ký tự
+            filterAndSortTickets();
+        });
+    }
 
+    public void setParentController(Controller parentController) {
+        this.parentController = parentController;
     }
 
     private void setupTable() {
-        colTicketId.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getTicketId())));
+        colTicketId.setCellValueFactory(new PropertyValueFactory<>("ticketId"));
         colMovieName.setCellValueFactory(new PropertyValueFactory<>("movieName"));
         colTotalPrice.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         colSeats.setCellValueFactory(new PropertyValueFactory<>("seats"));
         colShowtime.setCellValueFactory(new PropertyValueFactory<>("showtime"));
         colBookingDate.setCellValueFactory(new PropertyValueFactory<>("bookingDate"));
+        colUserInfo.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        colStatus.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus() == 1 ? "Active" : "Deactivated"));
+
         ticketTable.setItems(filteredTicketList);
+
+        // Thiết lập SelectionModel
+        ticketTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        // Thêm sự kiện nhấp đúp để mở trang chi tiết
+        ticketTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && ticketTable.getSelectionModel().getSelectedItem() != null) {
+                Ticket selectedTicket = ticketTable.getSelectionModel().getSelectedItem();
+                openTicketDetail(selectedTicket);
+            }
+        });
     }
 
     private void setupFiltersAndSort() {
@@ -197,24 +212,27 @@ public class UserTicketsController implements Initializable {
 
     private void loadTicketsFromDatabase() {
         ticketList.clear();
-        String query = "SELECT t.id, t.movieID, t.totalPrice, t.seatNumbers, t.createDate, s.date, s.time, m.name " +
+        String query = "SELECT t.id, t.userID, t.movieID, t.showtimeID, t.seatNumbers, t.totalPrice, t.status, t.createDate, " +
+                      "s.date, s.time, m.name, u.first_name, u.last_name, u.email " +
                       "FROM bookedTickets t " +
                       "JOIN showtimes s ON t.showtimeID = s.id_lichchieu " +
                       "JOIN movies m ON t.movieID = m.id " +
-                      "WHERE t.userID = ?";
+                      "JOIN users u ON t.userID = u.id";
 
         try (Connection conn = mysqlconnect.ConnectDb(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, userID);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 int ticketId = rs.getInt("id");
+                int userId = rs.getInt("userID");
                 String movieName = rs.getString("name");
                 double totalPrice = rs.getDouble("totalPrice");
                 String seats = rs.getString("seatNumbers");
+                int status = rs.getInt("status");
                 String date = rs.getString("date"); // Định dạng: "2025-03-20"
                 String time = rs.getString("time");
+                // Kiểm tra và xử lý time
                 if (time == null || time.length() < 5) {
                     System.err.println("Time không hợp lệ cho ticket " + ticketId + ": " + time);
                     time = "00:00";
@@ -224,20 +242,14 @@ public class UserTicketsController implements Initializable {
                 String showtime = time + ", " + formatDate(date); // Định dạng: "14:00, 20-03-2025"
                 LocalDateTime bookingDateTime = rs.getTimestamp("createDate").toLocalDateTime();
                 String bookingDate = bookingDateTime.format(DateTimeFormatter.ofPattern("HH:mm, dd-MM-yyyy"));
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String userName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                userName = userName.trim();
+                if (userName.isEmpty()) userName = "Unknown User";
+                String userEmail = rs.getString("email");
 
-                ticketList.add(new Ticket(
-                    ticketId,
-                    Integer.parseInt(userID),
-                    movieName,
-                    totalPrice,
-                    seats,
-                    showtime,
-                    bookingDate,
-                    bookingDateTime,
-                    1,
-                    "",
-                    ""
-                ));
+                ticketList.add(new Ticket(ticketId, userId, movieName, totalPrice, seats, showtime, bookingDate, bookingDateTime, status, userName, userEmail));
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu vé: " + e.getMessage());
@@ -256,8 +268,10 @@ public class UserTicketsController implements Initializable {
             filterType = "Tất cả"; // Đặt giá trị mặc định nếu filterType là null
         }
 
-        // Lấy từ khóa tìm kiếm và chuyển thành chữ thường
+        // Lấy từ khóa tìm kiếm, làm sạch và chuyển thành chữ thường
         String searchText = searchField.getText() != null ? searchField.getText().trim().toLowerCase() : "";
+        // Loại bỏ các ký tự không mong muốn (nếu cần)
+        searchText = searchText.replaceAll("\\s+", " "); // Chuẩn hóa khoảng trắng
 
         // Lọc theo tiêu chí ngày, tháng, năm
         List<Ticket> tempList = new ArrayList<>();
@@ -266,8 +280,9 @@ public class UserTicketsController implements Initializable {
                 LocalDate selectedDate = datePicker.getValue();
                 if (selectedDate != null) {
                     for (Ticket ticket : ticketList) {
-                        LocalDate bookingDate = ticket.getBookingDateTime().toLocalDate();
-                        if (bookingDate.equals(selectedDate)) {
+                        String bookingDate = ticket.getBookingDate();
+                        LocalDate ticketDate = parseBookingDate(bookingDate);
+                        if (ticketDate != null && ticketDate.equals(selectedDate)) {
                             tempList.add(ticket);
                         }
                     }
@@ -284,11 +299,14 @@ public class UserTicketsController implements Initializable {
                     break;
                 }
                 for (Ticket ticket : ticketList) {
-                    LocalDateTime bookingDate = ticket.getBookingDateTime();
-                    boolean matchesMonth = selectedMonth.equals("Tất cả") || bookingDate.getMonthValue() == Integer.parseInt(selectedMonth);
-                    boolean matchesYear = selectedYearForMonth.equals("Tất cả") || bookingDate.getYear() == Integer.parseInt(selectedYearForMonth);
-                    if (matchesMonth && matchesYear) {
-                        tempList.add(ticket);
+                    String bookingDate = ticket.getBookingDate();
+                    LocalDate ticketDate = parseBookingDate(bookingDate);
+                    if (ticketDate != null) {
+                        boolean matchesMonth = selectedMonth.equals("Tất cả") || ticketDate.getMonthValue() == Integer.parseInt(selectedMonth);
+                        boolean matchesYear = selectedYearForMonth.equals("Tất cả") || ticketDate.getYear() == Integer.parseInt(selectedYearForMonth);
+                        if (matchesMonth && matchesYear) {
+                            tempList.add(ticket);
+                        }
                     }
                 }
                 break;
@@ -300,10 +318,13 @@ public class UserTicketsController implements Initializable {
                     break;
                 }
                 for (Ticket ticket : ticketList) {
-                    LocalDateTime bookingDate = ticket.getBookingDateTime();
-                    boolean matchesYear = selectedYear.equals("Tất cả") || bookingDate.getYear() == Integer.parseInt(selectedYear);
-                    if (matchesYear) {
-                        tempList.add(ticket);
+                    String bookingDate = ticket.getBookingDate();
+                    LocalDate ticketDate = parseBookingDate(bookingDate);
+                    if (ticketDate != null) {
+                        boolean matchesYear = selectedYear.equals("Tất cả") || ticketDate.getYear() == Integer.parseInt(selectedYear);
+                        if (matchesYear) {
+                            tempList.add(ticket);
+                        }
                     }
                 }
                 break;
@@ -319,10 +340,11 @@ public class UserTicketsController implements Initializable {
             for (Ticket ticket : tempList) {
                 boolean matchesSearch = String.valueOf(ticket.getTicketId()).toLowerCase().contains(searchText) ||
                                        ticket.getMovieName().toLowerCase().contains(searchText) ||
-                                       String.valueOf(ticket.getTotalPrice()).toLowerCase().contains(searchText) ||
                                        ticket.getSeats().toLowerCase().contains(searchText) ||
                                        ticket.getShowtime().toLowerCase().contains(searchText) ||
-                                       ticket.getBookingDate().toLowerCase().contains(searchText);
+                                       ticket.getBookingDate().toLowerCase().contains(searchText) ||
+                                       ticket.getUserName().toLowerCase().contains(searchText) ||
+                                       (ticket.getStatus() == 1 ? "active" : "deactivated").contains(searchText);
                 if (matchesSearch) {
                     filteredTicketList.add(ticket);
                 }
@@ -362,10 +384,66 @@ public class UserTicketsController implements Initializable {
                 break;
         }
     }
+    private void openTicketDetail(Ticket ticket) {
+        try {
+            URL fxmlLocation = getClass().getResource("/Cinema/UI/TicketDetailView.fxml");
+            if (fxmlLocation == null) {
+                System.err.println("Không tìm thấy file FXML: /Cinema/UI/TicketDetailView.fxml");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Không thể mở trang chi tiết vé: File FXML không tồn tại.");
+                alert.showAndWait();
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+            Parent root = loader.load();
+
+            TicketDetailController controller = loader.getController();
+            controller.setTicket(ticket);
+            controller.setAdminTicketsController(this);
+
+            Stage stage = new Stage();
+            stage.setTitle("Ticket Details - ID: " + ticket.getTicketId());
+            stage.setScene(new Scene(root));
+            stage.initStyle(StageStyle.UNDECORATED); // Ẩn thanh tiêu đề
+            stage.show();
+         // Khi cửa sổ mất focus, tự động đóng lại
+            stage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    stage.close();
+                }
+            });
+            
+        } catch (IOException e) {
+            System.err.println("Lỗi khi mở trang chi tiết vé: " + e.getMessage());
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Không thể mở trang chi tiết vé: " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public void refreshTickets() {
+        loadTicketsFromDatabase();
+    }
 
     // Phương thức định dạng ngày từ "2025-03-20" thành "20-03-2025"
     private String formatDate(String date) {
         String[] parts = date.split("-");
         return parts[2] + "-" + parts[1] + "-" + parts[0];
+    }
+
+    // Phương thức phân tích bookingDate để lấy ngày (dùng cho lọc)
+    private LocalDate parseBookingDate(String bookingDate) {
+        try {
+            // bookingDate có định dạng "HH:mm, dd-MM-yyyy"
+            String datePart = bookingDate.split(", ")[1]; // Lấy phần "dd-MM-yyyy"
+            String[] dateParts = datePart.split("-");
+            int day = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]);
+            int year = Integer.parseInt(dateParts[2]);
+            return LocalDate.of(year, month, day);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi phân tích bookingDate: " + bookingDate);
+            return null;
+        }
     }
 }

@@ -85,6 +85,11 @@
                   </GridPane>
                </children>
             </HBox>
+            <ImageView fitHeight="45.0" fitWidth="831.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/movie/brand-type-film-footer_ver2.png" />
+               </image>
+            </ImageView>
          </children>
       </VBox>
    </content>

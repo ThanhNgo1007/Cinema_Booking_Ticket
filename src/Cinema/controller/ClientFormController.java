@@ -105,14 +105,13 @@ public class ClientFormController {
 
         txtLabel.setText(clientName);
         if (vBox != null) {
-            vBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue((Double) newValue));
+            vBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue(1.0)); // Cuộn xuống dưới cùng
         } else {
             System.err.println("Error: vBox is null. Check FXML mapping.");
         }
 
-        // Thêm sự kiện Enter cho txtMsg
         if (txtMsg != null) {
-            txtMsg.setOnAction(event -> sendMsg(txtMsg.getText())); // Gửi tin nhắn khi nhấn Enter
+            txtMsg.setOnAction(event -> sendMsg(txtMsg.getText()));
         } else {
             System.err.println("Error: txtMsg is null during initialization. Check FXML mapping.");
         }
@@ -172,7 +171,7 @@ public class ClientFormController {
 
             try {
                 System.out.println("Sending message to admin: " + userId + "-" + msgToSend + " with routing key: admin");
-                rabbitMQ.sendMessage(userId + "-" + msgToSend, "admin"); // Gửi userId thay vì clientName
+                rabbitMQ.sendMessage(userId + "-" + msgToSend, "admin");
                 saveMessageToDatabase(userId, adminId, msgToSend);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -186,29 +185,54 @@ public class ClientFormController {
         System.out.println("Client received message: " + msg);
         Platform.runLater(() -> {
             String[] parts = msg.split("-", 2);
-            String sender = parts[0];
-            String message = parts.length > 1 ? parts[1] : "";
+            if (parts.length < 2) {
+                System.err.println("Invalid message format: " + msg);
+                return;
+            }
+            String senderId = parts[0]; // senderId từ admin hoặc client khác
+            String message = parts[1];
+            String senderName = senderId.equals(adminId) ? "Admin" : senderId; // Hiển thị "Admin" nếu là adminId
+            displayMessage(senderName, message);
+        });
+    }
+
+    private void displayMessage(String sender, String message) {
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(5, 5, 5, 10));
+
+        Text text = new Text(message);
+        TextFlow textFlow = new TextFlow(text);
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+
+        if (sender.equals(clientName)) { // Tin nhắn của chính client
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+            textFlow.setStyle("-fx-background-color: #0693e3; -fx-background-radius: 20px");
+            text.setFill(Color.WHITE);
+        } else { // Tin nhắn từ admin hoặc người khác
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            textFlow.setStyle("-fx-background-color: #abb8c3; -fx-background-radius: 20px");
+            text.setFill(Color.BLACK);
             HBox hBoxName = new HBox();
             hBoxName.setAlignment(Pos.CENTER_LEFT);
             Text textName = new Text(sender);
             TextFlow textFlowName = new TextFlow(textName);
             hBoxName.getChildren().add(textFlowName);
+            vBox.getChildren().add(hBoxName); // Thêm tên người gửi
+        }
 
-            HBox hBox = new HBox();
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            hBox.setPadding(new Insets(5, 5, 5, 10));
+        hBox.getChildren().add(textFlow);
 
-            Text text = new Text(message);
-            TextFlow textFlow = new TextFlow(text);
-            textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
-            textFlow.setPadding(new Insets(5, 10, 5, 10));
-            text.setFill(Color.BLACK);
+        HBox hBoxTime = new HBox();
+        hBoxTime.setAlignment(hBox.getAlignment());
+        hBoxTime.setPadding(new Insets(0, 5, 5, 10));
+        String stringTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        Text time = new Text(stringTime);
+        time.setStyle("-fx-font-size: 8");
+        hBoxTime.getChildren().add(time);
 
-            hBox.getChildren().add(textFlow);
-
-            vBox.getChildren().add(hBoxName);
-            vBox.getChildren().add(hBox);
-        });
+        vBox.getChildren().add(hBox);
+        vBox.getChildren().add(hBoxTime);
+        scrollPain.setVvalue(1.0); // Cuộn xuống dưới cùng
     }
 
     private void saveMessageToDatabase(String senderId, String receiverId, String messageText) {

@@ -12,6 +12,7 @@ import java.util.List;
 
 import Cinema.database.JSONUtility.MovieData;
 import Cinema.database.JSONUtility.User;
+import Cinema.util.Movie;
 
 public class DBUtility {
 

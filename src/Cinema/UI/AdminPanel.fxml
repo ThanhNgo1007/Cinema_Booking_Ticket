@@ -11,20 +11,19 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="774.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminPanelController">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="575.0" prefWidth="850.0" style="-fx-background-color: #fcfdf0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminPanelController">
    <content>
-      <VBox fx:id="rootPane" alignment="CENTER" prefHeight="573.0" prefWidth="772.0" spacing="20.0" stylesheets="@../../../../HelloFX/src/resource/css/Showtime.css">
+      <VBox fx:id="rootPane" alignment="CENTER" prefHeight="573.0" prefWidth="884.0" spacing="20.0" style="-fx-background-color: #fcfdf0;" stylesheets="@/css/Showtime.css">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" text="DANH MỤC PHIM ">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
+            <Label prefHeight="26.0" prefWidth="157.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="DANH MỤC PHIM">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </Label>
             <HBox alignment="CENTER" prefHeight="64.0" prefWidth="772.0" spacing="30.0">
                <children>
-                  <Button fx:id="add_btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#openAddPanel" prefHeight="25.0" prefWidth="90.0" style="-fx-border-radius: 50;" text="ADD">
+                  <Button fx:id="add_btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#openAddPanel" prefHeight="25.0" prefWidth="90.0" style="-fx-border-radius: 50; -fx-background-color: #8ee07f;" text="THÊM">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -36,44 +35,44 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="update_btn" alignment="CENTER" disable="true" mnemonicParsing="false" onMouseClicked="#handleUpdateMovie" prefHeight="25.0" prefWidth="90.0" style="-fx-border-radius: 50;" text="UPDATE">
+                  <Button fx:id="update_btn" alignment="CENTER" disable="true" mnemonicParsing="false" onMouseClicked="#handleUpdateMovie" prefHeight="29.0" prefWidth="121.0" style="-fx-border-radius: 50; -fx-background-color: #e0de7f;" text="CẬP NHẬT">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../image/icons8-add-50.png" />
+                              <Image url="@../image/icons8-update-50.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="delete_btn" alignment="CENTER" disable="true" mnemonicParsing="false" onMouseClicked="#handleDeleteMovie" prefHeight="25.0" prefWidth="90.0" style="-fx-border-radius: 50;" text="DELETE">
+                  <Button fx:id="delete_btn" alignment="CENTER" disable="true" mnemonicParsing="false" onMouseClicked="#handleDeleteMovie" prefHeight="25.0" prefWidth="90.0" style="-fx-border-radius: 50; -fx-background-color: #e07f81;" text="XOÁ">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../image/icons8-add-50.png" />
+                              <Image url="@../image/icons8-delete-24.png" />
                            </image>
                         </ImageView>
                      </graphic>
                   </Button>
                </children>
             </HBox>
-            <TableView fx:id="movieTable" prefHeight="424.0" prefWidth="772.0">
+            <TableView fx:id="movieTable" prefHeight="449.0" prefWidth="901.0" stylesheets="@../../../bin/css/style.css">
               <columns>
-                <TableColumn fx:id="col_id" prefWidth="54.10161650180817" text="Mã phim" />
-                <TableColumn fx:id="col_name" prefWidth="117.39838790893555" text="Tên phim" />
-                  <TableColumn fx:id="col_gener" prefWidth="75.0" text="Thể loại" />
-                  <TableColumn fx:id="col_director" prefWidth="75.0" text="Đạo diễn" />
-                  <TableColumn fx:id="col_duration" prefWidth="75.0" text="Thời lượng" />
-                  <TableColumn fx:id="col_date" prefWidth="75.0" text="Ngày thêm" />
-                  <TableColumn fx:id="col_updatedate" prefWidth="97.59463500976562" text="Ngày cập nhật" />
-                  <TableColumn fx:id="col_status" prefWidth="52.4053955078125" text="Status" />
-                  <TableColumn fx:id="col_release" prefWidth="88.291015625" text="Ngày ra mat" />
-                  <TableColumn fx:id="col_release1" prefWidth="61.708984375" text="Lich chieu" />
+                <TableColumn fx:id="col_id" prefWidth="36.0" text="ID" />
+                <TableColumn fx:id="col_name" prefWidth="106.0" text="Tên phim" />
+                  <TableColumn fx:id="col_gener" prefWidth="84.0" text="Thể loại" />
+                  <TableColumn fx:id="col_director" prefWidth="82.0" text="Đạo diễn" />
+                  <TableColumn fx:id="col_duration" prefWidth="91.0" text="Thời lượng" />
+                  <TableColumn fx:id="col_date" prefWidth="82.0" text="Ngày thêm" />
+                  <TableColumn fx:id="col_updatedate" prefWidth="112.5" text="Ngày cập nhật" />
+                  <TableColumn fx:id="col_status" prefWidth="55.0" text="Status" />
+                  <TableColumn fx:id="col_release" prefWidth="106.0" text="Ngày ra mắt" />
+                  <TableColumn fx:id="col_release1" prefWidth="84.5" text="Lịch chiếu" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

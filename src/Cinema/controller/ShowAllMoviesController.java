@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import Cinema.database.DBUtility;
-import Cinema.database.Movie;
 import Cinema.database.mysqlconnect;
+import Cinema.util.Movie;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

@@ -1,17 +1,17 @@
 {
-  "id": "LC112",
+  "id": "LC016",
   "price": 0,
   "basePrice": 60000,
   "totalPrice": 180000,
   "numberOfSeats": 2,
-  "name": "NHÀ GIA TIÊN",
-  "timing": "15:00, 24-03-2025",
-  "selected": "7H, 6H",
+  "name": "INTERSTELLAR (CHIẾU LẠI)",
+  "timing": "19:00, 31-03-2025",
+  "selected": "10F, 8F",
   "bookedSeats": [
     ""
   ],
   "selectedSeats": [
-    "7H",
-    "6H"
+    "10F",
+    "8F"
   ]
 }

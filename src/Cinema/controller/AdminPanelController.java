@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import Cinema.database.mysqlconnect;
-import Cinema.database.Movie;
-import Cinema.database.Showtime;
+import Cinema.util.Movie;
+import Cinema.util.Showtime;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

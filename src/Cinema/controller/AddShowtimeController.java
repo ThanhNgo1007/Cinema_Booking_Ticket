@@ -1,7 +1,7 @@
 package Cinema.controller;
 
 import Cinema.database.mysqlconnect;
-import Cinema.database.Movie; // Sử dụng Movie từ Cinema.database
+import Cinema.util.Movie;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
