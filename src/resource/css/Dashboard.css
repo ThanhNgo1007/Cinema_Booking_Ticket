@@ -1,3 +1,15 @@
+@font-face {
+	font-family: Montserrat;
+	src: url(Montserrat-Bold.ttf);
+}
+
+.label {
+	-fx-font-family: Montserrat;
+}
+#dashboard_title {
+	-fx-font-family: Montserrat;
+	-fx-font-size: 30px;
+}
 .chart-pie {
     -fx-pie-label-visible: true;
     -fx-font-size: 10px;
@@ -34,4 +46,7 @@
 
 .combo-box, .date-picker, .button {
     -fx-font-size: 14px;
+}
+#totalLabel{
+	-fx-font-size: 16px;
 }

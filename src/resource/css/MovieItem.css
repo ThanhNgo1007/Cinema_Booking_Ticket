@@ -1,0 +1,18 @@
+@font-face {
+    font-family: Montserrat_Regular;
+    src: url("Montserrat-Regular.ttf");
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url("Montserrat-Bold.ttf"); /* Đã sửa lỗi .ttf.ttf */
+}
+
+.text {
+    -fx-font-family: "Montserrat_Regular"; /* Đặt font mặc định */
+}
+
+#setMovieName {
+    -fx-font-family: "Montserrat"; /* Font cho ID cụ thể */
+	-fx-font-weight: bold;
+}

@@ -1,8 +1,26 @@
+@font-face {
+	font-family: Montserrat;
+	src: url(Montserrat-Bold.ttf);
+}
+
+.label {
+	-fx-font-family: Montserrat;
+}
 #hbox_top{
 	-fx-background-image: url("/Cinema/image/movie/bg-top.png");
 }
 
-#bookingPane {
-	-fx-background-image: url("/Cinema/image/movie/8c7e4982b888e958f24e2f0957579532.jpg");
-}
 
+#account_address, #account_city, #account_district, #account_email, #account_ho, #account_phone, #account_ten, #account_ward{
+	-fx-font-size: 20px;
+	-fx-font-weight: bold;
+}
+#label1{
+	-fx-font-size: 24px;	
+}
+#btn_menuback:hover, #btn_menuback1:hover {
+	-fx-background-color: rgba(128, 128, 128, 0.5);
+}
+#btn_menuback, #btn_menuback1{
+	-fx-font-size: 18px;
+}

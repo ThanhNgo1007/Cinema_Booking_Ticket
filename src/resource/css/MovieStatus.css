@@ -1,0 +1,13 @@
+@font-face {
+	font-family: Montserrat;
+	src: url(Montserrat-Bold.ttf);
+}
+
+
+#director, #movieDescription, #movieTitle, #movieGener, #movieReleaseDate, #movieTime, #movieActors {
+	-fx-font-family: Montserrat;
+	-fx-font-weight: regular;
+}
+#movieTitle, #rating, #title {
+	-fx-font-family: Montserrat;
+}

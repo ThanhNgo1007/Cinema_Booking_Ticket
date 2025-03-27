@@ -1,7 +1,6 @@
 /* Định dạng cho VBox gốc */
 .root {
     -fx-background-color: #f5f5f5;
-    -fx-alignment: center;
     -fx-spacing: 20;
 }
 
@@ -35,8 +34,8 @@
     -fx-font-size: 12px;
     -fx-text-fill: #333333;
     -fx-alignment: center;
-    -fx-pref-width: 45px; /* Thu nhỏ kích thước */
-    -fx-pref-height: 45px; /* Thu nhỏ kích thước */
+    -fx-pref-width: 50px; /* Thu nhỏ kích thước */
+    -fx-pref-height: 40px; /* Thu nhỏ kích thước */
     -fx-wrap-text: true; /* Cho phép xuống dòng (hiển thị "01\nMON") */
 }
 

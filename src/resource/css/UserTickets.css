@@ -1,3 +1,7 @@
+@font-face {
+	font-family: Montserrat;
+	src: url(Montserrat-Bold.ttf);
+}
 /* Định dạng cho VBox gốc */
 .root {
     -fx-background-color: #f5f5f5;
@@ -8,8 +12,9 @@
 /* Định dạng cho tiêu đề "Vé đã đặt" */
 .label {
     -fx-font-size: 20px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 700;
     -fx-text-fill: #333333;
+    -fx-font-family: Montserrat;
 }
 
 /* Định dạng cho HBox chứa bộ lọc */
