@@ -2,6 +2,7 @@
 
 <?xml-model ?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -10,8 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane minHeight="700.0" minWidth="1200.0" style="-fx-background-color: #1F1F1F;" stylesheets="@../../resource/css/SelectSeats.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.SelectSeats">
+<AnchorPane minHeight="700.0" minWidth="1200.0" style="-fx-background-color: #1F1F1F;" stylesheets="@/css/SelectSeats.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.SelectSeats">
    <children>
       <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="800.0" prefWidth="1365.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
         <content>
@@ -39,11 +39,11 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox fx:id="normalHbox">
+                              <HBox fx:id="vipHbox">
                                  <children>
                                     <VBox prefHeight="200.0" prefWidth="137.0">
                                        <children>
-                                          <Label fx:id="normalPrice" layoutX="10.0" layoutY="10.0" text="USD 300" textFill="#f5f5f5">
+                                          <Label fx:id="vipPrice" layoutX="10.0" layoutY="10.0" text="USD 300" textFill="#f5f5f5">
                                              <font>
                                                 <Font name="Bell MT" size="18.0" />
                                              </font>
@@ -52,11 +52,11 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox fx:id="vipHbox" prefHeight="200.0" prefWidth="1118.0">
+                              <HBox fx:id="normalHbox" prefHeight="200.0" prefWidth="1118.0">
                                  <children>
                                     <VBox prefHeight="200.0" prefWidth="141.0">
                                        <children>
-                                          <Label fx:id="vipPrice" layoutX="10.0" layoutY="10.0" text="USD 420" textFill="#f5f5f5">
+                                          <Label fx:id="normalPrice" layoutX="10.0" layoutY="10.0" text="USD 420" textFill="#f5f5f5">
                                              <font>
                                                 <Font name="Bell MT" size="18.0" />
                                              </font>
@@ -87,11 +87,17 @@
                                        <font>
                                           <Font name="Calibri Bold" size="18.0" />
                                        </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                     <Button fx:id="cancelBtn" alignment="CENTER" minHeight="40.0" mnemonicParsing="false" onAction="#handleCancelBtnClick" prefWidth="137.0" style="-fx-background-color: red; -fx-text-fill: #ffffff;" text="HUỶ">
                                        <font>
                                           <Font name="Calibri Bold" size="18.0" />
                                        </font>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
                                     </Button>
                                  </children>
                                  <VBox.margin>

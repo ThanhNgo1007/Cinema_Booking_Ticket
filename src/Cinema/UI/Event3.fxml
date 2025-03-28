@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="603.0" prefWidth="1196.0" style="-fx-background-color: #fdfcf0;" stylesheets="@/css/Event.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Event1_Controller">
+   <children>
+      <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#goBack" text="Quay lại">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <VBox alignment="TOP_CENTER" layoutX="178.0" layoutY="46.0" prefHeight="557.0" prefWidth="1005.0" spacing="20.0">
+         <children>
+            <Text fx:id="text1" strokeType="OUTSIDE" strokeWidth="0.0" text="MINECRAFT BLIND BAG" textAlignment="CENTER" wrappingWidth="1085.53515625" />
+            <HBox alignment="TOP_CENTER" prefHeight="520.0" prefWidth="1160.0" spacing="30.0">
+               <children>
+                  <ImageView fitHeight="417.0" fitWidth="274.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../HelloFX/src/Cinema/image/event/2025_Minecraft__N_O_350x495.png" />
+                     </image>
+                  </ImageView>
+                  <VBox prefHeight="647.0" prefWidth="420.0" spacing="5.0">
+                     <children>
+                        <Text fx:id="text2" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Thời gian mở bán:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Từ ngày 28/03/2025" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text fx:id="text3" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2. Thông tin sản phẩm:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-  Túi mù móc khóa bông Minecraft đã chính thức có mặt tại CGV! Với 5 nhân vật độc đáo, mỗi túi mang đến một bất ngờ thú vị." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Bộ sưu tập Minecraft Blind Bag có 5 nhân vật, mỗi nhân vật mang một phong cách riêng đầy cá tính!" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Chất liệu: Polyester và nhựa PP, vải lông mềm mịn, bông nhồi cao cấp, móc khóa chắc chắn, an toàn cho mọi lứa tuổi, phù hợp cả trẻ em và người lớn." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Kích thước: ~ 90x90x90(mm)" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Sản phẩm chính hãng chỉ có tại CGV Cinemas Vietnam và có bản quyền từ Licensor." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text fx:id="text4" layoutX="10.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3. Thông tin combo:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="224.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MINECRAFT BLIND BAG COMBO, bao gồm:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 01 Túi mù móc khóa bông Minecraft ngẫu nhiên" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="335.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- 01 Nước ngọt siêu lớn 32oz" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <!-- Nội dung của Event1 -->
+   </children>
+</AnchorPane>

@@ -1,5 +1,6 @@
 package Cinema.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -9,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -39,11 +41,9 @@ public class ShowtimeController {
     private LocalDate selectedDate;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private List<Showtime> showtimes;
-    private String movieID; // Thêm biến để lưu movieID
-    
-    private List<Button> dayButtons = new ArrayList<>(); // Danh sách các nút ngày
+    private String movieID;
+    private List<Button> dayButtons = new ArrayList<>();
 
-    // Lớp đại diện cho một lịch chiếu
     public static class Showtime {
         private String id_lichchieu;
         private LocalDate date;
@@ -81,31 +81,29 @@ public class ShowtimeController {
             return totalNumberSeats;
         }
 
-		public String getId_movie() {
-			return id_movie;
-		}
+        public String getId_movie() {
+            return id_movie;
+        }
 
-		public void setId_movie(String id_movie) {
-			this.id_movie = id_movie;
-		}
+        public void setId_movie(String id_movie) {
+            this.id_movie = id_movie;
+        }
     }
 
-    // Phương thức để nhận movieID từ MovieItemController
     public void setMovieId(String movieID) {
         this.movieID = movieID;
-        // Tải lại dữ liệu khi movieID được đặt
         loadShowtimesFromDatabase();
         displayCalendar();
     }
 
     @FXML
     public void initialize() {
-        // Nếu movieID chưa được đặt (trường hợp khởi động trực tiếp)
         if (movieID == null) {
-            movieID = ""; // Mặc định, có thể điều chỉnh logic nếu cần
+            movieID = "";
         }
         loadShowtimesFromDatabase();
         displayCalendar();
+
         cancelButton.setOnAction(event -> {
             Stage stage = (Stage) cancelButton.getScene().getWindow();
             stage.close();
@@ -126,7 +124,6 @@ public class ShowtimeController {
             LocalDate date = today.plusDays(i);
             Button dayButton = new Button(String.format("%02d\n%s", date.getDayOfMonth(), date.getDayOfWeek().toString().substring(0, 3)));
             
-            // Áp dụng class CSS
             dayButton.getStyleClass().add("day-button");
             if (date.equals(selectedDate)) {
                 dayButton.getStyleClass().add("day-button-selected");
@@ -176,8 +173,8 @@ public class ShowtimeController {
         for (Showtime showtime : showtimes) {
             if (showtime.getDate().equals(date) && showtime.getId_movie().equals(movieID)) {
                 Button showtimeButton = new Button(String.format("%s ( %d/%d )", showtime.getTime(), showtime.getAvailableSeats(), showtime.getTotalNumberSeats()));
-                showtimeButton.getStyleClass().add("showtime-button"); // Thêm class CSS
-                showtimeButton.setStyle("-fx-pref-height: 40px;"); // Giữ style inline hiện tại
+                showtimeButton.getStyleClass().add("showtime-button");
+                showtimeButton.setStyle("-fx-pref-height: 40px;");
 
                 if (showtime.getAvailableSeats() > 0) {
                     showtimeButton.setOnAction(event -> {
@@ -204,14 +201,13 @@ public class ShowtimeController {
             Parent root = loader.load();
             SelectSeats controller = loader.getController();
 
-            // Lấy thông tin suất chiếu và basePrice từ CSDL
             String url = "jdbc:mysql://localhost/Cinema_DB";
             String username = "root";
             String password = "";
             String movieName = "";
             String date = "";
             String time = "";
-            String timing = ""; // Chuỗi đầy đủ: "16:30, 16-03-2025"
+            String timing = "";
             String movieId = "";
             int basePrice = 0;
 
@@ -220,12 +216,11 @@ public class ShowtimeController {
                 pstmt.setString(1, id_lichchieu);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    date = rs.getDate("date").toString(); // Định dạng: "2025-03-16"
-                    time = rs.getTime("time").toString().substring(0, 5); // Định dạng: "16:30"
-                    timing = time + ", " + formatDate(date); // Ghép thành: "16:30, 16-03-2025"
+                    date = rs.getDate("date").toString();
+                    time = rs.getTime("time").toString().substring(0, 5);
+                    timing = time + ", " + formatDate(date);
                     movieId = rs.getString("id_movie");
 
-                    // Lấy thông tin phim từ bảng movies
                     PreparedStatement pstmtMovie = conn.prepareStatement("SELECT name, basePrice FROM movies WHERE id = ?");
                     pstmtMovie.setString(1, movieId);
                     ResultSet rsMovie = pstmtMovie.executeQuery();
@@ -238,15 +233,14 @@ public class ShowtimeController {
                 e.printStackTrace();
             }
 
-            // Khởi tạo JSON với thông tin suất chiếu, basePrice
             JSONUtility jsonUtil = new JSONUtility();
-            jsonUtil.createMovieJson(id_lichchieu, movieName, timing, "", basePrice); // Lưu timing đầy đủ
+            jsonUtil.createMovieJson(id_lichchieu, movieName, timing, "", basePrice);
             controller.initializeSeatSelection(id_lichchieu, totalNumberSeats);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); // Chặn tương tác với cửa sổ cũ
-            stage.initStyle(StageStyle.UNDECORATED); // Ẩn thanh tiêu đề
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
 
             Stage currentStage = (Stage) cancelButton.getScene().getWindow();
@@ -256,10 +250,9 @@ public class ShowtimeController {
         }
     }
 
-    // Phương thức định dạng ngày từ "2025-03-16" thành "16-03-2025"
     private String formatDate(String date) {
         String[] parts = date.split("-");
-        return parts[2] + "-" + parts[1] + "-" + parts[0]; // Chuyển thành "16-03-2025"
+        return parts[2] + "-" + parts[1] + "-" + parts[0];
     }
 
     private void loadShowtimesFromDatabase() {
@@ -269,9 +262,7 @@ public class ShowtimeController {
         String username = "root";
         String password = "";
 
-        try (Connection conn = mysqlconnect.ConnectDb(url, username, password);) {
-
-            // Thiết lập tham số id_movie (cần PreparedStatement nếu dùng tham số)
+        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
             PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM showtimes WHERE id_movie = ?");
             pstmt.setString(1, movieID);
             ResultSet rs = pstmt.executeQuery();

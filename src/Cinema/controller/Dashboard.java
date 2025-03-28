@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import javafx.scene.chart.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,7 +35,7 @@ public class Dashboard implements Initializable {
     @FXML
     private NumberAxis yAxis;
     @FXML
-    private Label pieChartTitle, barChartTitle;
+    private Label pieChartTitle, barChartTitle, totalLabel; // Thêm totalLabel
 
     private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String DB_USER = "root";
@@ -47,13 +48,11 @@ public class Dashboard implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         filterTypeCombo.setItems(FXCollections.observableArrayList("Theo ngày", "Theo tháng/năm", "Theo năm"));
         monthCombo.setItems(FXCollections.observableArrayList("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"));
-        yearComboForMonth.setItems(FXCollections.observableArrayList("2023", "2024", "2025"));
-        yearCombo.setItems(FXCollections.observableArrayList("2023", "2024", "2025"));
+        yearComboForMonth.setItems(FXCollections.observableArrayList("2024", "2025"));
+        yearCombo.setItems(FXCollections.observableArrayList("2024", "2025"));
         dataTypeCombo.setItems(FXCollections.observableArrayList("Số vé bán được", "Doanh thu"));
 
         filterTypeCombo.setOnAction(event -> updateFilterVisibility());
-        dataTypeCombo.setOnAction(event -> refreshCharts());
-        refreshButton.setOnAction(event -> refreshCharts());
 
         filterTypeCombo.getSelectionModel().select("Theo ngày");
         dataTypeCombo.getSelectionModel().select("Số vé bán được");
@@ -65,6 +64,8 @@ public class Dashboard implements Initializable {
         customizeCategoryAxis();
 
         refreshCharts();
+        dataTypeCombo.setOnAction(event -> refreshCharts());
+        refreshButton.setOnAction(event -> refreshCharts());
     }
 
     private void updateFilterVisibility() {
@@ -86,29 +87,61 @@ public class Dashboard implements Initializable {
         xAxis.setTickLabelFont(javafx.scene.text.Font.font(10));
     }
 
-    private String wrapMovieName(String movieName) {
-        return movieName.replaceAll("(.{20})", "$1\n");
-    }
+    private String wrapMovieName(String movieName, int maxLengthPerLine) {
+        if (movieName == null || movieName.length() <= maxLengthPerLine) {
+            return movieName; // Không cần bọc nếu ngắn hơn hoặc null
+        }
 
+        StringBuilder wrappedName = new StringBuilder();
+        int start = 0;
+
+        while (start < movieName.length()) {
+            int end = Math.min(start + maxLengthPerLine, movieName.length());
+            
+            // Tìm khoảng trắng gần nhất để cắt (nếu có) thay vì cắt cứng
+            if (end < movieName.length()) {
+                int lastSpace = movieName.lastIndexOf(" ", end);
+                if (lastSpace > start && lastSpace < end) {
+                    end = lastSpace; // Cắt tại khoảng trắng để tránh lẻ chữ
+                }
+            }
+
+            wrappedName.append(movieName.substring(start, end));
+            if (end < movieName.length()) {
+                wrappedName.append("\n");
+            }
+            start = end + 1; // Bỏ qua khoảng trắng nếu có
+        }
+
+        return wrappedName.toString();
+    }
+    
+    //Cài đặt độ chia cho trục Y
     private void setupYAxis(double maxValue, boolean isTicketCount) {
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(0);
 
         if (isTicketCount) {
             int maxTickets = (int) Math.ceil(maxValue);
-            yAxis.setUpperBound(maxTickets + 1);
-            yAxis.setTickUnit(1);
+            int upperBound = maxTickets + (int) (maxTickets * 0.2);
+            upperBound = Math.max(upperBound, 5);
+            yAxis.setUpperBound(upperBound);
+            yAxis.setTickUnit(Math.max(1, upperBound / 10));
             yAxis.setMinorTickVisible(false);
         } else {
             double step = 100000;
             double upperBound = Math.ceil(maxValue / step) * step;
-            upperBound = Math.max(upperBound, step);
-            yAxis.setUpperBound(upperBound + step);
+            upperBound = upperBound + (step * 2);
+            upperBound = Math.max(upperBound, step * 2);
+            yAxis.setUpperBound(upperBound);
             yAxis.setTickUnit(step);
             yAxis.setMinorTickVisible(false);
         }
-    }
 
+        yAxis.requestAxisLayout();
+    }
+    
+    //Load lại biểu đồ
     @FXML
     private void refreshCharts() {
         stopAllAnimations();
@@ -121,17 +154,20 @@ public class Dashboard implements Initializable {
         barChartTitle.setText(dataType + " theo thời gian");
         yAxis.setLabel(dataType + (isTicketCount ? " (vé)" : " (VND)"));
 
-        // Xóa dữ liệu cũ
+        // Clear charts data
         pieChart.getData().clear();
         barChart.getData().clear();
 
-        // Tắt hiển thị nhãn trên trục x và xóa danh mục
+        // Reset xAxis completely
         xAxis.setTickLabelsVisible(false);
-        xAxis.setCategories(FXCollections.observableArrayList());
+        xAxis.setCategories(FXCollections.<String>observableArrayList());
         clearAxisLabels();
         xAxis.requestAxisLayout();
         barChart.requestLayout();
 
+        totalLabel.setText("Tổng: ");
+
+        // Load new data based on filter type
         if ("Theo ngày".equals(filterType)) {
             LocalDate selectedDate = datePicker.getValue();
             if (selectedDate != null) {
@@ -153,9 +189,20 @@ public class Dashboard implements Initializable {
             }
         }
     }
-
-    // Phương thức để xóa hoàn toàn các nhãn trên trục x
+    
+  
     private void clearAxisLabels() {
+        if (xAxis == null) return;
+        
+        // Clear all existing tick labels
+        for (Node node : xAxis.getChildrenUnmodifiable()) {
+            if (node instanceof Text) {
+                ((Text) node).setText("");
+                node.setVisible(false);
+            }
+        }
+        
+        // Also clear through lookup if needed
         for (Node node : xAxis.lookupAll(".chart-category-tick-label")) {
             if (node instanceof Label) {
                 ((Label) node).setText("");
@@ -165,18 +212,10 @@ public class Dashboard implements Initializable {
     }
 
     private void stopAllAnimations() {
-        if (currentPieFadeOut != null) {
-            currentPieFadeOut.stop();
-        }
-        if (currentPieFadeIn != null) {
-            currentPieFadeIn.stop();
-        }
-        if (currentBarFadeOut != null) {
-            currentBarFadeOut.stop();
-        }
-        if (currentBarFadeIn != null) {
-            currentBarFadeIn.stop();
-        }
+        if (currentPieFadeOut != null) currentPieFadeOut.stop();
+        if (currentPieFadeIn != null) currentPieFadeIn.stop();
+        if (currentBarFadeOut != null) currentBarFadeOut.stop();
+        if (currentBarFadeIn != null) currentBarFadeIn.stop();
     }
 
     private void loadDataForDay(LocalDate date, boolean isTicketCount) {
@@ -184,7 +223,7 @@ public class Dashboard implements Initializable {
         String query = "SELECT m.name, b.seatNumbers, b.totalPrice " +
                       "FROM bookedTickets b " +
                       "JOIN movies m ON b.movieID = m.id " +
-                      "WHERE DATE(b.createDate) = ? AND b.currentStatus = 1";
+                      "WHERE DATE(b.createDate) = ?";
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -193,8 +232,10 @@ public class Dashboard implements Initializable {
         Map<String, Integer> ticketCountByMovie = new HashMap<>();
         Map<String, Double> revenueByMovie = new HashMap<>();
         double maxValue = 0;
+        double totalValue = 0;
 
         ObservableList<String> categories = FXCollections.observableArrayList();
+        xAxis.setCategories(categories);
 
         try (Connection conn = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -209,37 +250,35 @@ public class Dashboard implements Initializable {
                 int ticketCount = seatNumbers.split(",").length;
                 ticketCountByMovie.put(movieName, ticketCountByMovie.getOrDefault(movieName, 0) + ticketCount);
                 revenueByMovie.put(movieName, revenueByMovie.getOrDefault(movieName, 0.0) + totalPrice);
-
-                double value = isTicketCount ? ticketCount : totalPrice;
-                maxValue = Math.max(maxValue, value);
             }
 
             for (String movieName : ticketCountByMovie.keySet()) {
                 int ticketCount = ticketCountByMovie.get(movieName);
                 double revenue = revenueByMovie.get(movieName);
 
-                String wrappedMovieName = wrapMovieName(movieName);
+                String wrappedMovieName = wrapMovieName(movieName, 21); // Sử dụng phương thức mới
                 categories.add(wrappedMovieName);
 
                 double value = isTicketCount ? ticketCount : revenue;
                 PieChart.Data pieData = new PieChart.Data(movieName, value);
                 pieChartData.add(pieData);
 
-                Tooltip tooltip = new Tooltip(movieName);
-                Tooltip.install(pieData.getNode(), tooltip);
-
                 series.getData().add(new XYChart.Data<>(wrappedMovieName, value));
+                maxValue = Math.max(maxValue, value);
+                totalValue += value;
             }
 
-            // Cập nhật danh mục trên trục x và bật lại hiển thị nhãn
             xAxis.setCategories(categories);
             xAxis.setTickLabelsVisible(true);
-            xAxis.requestAxisLayout();
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu: " + e.getMessage());
         }
 
         setupYAxis(maxValue, isTicketCount);
+
+        String totalText = isTicketCount ? String.format("Tổng: %d vé", (int) totalValue)
+                                       : String.format("Tổng: %.2f VND", totalValue);
+        totalLabel.setText(totalText);
 
         currentPieFadeOut = new FadeTransition(Duration.millis(500), pieChart);
         currentPieFadeOut.setFromValue(1.0);
@@ -250,10 +289,6 @@ public class Dashboard implements Initializable {
             } else {
                 pieChart.setData(pieChartData);
                 pieChart.setTitle("");
-                for (PieChart.Data data : pieChart.getData()) {
-                    Tooltip tooltip = new Tooltip(data.getName());
-                    Tooltip.install(data.getNode(), tooltip);
-                }
             }
             currentPieFadeIn = new FadeTransition(Duration.millis(500), pieChart);
             currentPieFadeIn.setFromValue(0.0);
@@ -269,8 +304,6 @@ public class Dashboard implements Initializable {
                 barChart.setTitle("Không có dữ liệu");
                 xAxis.setCategories(FXCollections.observableArrayList());
                 clearAxisLabels();
-                xAxis.setTickLabelsVisible(true);
-                xAxis.requestAxisLayout();
             } else {
                 barChart.getData().removeIf(s -> s.getName().equals(series.getName()));
                 barChart.getData().add(series);
@@ -289,7 +322,12 @@ public class Dashboard implements Initializable {
 
         currentPieFadeOut.play();
         currentBarFadeOut.play();
+        if (categories.isEmpty()) {
+            categories.add("No Data");
+        }
 
+        xAxis.setCategories(categories);
+        xAxis.setTickLabelsVisible(true);
         xAxis.setLabel("Phim");
     }
 
@@ -305,7 +343,6 @@ public class Dashboard implements Initializable {
                 label.setMaxWidth(150);
                 label.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
                 label.setStyle("-fx-font-size: 10px;");
-                // Chỉ hiển thị nhãn nếu có dữ liệu và nhãn nằm trong danh mục hiện tại
                 label.setVisible(!barChart.getData().isEmpty() && xAxis.getCategories().contains(label.getText()));
             }
         }
@@ -317,7 +354,7 @@ public class Dashboard implements Initializable {
         String query = "SELECT m.name, b.seatNumbers, b.totalPrice " +
                       "FROM bookedTickets b " +
                       "JOIN movies m ON b.movieID = m.id " +
-                      "WHERE DATE(b.createDate) BETWEEN ? AND ? AND b.currentStatus = 1";
+                      "WHERE DATE(b.createDate) BETWEEN ? AND ?";
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -325,6 +362,7 @@ public class Dashboard implements Initializable {
 
         Map<String, Integer> ticketCountByMovie = new HashMap<>();
         Map<String, Double> revenueByMovie = new HashMap<>();
+        double totalValue = 0;
 
         try (Connection conn = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -348,18 +386,19 @@ public class Dashboard implements Initializable {
 
                 double value = isTicketCount ? ticketCount : revenue;
                 PieChart.Data pieData = new PieChart.Data(movieName, value);
-                pieChartData.add(pieData);
+                pieChartData.add(pieData); // Xóa Tooltip ở đây
 
-                Tooltip tooltip = new Tooltip(movieName);
-                Tooltip.install(pieData.getNode(), tooltip);
+                totalValue += value;
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu: " + e.getMessage());
         }
 
-        String queryByDay = "SELECT DAY(b.createDate) as day, SUM(LENGTH(b.seatNumbers) - LENGTH(REPLACE(b.seatNumbers, ',', '')) + 1) as ticket_count, SUM(b.totalPrice) as revenue " +
+        String queryByDay = "SELECT DAY(b.createDate) as day, " +
+                           "SUM(LENGTH(b.seatNumbers) - LENGTH(REPLACE(b.seatNumbers, ',', '')) + 1) as ticket_count, " +
+                           "SUM(b.totalPrice) as revenue " +
                            "FROM bookedTickets b " +
-                           "WHERE DATE(b.createDate) BETWEEN ? AND ? AND b.currentStatus = 1 " +
+                           "WHERE DATE(b.createDate) BETWEEN ? AND ?" +
                            "GROUP BY DAY(b.createDate) " +
                            "ORDER BY DAY(b.createDate)";
         double maxValue = 0;
@@ -384,12 +423,15 @@ public class Dashboard implements Initializable {
 
             xAxis.setCategories(categories);
             xAxis.setTickLabelsVisible(true);
-            xAxis.requestAxisLayout();
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu: " + e.getMessage());
         }
 
         setupYAxis(maxValue, isTicketCount);
+
+        String totalText = isTicketCount ? String.format("Tổng: %d vé", (int) totalValue)
+                                       : String.format("Tổng: %.2f VND", totalValue);
+        totalLabel.setText(totalText);
 
         currentPieFadeOut = new FadeTransition(Duration.millis(500), pieChart);
         currentPieFadeOut.setFromValue(1.0);
@@ -399,11 +441,7 @@ public class Dashboard implements Initializable {
                 pieChart.setTitle("Không có dữ liệu");
             } else {
                 pieChart.setData(pieChartData);
-                pieChart.setTitle("");
-                for (PieChart.Data data : pieChart.getData()) {
-                    Tooltip tooltip = new Tooltip(data.getName());
-                    Tooltip.install(data.getNode(), tooltip);
-                }
+                pieChart.setTitle(""); // Xóa phần cài đặt lại Tooltip ở đây
             }
             currentPieFadeIn = new FadeTransition(Duration.millis(500), pieChart);
             currentPieFadeIn.setFromValue(0.0);
@@ -419,8 +457,6 @@ public class Dashboard implements Initializable {
                 barChart.setTitle("Không có dữ liệu");
                 xAxis.setCategories(FXCollections.observableArrayList());
                 clearAxisLabels();
-                xAxis.setTickLabelsVisible(true);
-                xAxis.requestAxisLayout();
             } else {
                 barChart.getData().removeIf(s -> s.getName().equals(series.getName()));
                 barChart.getData().add(series);
@@ -449,7 +485,7 @@ public class Dashboard implements Initializable {
         String query = "SELECT m.name, b.seatNumbers, b.totalPrice " +
                       "FROM bookedTickets b " +
                       "JOIN movies m ON b.movieID = m.id " +
-                      "WHERE DATE(b.createDate) BETWEEN ? AND ? AND b.currentStatus = 1";
+                      "WHERE DATE(b.createDate) BETWEEN ? AND ?";
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         XYChart.Series<String, Number> series = new XYChart.Series<>();
@@ -457,6 +493,7 @@ public class Dashboard implements Initializable {
 
         Map<String, Integer> ticketCountByMovie = new HashMap<>();
         Map<String, Double> revenueByMovie = new HashMap<>();
+        double totalValue = 0;
 
         try (Connection conn = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -480,18 +517,19 @@ public class Dashboard implements Initializable {
 
                 double value = isTicketCount ? ticketCount : revenue;
                 PieChart.Data pieData = new PieChart.Data(movieName, value);
-                pieChartData.add(pieData);
+                pieChartData.add(pieData); // Xóa Tooltip ở đây
 
-                Tooltip tooltip = new Tooltip(movieName);
-                Tooltip.install(pieData.getNode(), tooltip);
+                totalValue += value;
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu: " + e.getMessage());
         }
 
-        String queryByMonth = "SELECT MONTH(b.createDate) as month, SUM(LENGTH(b.seatNumbers) - LENGTH(REPLACE(b.seatNumbers, ',', '')) + 1) as ticket_count, SUM(b.totalPrice) as revenue " +
+        String queryByMonth = "SELECT MONTH(b.createDate) as month, " +
+                             "SUM(LENGTH(b.seatNumbers) - LENGTH(REPLACE(b.seatNumbers, ',', '')) + 1) as ticket_count, " +
+                             "SUM(b.totalPrice) as revenue " +
                              "FROM bookedTickets b " +
-                             "WHERE DATE(b.createDate) BETWEEN ? AND ? AND b.currentStatus = 1 " +
+                             "WHERE DATE(b.createDate) BETWEEN ? AND ?" +
                              "GROUP BY MONTH(b.createDate) " +
                              "ORDER BY MONTH(b.createDate)";
         double maxValue = 0;
@@ -516,12 +554,15 @@ public class Dashboard implements Initializable {
 
             xAxis.setCategories(categories);
             xAxis.setTickLabelsVisible(true);
-            xAxis.requestAxisLayout();
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu: " + e.getMessage());
         }
 
         setupYAxis(maxValue, isTicketCount);
+
+        String totalText = isTicketCount ? String.format("Tổng: %d vé", (int) totalValue)
+                                       : String.format("Tổng: %.2f VND", totalValue);
+        totalLabel.setText(totalText);
 
         currentPieFadeOut = new FadeTransition(Duration.millis(500), pieChart);
         currentPieFadeOut.setFromValue(1.0);
@@ -531,11 +572,7 @@ public class Dashboard implements Initializable {
                 pieChart.setTitle("Không có dữ liệu");
             } else {
                 pieChart.setData(pieChartData);
-                pieChart.setTitle("");
-                for (PieChart.Data data : pieChart.getData()) {
-                    Tooltip tooltip = new Tooltip(data.getName());
-                    Tooltip.install(data.getNode(), tooltip);
-                }
+                pieChart.setTitle(""); // Xóa phần cài đặt lại Tooltip ở đây
             }
             currentPieFadeIn = new FadeTransition(Duration.millis(500), pieChart);
             currentPieFadeIn.setFromValue(0.0);
@@ -551,8 +588,6 @@ public class Dashboard implements Initializable {
                 barChart.setTitle("Không có dữ liệu");
                 xAxis.setCategories(FXCollections.observableArrayList());
                 clearAxisLabels();
-                xAxis.setTickLabelsVisible(true);
-                xAxis.requestAxisLayout();
             } else {
                 barChart.getData().removeIf(s -> s.getName().equals(series.getName()));
                 barChart.getData().add(series);

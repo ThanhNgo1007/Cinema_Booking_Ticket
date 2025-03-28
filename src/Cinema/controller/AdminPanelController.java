@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import Cinema.database.mysqlconnect;
-import Cinema.database.Movie;
-import Cinema.database.Showtime;
+import Cinema.util.Movie;
+import Cinema.util.Showtime;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -301,7 +301,7 @@ public class AdminPanelController implements Initializable {
         Scene scene = new Scene(scrollPane, 800, 400); // Kích thước cửa sổ: 800x400
 
         // Áp dụng CSS (nếu có)
-        URL cssURL = getClass().getResource("/resource/css/Showtime.css");
+        URL cssURL = getClass().getResource("/css/Showtime.css");
         if (cssURL != null) {
             scene.getStylesheets().add(cssURL.toExternalForm());
         } else {
@@ -342,12 +342,16 @@ public class AdminPanelController implements Initializable {
         TableColumn<Showtime, Integer> bookedSeatsCol = new TableColumn<>("Số ghế đã đặt");
         bookedSeatsCol.setCellValueFactory(new PropertyValueFactory<>("bookedSeatsCount"));
         bookedSeatsCol.setPrefWidth(100);
+        
+        TableColumn<Showtime, Integer> screenCol = new TableColumn<>("Phòng chiếu");
+        screenCol.setCellValueFactory(new PropertyValueFactory<>("screen"));
+        screenCol.setPrefWidth(100);
 
-        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, totalSeatsCol, bookedSeatsCol);
+        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, totalSeatsCol, bookedSeatsCol,screenCol);
 
         // Tải dữ liệu lịch chiếu từ bảng showtimes
         ObservableList<Showtime> showtimes = FXCollections.observableArrayList();
-        String query = "SELECT id_lichchieu, id_movie, date, time, totalNumberSeats, bookedSeatsCount FROM showtimes WHERE id_movie = ?";
+        String query = "SELECT id_lichchieu, id_movie, date, time, totalNumberSeats, bookedSeatsCount, screen FROM showtimes WHERE id_movie = ?";
 
         try (Connection conn = mysqlconnect.ConnectDb(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -361,7 +365,8 @@ public class AdminPanelController implements Initializable {
                 String showTime = rs.getString("time");
                 Integer totalNumberSeats = rs.getInt("totalNumberSeats");
                 Integer bookedSeatsCount = rs.getInt("bookedSeatsCount");
-                showtimes.add(new Showtime(id, movieId, showDate, showTime, totalNumberSeats, bookedSeatsCount));
+                Integer screen = rs.getInt("screen");
+                showtimes.add(new Showtime(id, movieId, showDate, showTime, totalNumberSeats, bookedSeatsCount,screen));
             }
 
             showtimeTable.setItems(showtimes);

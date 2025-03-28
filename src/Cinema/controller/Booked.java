@@ -16,16 +16,11 @@ public class Booked {
 
     @FXML
     private AnchorPane downloadTicketBt;
-
-    @FXML
-    private Button seeTicketBtn;
-
     @FXML
     void goBack(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
          stage.close();
-
     }
 
 }

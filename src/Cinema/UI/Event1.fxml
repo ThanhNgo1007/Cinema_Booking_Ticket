@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="603.0" prefWidth="1196.0" style="-fx-background-color: #fdfcf0;" stylesheets="@/css/Event.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Event1_Controller">
+   <children>
+      <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#goBack" text="Quay lại">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <VBox alignment="TOP_CENTER" layoutX="178.0" layoutY="46.0" prefHeight="557.0" prefWidth="1005.0" spacing="20.0">
+         <children>
+            <Text fx:id="text1" strokeType="OUTSIDE" strokeWidth="0.0" text="CÔ GÁI NĂM ẤY CHÚNG TA CÙNG THEO ĐUỔI - MUA 1 VÉ XEM PHIM , TẶNG 1 POSTER A4" textAlignment="CENTER" wrappingWidth="1085.53515625" />
+            <HBox alignment="TOP_CENTER" prefHeight="520.0" prefWidth="1160.0" spacing="30.0">
+               <children>
+                  <ImageView fitHeight="417.0" fitWidth="274.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/event/350wx495h.jpg" />
+                     </image>
+                  </ImageView>
+                  <VBox prefHeight="647.0" prefWidth="420.0" spacing="5.0">
+                     <children>
+                        <Text fx:id="text2" strokeType="OUTSIDE" strokeWidth="0.0" text="I. THÔNG TIN CHƯƠNG TRÌNH:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text fx:id="text3" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Nội dung chi tiết:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Từ ngày 21/03/2025, 50 khách hàng đầu tiên mua 01 vé xem phim CÔ GÁI NĂM ẤY CHÚNG TA CÙNG THEO ĐUỔI (YOU ARE THE APPLE OF MY EYE) và đến đổi quà quầy vé tại các rạp áp dụng chương trình khuyến mãi sẽ nhận được 01 poster A4 in chữ ký của Dahyun &amp; Jinyoung. Chương trình kéo dài đến khi hết quà." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="text4" layoutX="10.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="II. ĐIỀU KIỆN VÀ ĐIỀU KHOẢN" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text fx:id="text5" layoutX="10.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Thời gian đổi quà:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Từ ngày 21/03/2025 cho đến khi hết quà." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Chỉ áp dụng cho các suất chiếu từ ngày 21/03/2025" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Khách hàng mua vé sớm cần giữ cuống vé hợp lệ và chỉ có thể đổi quà từ ngày 21/03/2025." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="text6" layoutX="10.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2. Phạm vi áp dụng:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="224.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Áp dụng cho vé mua trực tiếp tại quầy hoặc online." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="239.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Quà tặng được phát theo thứ tự khách hàng đến đổi vé tại quầy trước sẽ nhận trước, mỗi vé được đổi 01 lần duy nhất" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="text7" layoutX="10.0" layoutY="255.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3. Số lượng quà có hạn:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="286.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Khi hết quà, rạp sẽ thông báo tại quầy vé. Khách vui lòng kiểm tra tình trạng quà với nhân viên trước khi đổi." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="text8" layoutX="10.0" layoutY="301.0" strokeType="OUTSIDE" strokeWidth="0.0" text="*KHÔNG ÁP DỤNG:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Đồng thời bất kì các chương trình khuyến mãi nào khác." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <!-- Nội dung của Event1 -->
+   </children>
+</AnchorPane>

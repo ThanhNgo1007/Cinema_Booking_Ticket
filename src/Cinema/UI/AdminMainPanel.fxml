@@ -15,9 +15,9 @@
 
 <BorderPane fx:id="mainPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminMainPanelController">
    <left>
-      <AnchorPane fx:id="menuPane" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="menuPane" prefHeight="832.0" prefWidth="188.0" stylesheets="@../../../bin/css/style.css" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="594.0" prefWidth="188.0">
+            <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="714.0" prefWidth="188.0" style="-fx-background-color: #fcfdf0;">
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
@@ -31,11 +31,11 @@
                         <Insets bottom="20.0" />
                      </VBox.margin>
                   </HBox>
-                  <VBox prefHeight="475.0" prefWidth="188.0">
+                  <VBox prefHeight="548.0" prefWidth="203.0">
                      <children>
                         <Label fx:id="home_name" alignment="CENTER" prefHeight="68.0" prefWidth="188.0" text="ADMIN">
                            <graphic>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="75.0" text="WELCOME, " />
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="75.0" text="XIN CHÀO," />
                            </graphic>
                            <VBox.margin>
                               <Insets bottom="40.0" />
@@ -49,7 +49,7 @@
                               <Insets bottom="30.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="btn_home" layoutX="7.0" prefHeight="46.0" prefWidth="195.0" text="HOME">
+                              <Label fx:id="btn_home" layoutX="7.0" prefHeight="46.0" prefWidth="195.0" text="TRANG CHỦ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -74,7 +74,7 @@
                               <Insets bottom="30.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="btn_addmovie" layoutX="6.0" prefHeight="44.0" prefWidth="195.0" text="ADD MOVIE">
+                              <Label fx:id="btn_addmovie" layoutX="6.0" prefHeight="44.0" prefWidth="195.0" text="QUẢN LÝ PHIM">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -96,7 +96,7 @@
                               <Insets bottom="30.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="btn_ticket" layoutX="7.0" prefHeight="44.0" prefWidth="196.0" text="BOOKING TICKET">
+                              <Label fx:id="btn_ticket" layoutX="7.0" prefHeight="44.0" prefWidth="196.0" text="QUẢN LÝ VÉ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -118,7 +118,7 @@
                               <Insets bottom="30.0" />
                            </VBox.margin>
                            <children>
-                              <Label fx:id="btn_support" layoutX="5.0" prefHeight="44.0" prefWidth="198.0" text="SUPPORT">
+                              <Label fx:id="btn_support" layoutX="5.0" prefHeight="44.0" prefWidth="198.0" text="HỖ TRỢ">
                                  <graphic>
                                     <ImageView fitHeight="30.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -135,8 +135,8 @@
                               </Label>
                            </children>
                         </AnchorPane>
-                        <Pane prefHeight="200.0" prefWidth="200.0" />
-                        <Label fx:id="logout_btn" alignment="CENTER" onMouseClicked="#logOutButton" text="LOG OUT">
+                        <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <Label fx:id="logout_btn" alignment="CENTER" onMouseClicked="#logOutButton" text="ĐĂNG XUẤT">
                            <VBox.margin>
                               <Insets left="40.0" />
                            </VBox.margin>
@@ -159,9 +159,9 @@
       </AnchorPane>
    </left>
    <top>
-      <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="60.0" prefWidth="1063.0" stylesheets="@../../resource/css/style.css" BorderPane.alignment="CENTER">
+      <HBox fx:id="hbox_top" alignment="CENTER" prefHeight="91.0" prefWidth="1063.0" stylesheets="@/css/style.css" BorderPane.alignment="CENTER">
          <children>
-            <StackPane prefHeight="40.0" prefWidth="291.0">
+            <StackPane prefHeight="169.0" prefWidth="269.0">
                <children>
                   <Label fx:id="btn_menuback" text="MENU">
                      <graphic>
@@ -174,8 +174,11 @@
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
+                     <StackPane.margin>
+                        <Insets right="60.0" />
+                     </StackPane.margin>
                   </Label>
-                  <Label fx:id="btn_menuback1" text="MENU">
+                  <Label fx:id="btn_menuback1" layoutX="28.0" layoutY="15.0" text="MENU">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -186,22 +189,22 @@
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
+                     <StackPane.margin>
+                        <Insets right="60.0" />
+                     </StackPane.margin>
                   </Label>
                </children>
                <HBox.margin>
-                  <Insets top="20.0" />
+                  <Insets />
                </HBox.margin>
             </StackPane>
             <Pane prefHeight="49.0" prefWidth="429.0" HBox.hgrow="ALWAYS" />
-            <Label alignment="CENTER" prefHeight="40.0" prefWidth="570.0" text="CINEMA BOOKING TICKET ADMIN PANEL">
+            <Label alignment="CENTER" prefHeight="40.0" prefWidth="570.0" text="QUẢN LÝ PHẦN MỀM ">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
                <HBox.margin>
-                  <Insets top="20.0" />
+                  <Insets />
                </HBox.margin></Label>
             <Pane layoutX="64.0" layoutY="10.0" prefHeight="43.0" prefWidth="416.0" HBox.hgrow="ALWAYS" />
             <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">

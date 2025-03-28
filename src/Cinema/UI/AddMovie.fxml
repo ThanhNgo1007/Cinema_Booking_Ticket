@@ -26,7 +26,7 @@
                <content>
                   <VBox alignment="TOP_CENTER" prefHeight="765.0" prefWidth="387.0" spacing="15.0">
                      <children>
-                        <Label text="ADD NEW FILM">
+                        <Label text="THÊM PHIM MỚI">
                            <VBox.margin>
                               <Insets top="15.0" />
                            </VBox.margin>
@@ -36,8 +36,8 @@
                         </Label>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Image: " />
-                              <Button fx:id="uploadImageButton" mnemonicParsing="false" onMouseClicked="#handleUploadImage" prefHeight="25.0" prefWidth="300.0" text="UPLOAD MOVIE IMAGE">
+                              <Label text="Ảnh: " />
+                              <Button fx:id="uploadImageButton" mnemonicParsing="false" onMouseClicked="#handleUploadImage" prefHeight="25.0" prefWidth="300.0" text="CHỌN ẢNH">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -53,7 +53,7 @@
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Movie ID:  " />
+                              <Label text="ID Phim: " />
                               <TextField fx:id="movieIdField" prefHeight="25.0" prefWidth="300.0" promptText="Enter ID" />
                            </children>
                         </HBox>
@@ -65,38 +65,38 @@
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Title: " />
+                              <Label text="Tên phim: " />
                               <TextField fx:id="titleField" prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Director: " />
+                              <Label text="Đạo diễn: " />
                               <TextField fx:id="directorField" prefHeight="25.0" prefWidth="300.0" promptText="Enter Title" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Actor/Actress: " />
+                              <Label text="Diễn viên: " />
                               <TextArea fx:id="actorField" prefHeight="38.0" prefWidth="280.0" promptText="Enter Actor/Actress" wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="369.0">
                            <children>
-                              <Label text="Gerne: " />
+                              <Label text="Thể loại: " />
                               <TextArea fx:id="genreField" prefHeight="38.0" prefWidth="280.0" promptText="Enter gener..." wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="121.0" prefWidth="369.0">
                            <children>
-                              <Label text="Description: " />
+                              <Label text="Mô tả: " />
                               <TextArea fx:id="descriptionField" prefHeight="121.0" prefWidth="280.0" promptText="Description" wrapText="true" />
                            </children>
                         </HBox>
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
                            <children>
                               <Pane prefHeight="25.0" prefWidth="0.0" />
-                              <Label text="Date Release: " />
+                              <Label text="Ngày phát hành: " />
                               <TextField fx:id="dateRelease" prefHeight="26.0" prefWidth="277.0" promptText="Enter date.." />
                               <VBox />
                               <VBox />
@@ -114,7 +114,7 @@
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
                            <children>
                               <Pane prefHeight="25.0" prefWidth="0.0" />
-                              <Label fx:id="duration" text="Duration: " />
+                              <Label fx:id="duration" text="Thời lượng: " />
                               <TextField fx:id="durationField" prefHeight="26.0" prefWidth="277.0" promptText="Enter duration of movie" />
                               <VBox />
                               <VBox />
@@ -123,7 +123,7 @@
                         <HBox alignment="TOP_RIGHT" prefHeight="29.0" prefWidth="247.0">
                            <children>
                               <Pane prefHeight="25.0" prefWidth="0.0" />
-                              <Label text="Price: " />
+                              <Label text="Giá cơ bản: " />
                               <TextField fx:id="basePrice" prefHeight="26.0" prefWidth="277.0" promptText="Enter price of normal ticket" />
                               <VBox />
                               <VBox />
@@ -175,13 +175,13 @@
                   <Pane prefHeight="200.0" prefWidth="200.0" />
                   <HBox alignment="BOTTOM_CENTER" prefHeight="52.0" prefWidth="445.0">
                      <children>
-                        <Button fx:id="cancelButton" mnemonicParsing="false" onMouseClicked="#handleBackBtnClicked" prefHeight="46.0" prefWidth="120.0" style="-fx-background-color: RED;" text="CANCEL" textFill="WHITE">
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onMouseClicked="#handleBackBtnClicked" prefHeight="46.0" prefWidth="120.0" style="-fx-background-color: #de6058; -fx-font-weight: bold;" text="HUỶ" textFill="WHITE">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
                         <Pane prefHeight="44.0" prefWidth="124.0" />
-                        <Button mnemonicParsing="false" onMouseClicked="#handleAddMovie" prefHeight="46.0" prefWidth="129.0" style="-fx-background-color: GREEN;" text="APPLY" textFill="WHITE" />
+                        <Button mnemonicParsing="false" onMouseClicked="#handleAddMovie" prefHeight="46.0" prefWidth="129.0" style="-fx-background-color: #7fd265; -fx-font-weight: bold;" text="XÁC NHẬN" textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />

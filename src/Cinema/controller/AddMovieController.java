@@ -106,7 +106,7 @@ public class AddMovieController {
 	            return;
 	        }
 
-	        try (Connection conn = mysqlconnect.ConnectDb("jdbc:mysql://localhost/Cinema_DB", "root", "")) {
+	        try (Connection conn = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD)) {
 	            String sql = "INSERT INTO movies (id, name, gener, actorList, director, description, duration, ratings, releaseDate, basePrice, posterImage, trailer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	            PreparedStatement stmt = conn.prepareStatement(sql);
 	            stmt.setString(1, movieId);

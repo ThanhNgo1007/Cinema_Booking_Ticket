@@ -2,10 +2,21 @@ package Cinema.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.ArrayList;
+
+import Cinema.database.JSONUtility;
+import Cinema.database.JSONUtility.MovieData;
+import Cinema.database.mysqlconnect;
+import Cinema.util.SeatButton;
+import Cinema.util.SeatType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,27 +35,16 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import Cinema.database.JSONUtility;
-import Cinema.database.JSONUtility.MovieData;
-import Cinema.database.mysqlconnect;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DecimalFormat;
-
 public class SelectSeats implements Initializable {
     private Stage stage;
     private Scene scene;
     private Parent root;
 
     public JSONUtility util;
-
-    public String selectedSeats[] = {};
+    public String[] selectedSeats = {};
     public int totalPrice = 0, basePrice = 0;
-    private String id_lichchieu; // Lưu id_lichchieu của suất chiếu
-    private int totalNumberSeats; // Tổng số ghế của suất chiếu
+    private String id_lichchieu;
+    private int totalNumberSeats;
     private static final DecimalFormat formatter = new DecimalFormat("#,###");
 
     @FXML
@@ -53,136 +53,109 @@ public class SelectSeats implements Initializable {
     private ScrollPane scrollPane;
     @FXML
     private HBox premiumHbox, normalHbox, vipHbox;
-
     @FXML
     private Label premiumPrice, normalPrice, vipPrice;
-
     @FXML
     private Button proceedToPaymentBtn, cancelBtn;
 
-    // Lưu giá của từng ghế dựa trên loại ghế
-    private static class SeatButton extends Button {
-        private int seatPrice; // Giá của ghế
-
-        public SeatButton(String text, int seatPrice) {
-            super(text);
-            this.seatPrice = seatPrice;
-        }
-
-        public int getSeatPrice() {
-            return seatPrice;
-        }
-    }
+    
 
     public SelectSeats() {
         this.util = new JSONUtility();
     }
 
-    // Phương thức để khởi tạo với id_lichchieu và totalNumberSeats
     public void initializeSeatSelection(String id_lichchieu, int totalNumberSeats) {
         this.id_lichchieu = id_lichchieu;
         this.totalNumberSeats = totalNumberSeats;
-        initialize(null, null); // Gọi lại initialize để cập nhật giao diện
+        initialize(null, null);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         MovieData moviedata = util.getMovieJson();
-
         if (moviedata == null) {
             cancelBtn.fire();
             return;
         }
-        
 
-     // Trong phương thức
-     int basePrice = moviedata.basePrice;
+        basePrice = moviedata.basePrice;
+        premiumPrice.setText(formatter.format(basePrice + SeatType.PREMIUM.getPriceOffset()) + " đ");
+        normalPrice.setText(formatter.format(basePrice + SeatType.NORMAL.getPriceOffset()) + " đ");
+        vipPrice.setText(formatter.format(basePrice + SeatType.VIP.getPriceOffset()) + " đ");
 
-     premiumPrice.setText(formatter.format(basePrice + 50000) + " đ");
-     normalPrice.setText(formatter.format(basePrice + 30000) + " đ");
-     vipPrice.setText(formatter.format(basePrice) + " đ");
-     
         double paneWidth = Screen.getPrimary().getBounds().getWidth();
         seatsPane.setPrefWidth(paneWidth);
-        GridPane selectSeatsWrap1 = new GridPane(); // Premium
-        selectSeatsWrap1.setHgap(10);
-        GridPane selectSeatsWrap2 = new GridPane(); // Normal
-        selectSeatsWrap2.setVgap(10);
-        selectSeatsWrap2.setHgap(10);
-        GridPane selectSeatsWrap3 = new GridPane(); // VIP
-        selectSeatsWrap3.setHgap(10);
 
-        // Lấy id_lichchieu từ JSON (thay vì từ biến instance)
+        GridPane premiumGrid = new GridPane();
+        premiumGrid.setHgap(10);
+        GridPane vipGrid = new GridPane();
+        vipGrid.setVgap(10);
+        vipGrid.setHgap(10);
+        GridPane normalGrid = new GridPane();
+        normalGrid.setHgap(10);
+
         String jsonIdLichChieu = moviedata.id;
-
-        // Lấy danh sách ghế đã đặt từ CSDL dựa trên id_lichchieu từ JSON
         String[] bookedSeats = getBookedSeatsFromDatabase(jsonIdLichChieu);
-        moviedata.bookedSeats = bookedSeats; // Cập nhật bookedSeats trong JSON
+        moviedata.bookedSeats = bookedSeats;
 
-        // Hiển thị ghế dựa trên totalNumberSeats
         int maxSeats = Math.min(totalNumberSeats, 150);
         for (int i = maxSeats - 1; i >= 0; i--) {
             String seatCode = getSeatCode(i);
+            SeatType seatType;
             int seatPrice;
 
-            // Xác định giá của ghế dựa trên loại ghế
-            if (i >= 140) { // Premium (A-J, hàng 19-20)
-                seatPrice = basePrice + 50000;
-            } else if (i < 10) { // VIP (H-J, hàng 0-1)
-                seatPrice = basePrice;
-            } else { // Normal (K-G, hàng 2-18)
-                seatPrice = basePrice + 30000;
+            // Assign seat types and prices (VIP and NORMAL swapped)
+            if (i >= 140) { // Premium: Rows 19-20 (A-J)
+                seatType = SeatType.PREMIUM;
+                seatPrice = basePrice + SeatType.PREMIUM.getPriceOffset();
+            } else if (i >= 10 && i < 140) { // VIP: Rows 2-18 (K-G)
+                seatType = SeatType.VIP;
+                seatPrice = basePrice + SeatType.VIP.getPriceOffset();
+            } else { // Normal: Rows 0-1 (H-J)
+                seatType = SeatType.NORMAL;
+                seatPrice = basePrice + SeatType.NORMAL.getPriceOffset();
             }
 
             SeatButton btn = new SeatButton(seatCode, seatPrice);
             btn.setText(seatCode);
 
             boolean isBooked = checkAvailability(seatCode, bookedSeats);
-
             if (isBooked) {
                 btn.getStyleClass().add("booked-seats");
                 btn.setDisable(true);
             } else {
                 btn.getStyleClass().add("available-seats");
-                btn.setOnAction(event -> handleSelection(event));
+                btn.setOnAction(this::handleSelection);
             }
 
-            if (i >= 140) { // Premium (A-J, hàng 19-20)
-                selectSeatsWrap1.add(btn, i % 10, i / 10);
-            } else if (i < 10) { // VIP (H-J, hàng 0-1)
-                selectSeatsWrap3.add(btn, i % 10, i / 10);
-            } else { // Normal (K-G, hàng 2-18)
-                selectSeatsWrap2.add(btn, i % 10, 14 - i / 10);
+            // Place buttons in the appropriate grid
+            if (seatType == SeatType.PREMIUM) {
+                premiumGrid.add(btn, i % 10, i / 10);
+            } else if (seatType == SeatType.VIP) {
+                vipGrid.add(btn, i % 10, 14 - i / 10);
+            } else { // NORMAL
+                normalGrid.add(btn, i % 10, i / 10);
             }
         }
 
         premiumHbox.setPadding(new Insets(10, 0, 20, 0));
-        normalHbox.setPadding(new Insets(10, 0, 20, 0));
         vipHbox.setPadding(new Insets(10, 0, 20, 0));
-        premiumHbox.getChildren().add(selectSeatsWrap1);
-        normalHbox.getChildren().add(selectSeatsWrap2);
-        vipHbox.getChildren().add(selectSeatsWrap3);
+        normalHbox.setPadding(new Insets(10, 0, 20, 0));
+        premiumHbox.getChildren().add(premiumGrid);
+        vipHbox.getChildren().add(vipGrid);
+        normalHbox.getChildren().add(normalGrid);
 
-        // Khởi tạo totalPrice từ các ghế đã chọn trước đó (nếu có)
         totalPrice = 0;
         if (moviedata.selectedSeats != null) {
             selectedSeats = moviedata.selectedSeats;
             for (String seat : selectedSeats) {
-                int seatLevel = seatLevel(seat);
-                if (seatLevel == 2) { // Premium
-                    totalPrice += basePrice + 30000;
-                } else if (seatLevel == 1) { // VIP
-                    totalPrice += basePrice + 50000;
-                } else { // Normal
-                    totalPrice += basePrice;
-                }
+                totalPrice += basePrice + getSeatType(seat).getPriceOffset();
             }
             moviedata.totalPrice = totalPrice;
             util.updateMovieJson(selectedSeats, totalPrice);
         }
     }
 
-    // Lấy danh sách ghế đã đặt từ CSDL dựa trên id_lichchieu từ JSON
     private String[] getBookedSeatsFromDatabase(String id_lichchieu) {
         List<String> bookedSeatsList = new ArrayList<>();
         String url = "jdbc:mysql://localhost/Cinema_DB";
@@ -191,29 +164,23 @@ public class SelectSeats implements Initializable {
 
         try (Connection conn = mysqlconnect.ConnectDb(url, username, password);
              PreparedStatement pstmt = conn.prepareStatement("SELECT seatNumbers FROM bookedTickets WHERE showTimeID = ?")) {
-
             pstmt.setString(1, id_lichchieu);
             ResultSet rs = pstmt.executeQuery();
-
             while (rs.next()) {
                 String seatNumbers = rs.getString("seatNumbers");
                 if (seatNumbers != null && !seatNumbers.isEmpty()) {
-                    // Giả định seatNumbers là chuỗi phân tách bởi dấu phẩy
-                    String[] seats = seatNumbers.split(", ");
-                    bookedSeatsList.addAll(Arrays.asList(seats));
+                    bookedSeatsList.addAll(Arrays.asList(seatNumbers.split(", ")));
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi lấy ghế đã đặt: " + e.getMessage());
+            System.err.println("Error fetching booked seats: " + e.getMessage());
             e.printStackTrace();
         }
-
         return bookedSeatsList.toArray(new String[0]);
     }
 
     public void handleCancelBtnClick(ActionEvent event) throws IOException {
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        
         stage.close();
     }
 
@@ -225,24 +192,11 @@ public class SelectSeats implements Initializable {
             moviedata.numberOfSeats = selectedSeats.length;
             util.updateMovieJson(selectedSeats, totalPrice);
 
-            // Chuyển sang màn hình xác nhận
             Parent root = FXMLLoader.load(getClass().getResource("/Cinema/UI/ConfirmTicketUI.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 800, 496);
-
-            // Đặt Stage ở giữa màn hình
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root, 800, 496);
             stage.setScene(scene);
-
-            // Tính toán vị trí trung tâm thủ công
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            double screenWidth = screenBounds.getWidth();
-            double screenHeight = screenBounds.getHeight();
-            double stageWidth = 800;  // Kích thước Scene
-            double stageHeight = 496; // Kích thước Scene
-
-            stage.setX((screenWidth - stageWidth) / 2);
-            stage.setY((screenHeight - stageHeight) / 2);
-
+            centerStage(stage, 800, 496);
             stage.show();
         }
     }
@@ -253,9 +207,19 @@ public class SelectSeats implements Initializable {
         for (int i = 0; i < chs.length; i++) {
             chs[i] = (char) (startChar + i);
         }
-        String st2 = Character.toString(chs[num % 10]);
-        String str = Integer.toString(num / 10 + 1) + st2;
-        return str;
+        return (num / 10 + 1) + Character.toString(chs[num % 10]);
+    }
+
+    public boolean checkAvailability(String seat, String[] booked) {
+        return Arrays.asList(booked).contains(seat);
+    }
+
+    // Determine seat type based on seat code
+    private SeatType getSeatType(String seatCode) {
+        int seatNum = getSeatNumber(seatCode);
+        if (seatNum >= 140) return SeatType.PREMIUM;
+        else if (seatNum >= 10) return SeatType.VIP;
+        else return SeatType.NORMAL;
     }
 
     public int getSeatNumber(String seatCode) {
@@ -266,74 +230,39 @@ public class SelectSeats implements Initializable {
         }
         int seatCol = -1;
         for (int i = 0; i < chs.length; i++) {
-            if (chs[i] == seatCode.toCharArray()[1]) {
+            if (chs[i] == seatCode.charAt(seatCode.length() - 1)) {
                 seatCol = i;
                 break;
             }
         }
-        int seatRow = (Integer.parseInt(seatCode.substring(0, 1)) - 1) * 10;
-        int seatNum = seatRow + seatCol;
-        return seatNum;
-    }
-
-    public boolean checkAvailability(String seat, String[] booked) {
-        List<String> list = Arrays.asList(booked);
-        return list.contains(seat);
-    }
-
-    public int seatLevel(String str) {
-        if (str.charAt(0) == 'A') return 2; // Premium
-        else if (str.charAt(0) == 'H') return 1; // VIP
-        return 0; // Normal
-    }
-
-    public String[] getUpdatedSelection(String[] orgArr, int method, String el) {
-        String[] newArr = {};
-        if (method == 1) {
-            newArr = Arrays.copyOf(orgArr, orgArr.length + 1);
-            newArr[orgArr.length] = el;
-        }
-        if (method == 0) {
-            for (int i = 0; i < orgArr.length; i++) {
-                if (!el.equals(orgArr[i])) {
-                    newArr[i] = orgArr[i];
-                }
-            }
-        }
-        return newArr;
+        int seatRow = (Integer.parseInt(seatCode.substring(0, seatCode.length() - 1)) - 1) * 10;
+        return seatRow + seatCol;
     }
 
     public void handleSelection(ActionEvent event) {
         SeatButton btn = (SeatButton) event.getSource();
         boolean alreadySelected = Arrays.stream(selectedSeats).anyMatch(e -> e.equals(btn.getText()));
         if (alreadySelected) {
-            // Bỏ chọn ghế
             selectedSeats = Arrays.stream(selectedSeats).filter(el -> !el.equals(btn.getText())).toArray(String[]::new);
-            selectedSeats = Arrays.stream(selectedSeats).filter(el -> el != null).toArray(String[]::new);
             btn.getStyleClass().remove("selected-seats");
-            totalPrice -= btn.getSeatPrice(); // Giảm totalPrice dựa trên giá của ghế
+            totalPrice -= btn.getSeatPrice();
         } else {
-            // Chọn ghế
             selectedSeats = Arrays.copyOf(selectedSeats, selectedSeats.length + 1);
             selectedSeats[selectedSeats.length - 1] = btn.getText();
             btn.getStyleClass().add("selected-seats");
-            totalPrice += btn.getSeatPrice(); // Tăng totalPrice dựa trên giá của ghế
+            totalPrice += btn.getSeatPrice();
         }
-        // Cập nhật totalPrice và selectedSeats trong JSON
+
         MovieData moviedata = util.getMovieJson();
         moviedata.totalPrice = totalPrice;
         moviedata.selectedSeats = selectedSeats;
         moviedata.numberOfSeats = selectedSeats.length;
         util.updateMovieJson(selectedSeats, totalPrice);
     }
-    
-    // Hàm căn giữa Stage với kích thước tùy chỉnh
+
     private void centerStage(Stage stage, double width, double height) {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        stage.setX((screenWidth - width) / 2);
-        stage.setY((screenHeight - height) / 2);
+        stage.setX((screenBounds.getWidth() - width) / 2);
+        stage.setY((screenBounds.getHeight() - height) / 2);
     }
 }

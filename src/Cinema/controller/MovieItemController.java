@@ -2,7 +2,7 @@ package Cinema.controller;
 
 import java.io.IOException;
 
-import Cinema.database.Movie;
+import Cinema.util.Movie;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,7 +20,7 @@ import javafx.stage.StageStyle;
 
 public class MovieItemController {
 	@FXML
-    private Text setMovieGener;
+    private Label setMovieGener;
 
     @FXML
     private Text setMovieName;
@@ -61,25 +61,31 @@ public class MovieItemController {
         newStage.show();
     }
 
-   public void bookedButtonHandle(MouseEvent e) throws IOException {
-	// Chuyển sang trang chọn suất chiếu và truyền movieID
-       FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/ShowtimeSelection.fxml"));
-       Parent root = loader.load();
-       ShowtimeController controller = loader.getController();
-       
-       // Truyền movieID để lọc suất chiếu
-       controller.setMovieId(movieID);
+    @FXML
+    public void bookedButtonHandle(MouseEvent e) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/ShowtimeSelection.fxml"));
+        Parent root = loader.load();
+        ShowtimeController controller = loader.getController();
 
-       // Lấy stage hiện tại (cửa sổ gốc)
-       Stage currentStage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        controller.setMovieId(movieID);
 
-       // Tạo cửa sổ mới
-       Stage newStage = new Stage();
-       Scene scene = new Scene(root);
-       newStage.setScene(scene);
-       newStage.show();
-	   
-   }
+        Stage newStage = new Stage();
+        Scene scene = new Scene(root);
+
+        newStage.setScene(scene);
+        newStage.initModality(Modality.APPLICATION_MODAL);
+        newStage.initStyle(StageStyle.UNDECORATED); // Ẩn thanh tiêu đề
+        newStage.show();
+
+        // Khi cửa sổ mất focus, tự động đóng lại
+        newStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                newStage.close();
+            }
+        });
+    }
+
+
 //   set to display data to screen
 	public void setData(Movie movie) {
 		movieID = movie.getMovieID();

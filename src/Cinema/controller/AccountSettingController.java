@@ -12,14 +12,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import Cinema.database.JSONUtility;
 import Cinema.database.JSONUtility.User;
+import Cinema.util.District;
+import Cinema.util.Province;
+import Cinema.util.Ward;
 import Cinema.database.mysqlconnect;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.google.gson.Gson;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AccountSettingController {
 
@@ -31,6 +41,15 @@ public class AccountSettingController {
 
     @FXML
     private ComboBox<String> cityField;
+
+    @FXML
+    private ComboBox<String> quanField;
+
+    @FXML
+    private ComboBox<String> phuongField;
+
+    @FXML
+    private TextField homeAddressField;
 
     @FXML
     private Text emailField;
@@ -53,7 +72,14 @@ public class AccountSettingController {
     private String initialLastName;
     private String initialPhone;
     private String initialCity;
+    private String initialQuan;
+    private String initialPhuong;
+    private String initialHomeAddress;
     private int userId;
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final Gson gson = new Gson();
+    private List<Province> provinces; // Lưu danh sách tỉnh
 
     @FXML
     public void initialize() {
@@ -68,14 +94,139 @@ public class AccountSettingController {
             System.out.println("Error: Could not retrieve user data from JSONUtility");
             emailField.setText("Không xác định được người dùng");
         }
-        loadCities();
 
+        loadProvincesFromApi(); // Tải danh sách tỉnh trực tiếp từ API
         setupChangeListeners();
     }
 
-    // Hàm lấy thông tin người dùng từ bảng users
+    private void loadProvincesFromApi() {
+        System.out.println("Loading provinces from API...");
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/")) // Chỉ lấy danh sách tỉnh
+                .GET()
+                .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("API response status: " + response.statusCode());
+            if (response.statusCode() == 200) {
+                provinces = List.of(gson.fromJson(response.body(), Province[].class));
+                ObservableList<String> cityNames = FXCollections.observableArrayList(
+                    provinces.stream().map(Province::getName).collect(Collectors.toList())
+                );
+                cityField.setItems(cityNames);
+                System.out.println("Loaded " + cityNames.size() + " provinces: " + cityNames);
+
+                if (initialCity != null && cityNames.contains(initialCity)) {
+                    cityField.setValue(initialCity);
+                    loadDistrictsForProvince(initialCity);
+                } else {
+                    cityField.setValue("Thành phố Hà Nội");
+                    loadDistrictsForProvince("Thành phố Hà Nội");
+                }
+            } else {
+                System.err.println("API call failed with status: " + response.statusCode());
+                cityField.setItems(FXCollections.observableArrayList("Hà Nội", "Hồ Chí Minh", "Đà Nẵng"));
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading provinces: " + e.getMessage());
+            cityField.setItems(FXCollections.observableArrayList("Hà Nội", "Hồ Chí Minh", "Đà Nẵng"));
+        }
+    }
+
+    private void loadDistrictsForProvince(String provinceName) {
+        System.out.println("Loading districts for province: " + provinceName);
+        quanField.getItems().clear();
+        phuongField.getItems().clear();
+
+        Province selectedProvince = provinces.stream()
+            .filter(p -> p.getName().equals(provinceName))
+            .findFirst()
+            .orElse(null);
+
+        if (selectedProvince == null) {
+            System.err.println("No province found for: " + provinceName);
+            return;
+        }
+
+        int provinceCode = selectedProvince.getCode();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/p/" + provinceCode + "?depth=2"))
+                .GET()
+                .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                Province provinceData = gson.fromJson(response.body(), Province.class);
+                List<District> districts = provinceData.getDistricts();
+                ObservableList<String> districtNames = FXCollections.observableArrayList(
+                    districts.stream().map(District::getName).collect(Collectors.toList())
+                );
+                quanField.setItems(districtNames);
+                System.out.println("Loaded " + districtNames.size() + " districts: " + districtNames);
+
+                if (initialQuan != null && districtNames.contains(initialQuan)) {
+                    quanField.setValue(initialQuan);
+                    loadWardsForDistrict(initialQuan, districts);
+                } else if (!districtNames.isEmpty()) {
+                    quanField.setValue(districtNames.get(0));
+                    loadWardsForDistrict(districtNames.get(0), districts);
+                }
+            } else {
+                System.err.println("Failed to load districts, status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading districts: " + e.getMessage());
+        }
+    }
+
+    private void loadWardsForDistrict(String districtName, List<District> districts) {
+        System.out.println("Loading wards for district: " + districtName);
+        phuongField.getItems().clear();
+
+        District selectedDistrict = districts.stream()
+            .filter(d -> d.getName().equals(districtName))
+            .findFirst()
+            .orElse(null);
+
+        if (selectedDistrict == null) {
+            System.err.println("No district found for: " + districtName);
+            return;
+        }
+
+        int districtCode = selectedDistrict.getCode();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://provinces.open-api.vn/api/d/" + districtCode + "?depth=2"))
+                .GET()
+                .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                District districtData = gson.fromJson(response.body(), District.class);
+                List<Ward> wards = districtData.getWards();
+                ObservableList<String> wardNames = FXCollections.observableArrayList(
+                    wards.stream().map(Ward::getName).collect(Collectors.toList())
+                );
+                phuongField.setItems(wardNames);
+                System.out.println("Loaded " + wardNames.size() + " wards: " + wardNames);
+
+                if (initialPhuong != null && wardNames.contains(initialPhuong)) {
+                    phuongField.setValue(initialPhuong);
+                } else if (!wardNames.isEmpty()) {
+                    phuongField.setValue(wardNames.get(0));
+                }
+            } else {
+                System.err.println("Failed to load wards, status: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading wards: " + e.getMessage());
+        }
+    }
+
     private void loadUserData(String userEmail) {
-        String query = "SELECT first_name, last_name, phone_num, city FROM users WHERE email = ?";
+        String query = "SELECT first_name, last_name, phone_num, city, quan, phuong, homeAddress FROM users WHERE email = ?";
         try (Connection con = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement ps = con.prepareStatement(query)) {
             ps.setString(1, userEmail);
@@ -87,11 +238,14 @@ public class AccountSettingController {
                 initialLastName = rs.getString("last_name");
                 initialPhone = rs.getString("phone_num");
                 initialCity = rs.getString("city");
+                initialQuan = rs.getString("quan");
+                initialPhuong = rs.getString("phuong");
+                initialHomeAddress = rs.getString("homeAddress");
 
                 firstNameField.setText(initialFirstName);
                 lastNameField.setText(initialLastName);
                 phoneField.setText(initialPhone);
-                cityField.setValue(initialCity);
+                homeAddressField.setText(initialHomeAddress);
             } else {
                 System.out.println("User not found in database for email: " + userEmail);
             }
@@ -100,55 +254,55 @@ public class AccountSettingController {
         }
     }
 
-    // Hàm lấy danh sách tỉnh/thành từ bảng cities
-    private void loadCities() {
-        ObservableList<String> cities = FXCollections.observableArrayList();
-        String query = "SELECT city_name FROM cities";
-        try (Connection con = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement ps = con.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                cities.add(rs.getString("city_name"));
-            }
-            cityField.setItems(cities);
-        } catch (Exception e) {
-            System.out.println("Error loading cities: " + e.getMessage());
-            cities.addAll("Hanoi", "Ho Chi Minh City", "Da Nang", "Hai Phong");
-            cityField.setItems(cities);
-        }
-    }
-
-    // Theo dõi thay đổi trong các trường
     private void setupChangeListeners() {
-        ChangeListener<String> changeListener = new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkForChanges();
+        cityField.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                loadDistrictsForProvince(newValue);
             }
-        };
+        });
 
+        quanField.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && cityField.getValue() != null) {
+                Province selectedProvince = provinces.stream()
+                    .filter(p -> p.getName().equals(cityField.getValue()))
+                    .findFirst()
+                    .orElse(null);
+                if (selectedProvince != null) {
+                    loadWardsForDistrict(newValue, selectedProvince.getDistricts());
+                }
+            }
+        });
+
+        ChangeListener<String> changeListener = (observable, oldValue, newValue) -> checkForChanges();
         firstNameField.textProperty().addListener(changeListener);
         lastNameField.textProperty().addListener(changeListener);
         phoneField.textProperty().addListener(changeListener);
         cityField.valueProperty().addListener(changeListener);
+        quanField.valueProperty().addListener(changeListener);
+        phuongField.valueProperty().addListener(changeListener);
+        homeAddressField.textProperty().addListener(changeListener);
     }
 
-    // Kiểm tra xem có thay đổi nào không
     private void checkForChanges() {
         String currentFirstName = firstNameField.getText();
         String currentLastName = lastNameField.getText();
         String currentPhone = phoneField.getText();
         String currentCity = cityField.getValue();
+        String currentQuan = quanField.getValue();
+        String currentPhuong = phuongField.getValue();
+        String currentHomeAddress = homeAddressField.getText();
 
         boolean hasChanges = !(currentFirstName.equals(initialFirstName) &&
                               currentLastName.equals(initialLastName) &&
                               currentPhone.equals(initialPhone) &&
-                              (currentCity == null ? initialCity == null : currentCity.equals(initialCity)));
+                              (currentCity == null ? initialCity == null : currentCity.equals(initialCity)) &&
+                              (currentQuan == null ? initialQuan == null : currentQuan.equals(initialQuan)) &&
+                              (currentPhuong == null ? initialPhuong == null : currentPhuong.equals(initialPhuong)) &&
+                              (currentHomeAddress == null ? initialHomeAddress == null : currentHomeAddress.equals(initialHomeAddress)));
 
         applyButton.setDisable(!hasChanges);
     }
 
-    // Xử lý sự kiện nút "Lưu"
     @FXML
     private void handleApplyButton() {
         String email = emailField.getText();
@@ -156,15 +310,21 @@ public class AccountSettingController {
         String lastName = lastNameField.getText();
         String phone = phoneField.getText();
         String city = cityField.getValue();
+        String quan = quanField.getValue();
+        String phuong = phuongField.getValue();
+        String homeAddress = homeAddressField.getText();
 
-        String query = "UPDATE users SET first_name = ?, last_name = ?, phone_num = ?, city = ? WHERE email = ?";
+        String query = "UPDATE users SET first_name = ?, last_name = ?, phone_num = ?, city = ?, quan = ?, phuong = ?, homeAddress = ? WHERE email = ?";
         try (Connection con = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement ps = con.prepareStatement(query)) {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
             ps.setString(3, phone);
             ps.setString(4, city);
-            ps.setString(5, email);
+            ps.setString(5, quan);
+            ps.setString(6, phuong);
+            ps.setString(7, homeAddress);
+            ps.setString(8, email);
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("User data updated successfully");
@@ -172,19 +332,19 @@ public class AccountSettingController {
                 initialLastName = lastName;
                 initialPhone = phone;
                 initialCity = city;
+                initialQuan = quan;
+                initialPhuong = phuong;
+                initialHomeAddress = homeAddress;
                 applyButton.setDisable(true);
 
-                // Cập nhật userdata.json
-                JSONUtility.storeUserData(userId, firstName, lastName, email, phone, city);
+                JSONUtility.storeUserData(userId, firstName, lastName, email, phone, city, quan, phuong, homeAddress);
                 System.out.println("userdata.json updated successfully");
 
-                // Hiển thị thông báo thành công
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Thành công");
                 alert.setHeaderText(null);
                 alert.setContentText("Cập nhật thông tin thành công!");
                 alert.showAndWait().ifPresent(response -> {
-                    // Sau khi nhấn OK, chuyển về màn hình Home
                     try {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/Home.fxml"));
                         Parent root = loader.load();
@@ -200,11 +360,6 @@ public class AccountSettingController {
                 });
             } else {
                 System.out.println("No user found to update for email: " + email);
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Lỗi");
-                alert.setHeaderText(null);
-                alert.setContentText("Không tìm thấy người dùng để cập nhật!");
-                alert.showAndWait();
             }
         } catch (Exception e) {
             System.out.println("Error updating user data: " + e.getMessage());
@@ -216,9 +371,8 @@ public class AccountSettingController {
         }
     }
 
-    // Xử lý sự kiện nút "Đổi mật khẩu"
     @FXML
     private void handleChangePasswordButton() {
-        System.out.println("Change password button clicked - Implement this feature!");
+        // Chưa triển khai
     }
 }

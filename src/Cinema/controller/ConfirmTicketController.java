@@ -60,10 +60,10 @@ public class ConfirmTicketController {
 
         root = FXMLLoader.load(getClass().getResource("/Cinema/UI/Booked.fxml"));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root, 800, 500); // Kích thước cho Booked.fxml
+        scene = new Scene(root, 900, 600); // Kích thước cho Booked.fxml
 
         stage.setScene(scene);
-        centerStage(stage, 800, 500); // Căn giữa với kích thước 900x600
+        centerStage(stage, 900, 600); // Căn giữa với kích thước 900x600
         stage.show();
     }
 
@@ -141,7 +141,7 @@ public class ConfirmTicketController {
                 return;
             }
 
-            String sql = "INSERT INTO bookedTickets (userId, movieId, seatNumbers, showTimeID, basePrice, totalPrice, status, currentStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO bookedTickets (userId, movieId, seatNumbers, showTimeID, basePrice, totalPrice, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, userId);
                 pstmt.setString(2, getMovieId());
@@ -150,7 +150,6 @@ public class ConfirmTicketController {
                 pstmt.setInt(5, moviedata.basePrice);
                 pstmt.setInt(6, moviedata.totalPrice);
                 pstmt.setInt(7, 1);
-                pstmt.setBoolean(8, true);
 
                 pstmt.executeUpdate();
                 System.out.println("Đã lưu vé vào cơ sở dữ liệu cho userId: " + userId);

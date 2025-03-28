@@ -78,7 +78,7 @@ public class AdminMainPanelController implements Initializable {
         btn_addmovie.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/AdminPanel.fxml", btn_addmovie));
         btn_home.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Dashboard.fxml", btn_home));
         btn_support.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/ServerForm.fxml", btn_support));
-        btn_ticket.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Ticket.fxml", btn_ticket));
+        btn_ticket.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/AdminTickets.fxml", btn_ticket));
     }
 
     private void hideMenu() {
