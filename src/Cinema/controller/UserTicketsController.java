@@ -47,14 +47,31 @@ public class UserTicketsController implements Initializable {
     @FXML private TableColumn<Ticket, String> colSeats;
     @FXML private TableColumn<Ticket, String> colShowtime;
     @FXML private TableColumn<Ticket, String> colBookingDate;
+    @FXML private TableColumn<Ticket, Integer> colScreen;
+
     @FXML private TextField searchField;
+
+    @FXML private Button btnFirstPage;
+    @FXML private Button btnPrevPage;
+    @FXML private Label lblPageInfo;
+    @FXML private Button btnNextPage;
+    @FXML private Button btnLastPage;
+    @FXML private Label lblTotalTickets;
 
     private ObservableList<Ticket> ticketList = FXCollections.observableArrayList();
     private ObservableList<Ticket> filteredTicketList = FXCollections.observableArrayList();
+    private ObservableList<Ticket> pagedTicketList = FXCollections.observableArrayList();
+    
     private String userID;
     private static final String URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String USER = "root";
     private static final String PASSWORD = "";
+    
+    // Biến phân trang
+    private static final int ITEMS_PER_PAGE = 10;
+    private int currentPage = 1;
+    private int totalPages = 1;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -89,9 +106,14 @@ public class UserTicketsController implements Initializable {
 
         // Xử lý sự kiện khi thay đổi từ khóa tìm kiếm
         searchField.textProperty().addListener((obs, oldValue, newValue) -> filterAndSortTickets());
-       
-
+        
+        // Xử lý sự kiện cho các nút phân trang
+        btnFirstPage.setOnAction(event -> goToFirstPage());
+        btnPrevPage.setOnAction(event -> goToPrevPage());
+        btnNextPage.setOnAction(event -> goToNextPage());
+        btnLastPage.setOnAction(event -> goToLastPage());
     }
+
 
     private void setupTable() {
         colTicketId.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getTicketId())));
@@ -99,9 +121,11 @@ public class UserTicketsController implements Initializable {
         colTotalPrice.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
         colSeats.setCellValueFactory(new PropertyValueFactory<>("seats"));
         colShowtime.setCellValueFactory(new PropertyValueFactory<>("showtime"));
+        colScreen.setCellValueFactory(new PropertyValueFactory<>("screen"));
         colBookingDate.setCellValueFactory(new PropertyValueFactory<>("bookingDate"));
-        ticketTable.setItems(filteredTicketList);
+        ticketTable.setItems(pagedTicketList); // Sử dụng pagedTicketList thay vì filteredTicketList
     }
+
 
     private void setupFiltersAndSort() {
         // Khởi tạo kiểu lọc
@@ -197,7 +221,7 @@ public class UserTicketsController implements Initializable {
 
     private void loadTicketsFromDatabase() {
         ticketList.clear();
-        String query = "SELECT t.id, t.movieID, t.totalPrice, t.seatNumbers, t.createDate, s.date, s.time, m.name " +
+        String query = "SELECT t.id, t.movieID, t.totalPrice, t.seatNumbers, t.createDate, s.date, s.time, m.name, s.screen " +
                       "FROM bookedTickets t " +
                       "JOIN showtimes s ON t.showtimeID = s.id_lichchieu " +
                       "JOIN movies m ON t.movieID = m.id " +
@@ -215,6 +239,7 @@ public class UserTicketsController implements Initializable {
                 String seats = rs.getString("seatNumbers");
                 String date = rs.getString("date"); // Định dạng: "2025-03-20"
                 String time = rs.getString("time");
+                int screen = rs.getInt("screen");
                 if (time == null || time.length() < 5) {
                     System.err.println("Time không hợp lệ cho ticket " + ticketId + ": " + time);
                     time = "00:00";
@@ -236,7 +261,9 @@ public class UserTicketsController implements Initializable {
                     bookingDateTime,
                     1,
                     "",
-                    ""
+                    "",
+                    screen
+                    
                 ));
             }
         } catch (SQLException e) {
@@ -248,20 +275,18 @@ public class UserTicketsController implements Initializable {
         filterAndSortTickets();
     }
 
-    private void filterAndSortTickets() {
-        // Bước 1: Lọc dữ liệu
-        filteredTicketList.clear();
-        String filterType = filterTypeComboBox.getValue();
-        if (filterType == null) {
-            filterType = "Tất cả"; // Đặt giá trị mặc định nếu filterType là null
-        }
+    	private void filterAndSortTickets() {
+            // Bước 1: Lọc dữ liệu (giữ nguyên như cũ)
+            filteredTicketList.clear();
+            String filterType = filterTypeComboBox.getValue();
+            if (filterType == null) {
+                filterType = "Tất cả";
+            }
 
-        // Lấy từ khóa tìm kiếm và chuyển thành chữ thường
-        String searchText = searchField.getText() != null ? searchField.getText().trim().toLowerCase() : "";
+            String searchText = searchField.getText() != null ? searchField.getText().trim().toLowerCase() : "";
 
-        // Lọc theo tiêu chí ngày, tháng, năm
-        List<Ticket> tempList = new ArrayList<>();
-        switch (filterType) {
+            List<Ticket> tempList = new ArrayList<>();
+            switch (filterType) {
             case "Theo ngày":
                 LocalDate selectedDate = datePicker.getValue();
                 if (selectedDate != null) {
@@ -314,30 +339,29 @@ public class UserTicketsController implements Initializable {
                 break;
         }
 
-        // Lọc theo từ khóa tìm kiếm
-        if (!searchText.isEmpty()) {
-            for (Ticket ticket : tempList) {
-                boolean matchesSearch = String.valueOf(ticket.getTicketId()).toLowerCase().contains(searchText) ||
-                                       ticket.getMovieName().toLowerCase().contains(searchText) ||
-                                       String.valueOf(ticket.getTotalPrice()).toLowerCase().contains(searchText) ||
-                                       ticket.getSeats().toLowerCase().contains(searchText) ||
-                                       ticket.getShowtime().toLowerCase().contains(searchText) ||
-                                       ticket.getBookingDate().toLowerCase().contains(searchText);
-                if (matchesSearch) {
-                    filteredTicketList.add(ticket);
+            if (!searchText.isEmpty()) {
+                for (Ticket ticket : tempList) {
+                    boolean matchesSearch = String.valueOf(ticket.getTicketId()).toLowerCase().contains(searchText) ||
+                                           ticket.getMovieName().toLowerCase().contains(searchText) ||
+                                           String.valueOf(ticket.getTotalPrice()).toLowerCase().contains(searchText) ||
+                                           ticket.getSeats().toLowerCase().contains(searchText) ||
+                                           ticket.getShowtime().toLowerCase().contains(searchText) ||
+                                           ticket.getBookingDate().toLowerCase().contains(searchText);
+                    if (matchesSearch) {
+                        filteredTicketList.add(ticket);
+                    }
                 }
+            } else {
+                filteredTicketList.addAll(tempList);
             }
-        } else {
-            filteredTicketList.addAll(tempList);
-        }
 
-        // Bước 2: Sắp xếp dữ liệu
-        String sortType = sortTypeComboBox.getValue();
-        if (sortType == null) {
-            sortType = "Không sắp xếp"; // Đặt giá trị mặc định nếu sortType là null
-        }
+            // Bước 2: Sắp xếp dữ liệu (giữ nguyên như cũ)
+            String sortType = sortTypeComboBox.getValue();
+            if (sortType == null) {
+                sortType = "Không sắp xếp";
+            }
 
-        switch (sortType) {
+            switch (sortType) {
             case "Giá vé: Thấp tới cao":
                 FXCollections.sort(filteredTicketList, Comparator.comparingDouble(Ticket::getTotalPrice));
                 break;
@@ -361,8 +385,66 @@ public class UserTicketsController implements Initializable {
                 // Không làm gì, giữ nguyên thứ tự
                 break;
         }
+            // Cập nhật tổng số vé
+            updateTotalTicketsCount();
+            updatePagination();
     }
+    	private void updatePagination() {
+            currentPage = 1; // Reset về trang đầu tiên khi lọc/sắp xếp
+            totalPages = (int) Math.ceil((double) filteredTicketList.size() / ITEMS_PER_PAGE);
+            if (totalPages == 0) totalPages = 1;
+            
+            updatePage();
+        }
 
+        private void updatePage() {
+            // Tính toán chỉ số bắt đầu và kết thúc
+            int fromIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, filteredTicketList.size());
+            
+            // Cập nhật danh sách hiển thị
+            pagedTicketList.setAll(filteredTicketList.subList(fromIndex, toIndex));
+            
+            // Cập nhật thông tin trang
+            lblPageInfo.setText(String.format("Trang %d/%d", currentPage, totalPages));
+            
+            // Cập nhật trạng thái các nút
+            btnFirstPage.setDisable(currentPage == 1);
+            btnPrevPage.setDisable(currentPage == 1);
+            btnNextPage.setDisable(currentPage == totalPages);
+            btnLastPage.setDisable(currentPage == totalPages);
+        }
+
+        private void goToFirstPage() {
+            currentPage = 1;
+            updatePage();
+        }
+
+        private void goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePage();
+            }
+        }
+
+        private void goToNextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePage();
+            }
+        }
+
+        private void goToLastPage() {
+            currentPage = totalPages;
+            updatePage();
+        }
+        
+     // Thêm phương thức cập nhật tổng số vé
+        private void updateTotalTicketsCount() {
+            int total = filteredTicketList.size();
+            lblTotalTickets.setText("Tổng số vé: " + total);
+        }
+        
     // Phương thức định dạng ngày từ "2025-03-20" thành "20-03-2025"
     private String formatDate(String date) {
         String[] parts = date.split("-");

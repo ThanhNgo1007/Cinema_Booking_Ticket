@@ -14,6 +14,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
@@ -30,9 +33,19 @@ public class ConfirmTicketController {
 
     private JSONUtility util = new JSONUtility();
     private MovieData moviedata;
+    private String voucherId = null;
+    private int discountAmount = 0;
 
     @FXML
-    private Label titleLabel, movieNameLabel, showtimeLabel, cinemaLabel, seatLabel, totalPriceLabel, totalPriceLabel1;
+    private Label titleLabel, movieNameLabel, showtimeLabel, cinemaLabel, seatLabel, 
+                  totalPriceLabel, totalPriceLabel1, voucherDiscountLabel;
+    @FXML
+    private TextField inputVoucher;
+    @FXML
+    private Text voucherDetail;
+    @FXML
+    private VBox voucherSection;
+
     private static final DecimalFormat formatter = new DecimalFormat("#,###");
 
     public void initialize() {
@@ -42,9 +55,94 @@ public class ConfirmTicketController {
             showtimeLabel.setText("Thời gian chiếu: " + moviedata.timing);
             cinemaLabel.setText("Rạp: CGV Sense City Cần Thơ ");
             seatLabel.setText("Ghế: " + String.join(", ", moviedata.selectedSeats));
-            totalPriceLabel.setText(formatter.format(moviedata.totalPrice) + " đ");
-            totalPriceLabel1.setText(formatter.format(moviedata.totalPrice) + " đ");
+            updatePriceLabels();
         }
+    }
+
+    @FXML
+    public void toggleVoucherSection() {
+        boolean isVisible = voucherSection.isVisible();
+        voucherSection.setVisible(!isVisible);
+        voucherSection.setManaged(!isVisible);
+    }
+
+    @FXML
+    public void handleApplyVoucher(ActionEvent event) {
+        String voucherCode = inputVoucher.getText().trim();
+        if (voucherCode.isEmpty()) {
+            voucherDetail.setText("Vui lòng nhập mã giảm giá");
+            return;
+        }
+
+        String url = "jdbc:mysql://localhost/Cinema_DB";
+        String username = "root";
+        String password = "";
+
+        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
+            if (conn == null) {
+                voucherDetail.setText("Lỗi kết nối cơ sở dữ liệu");
+                return;
+            }
+
+            String sql = "SELECT id_voucher, discountAmount, discountDetails FROM vouchers " +
+                         "WHERE id_voucher = ? AND status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, voucherCode);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    voucherId = rs.getString("id_voucher");
+                    String discountStr = rs.getString("discountAmount");
+                    String description = rs.getString("discountDetails");
+                    
+                    // Calculate discount amount
+                    if (discountStr.contains("%")) {
+                        // Percentage discount
+                        int percent = Integer.parseInt(discountStr.replace("%", "").trim());
+                        discountAmount = (int) (moviedata.totalPrice * (percent / 100.0));
+                    } else {
+                        // Fixed amount discount
+                        discountAmount = Integer.parseInt(discountStr);
+                    }
+                    
+                    // Calculate final price
+                    int finalPrice = moviedata.totalPrice - discountAmount;
+                    
+                    // Update JSON file
+                    util.updateMoviePrice(finalPrice);
+                    
+                    // Update UI
+                    voucherDetail.setText(description);
+                    voucherDiscountLabel.setText(formatter.format(discountAmount) + " VND");
+                    updatePriceLabels();
+                } else {
+                    voucherDetail.setText("Mã giảm giá không hợp lệ hoặc đã hết hạn");
+                    voucherId = null;
+                    discountAmount = 0;
+                    voucherDiscountLabel.setText("0 VND");
+                    updatePriceLabels();
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi kiểm tra voucher: " + e.getMessage());
+            voucherDetail.setText("Lỗi kiểm tra voucher");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.err.println("Lỗi định dạng discountAmount: " + e.getMessage());
+            voucherDetail.setText("Lỗi định dạng mã giảm giá");
+            voucherId = null;
+            discountAmount = 0;
+            voucherDiscountLabel.setText("0 VND");
+            updatePriceLabels();
+        }
+    }
+
+    private void updatePriceLabels() {
+        int finalPrice = moviedata.totalPrice - discountAmount;
+        totalPriceLabel1.setText(formatter.format(moviedata.totalPrice) + " đ");
+        totalPriceLabel.setText(formatter.format(finalPrice) + " đ");
+        
+        // Cập nhật lại moviedata trong bộ nhớ
+        moviedata.totalPrice = finalPrice;
     }
 
     @FXML
@@ -60,14 +158,73 @@ public class ConfirmTicketController {
 
         root = FXMLLoader.load(getClass().getResource("/Cinema/UI/Booked.fxml"));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root, 900, 600); // Kích thước cho Booked.fxml
+        scene = new Scene(root, 900, 600);
 
         stage.setScene(scene);
-        centerStage(stage, 900, 600); // Căn giữa với kích thước 900x600
+        centerStage(stage, 900, 600);
         stage.show();
     }
 
-    @FXML
+    private void saveTicketToDatabase(int userId) {
+        String url = "jdbc:mysql://localhost/Cinema_DB";
+        String username = "root";
+        String password = "";
+
+        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
+            if (conn == null) {
+                System.err.println("Không thể kết nối đến cơ sở dữ liệu.");
+                return;
+            }
+
+            // Sử dụng giá đã được cập nhật từ JSON
+            int finalPrice = moviedata.totalPrice;
+            String sql = "INSERT INTO bookedTickets (userID, movieID, showtimeID, seatNumbers, basePrice, totalPrice, status, discount_id) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, 1, ?)";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, userId);
+                pstmt.setString(2, getMovieId());
+                pstmt.setString(3, moviedata.id);
+                pstmt.setString(4, String.join(", ", moviedata.selectedSeats));
+                pstmt.setInt(5, moviedata.basePrice);
+                pstmt.setInt(6, finalPrice);
+                pstmt.setString(7, voucherId); // Can be null if no voucher applied
+
+                pstmt.executeUpdate();
+                System.out.println("Đã lưu vé vào cơ sở dữ liệu cho userId: " + userId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lưu vé vào cơ sở dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+	private int getTotalNumberSeatsFromDatabase(String id_lichchieu) {
+	        String url = "jdbc:mysql://localhost/Cinema_DB";
+	        String username = "root";
+	        String password = "";
+	        int totalNumberSeats = 0;
+	
+	        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
+	            if (conn == null) {
+	                System.err.println("Không thể kết nối đến cơ sở dữ liệu.");
+	                return totalNumberSeats;
+	            }
+	
+	            String sql = "SELECT totalNumberSeats FROM showtimes WHERE id_lichchieu = ?";
+	            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	                pstmt.setString(1, id_lichchieu);
+	                ResultSet rs = pstmt.executeQuery();
+	                if (rs.next()) {
+	                    totalNumberSeats = rs.getInt("totalNumberSeats");
+	                }
+	            }
+	        } catch (SQLException e) {
+	            System.err.println("Lỗi lấy totalNumberSeats: " + e.getMessage());
+	            e.printStackTrace();
+	        }
+	        return totalNumberSeats;
+	    }
+	@FXML
     public void handleCancelBtnClick(ActionEvent event) throws IOException {
         // Xóa các ghế đã chọn và tổng tiền trong MovieData
         moviedata.selectedSeats = new String[]{};
@@ -102,65 +259,6 @@ public class ConfirmTicketController {
         centerStage(stage, 1367, 800); // Căn giữa với kích thước 1200x700
         stage.show();
     }
-
-    private int getTotalNumberSeatsFromDatabase(String id_lichchieu) {
-        String url = "jdbc:mysql://localhost/Cinema_DB";
-        String username = "root";
-        String password = "";
-        int totalNumberSeats = 0;
-
-        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
-            if (conn == null) {
-                System.err.println("Không thể kết nối đến cơ sở dữ liệu.");
-                return totalNumberSeats;
-            }
-
-            String sql = "SELECT totalNumberSeats FROM showtimes WHERE id_lichchieu = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, id_lichchieu);
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    totalNumberSeats = rs.getInt("totalNumberSeats");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi lấy totalNumberSeats: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return totalNumberSeats;
-    }
-
-    private void saveTicketToDatabase(int userId) {
-        String url = "jdbc:mysql://localhost/Cinema_DB";
-        String username = "root";
-        String password = "";
-
-        try (Connection conn = mysqlconnect.ConnectDb(url, username, password)) {
-            if (conn == null) {
-                System.err.println("Không thể kết nối đến cơ sở dữ liệu.");
-                return;
-            }
-
-            String sql = "INSERT INTO bookedTickets (userId, movieId, seatNumbers, showTimeID, basePrice, totalPrice, status, currentStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, userId);
-                pstmt.setString(2, getMovieId());
-                pstmt.setString(3, String.join(", ", moviedata.selectedSeats));
-                pstmt.setString(4, moviedata.id);
-                pstmt.setInt(5, moviedata.basePrice);
-                pstmt.setInt(6, moviedata.totalPrice);
-                pstmt.setInt(7, 1);
-                pstmt.setBoolean(8, true);
-
-                pstmt.executeUpdate();
-                System.out.println("Đã lưu vé vào cơ sở dữ liệu cho userId: " + userId);
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi lưu vé vào cơ sở dữ liệu: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     private void updateNumberOfSeatsInShowtimes() {
         String url = "jdbc:mysql://localhost/Cinema_DB";
         String username = "root";

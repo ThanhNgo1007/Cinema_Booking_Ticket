@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminMainPanelController">
+<BorderPane fx:id="mainPane" prefHeight="807.0" prefWidth="1063.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminMainPanelController">
    <left>
-      <AnchorPane fx:id="menuPane" prefHeight="832.0" prefWidth="188.0" stylesheets="@../../../bin/css/style.css" BorderPane.alignment="CENTER">
+      <AnchorPane fx:id="menuPane" prefHeight="832.0" prefWidth="188.0" stylesheets="@/css/style.css" BorderPane.alignment="CENTER">
          <children>
             <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="714.0" prefWidth="188.0" style="-fx-background-color: #fcfdf0;">
                <children>
@@ -23,7 +23,7 @@
                      <children>
                         <ImageView fitHeight="96.0" fitWidth="103.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../HelloFX/src/Cinema/image/icons8-avatar-100.png" />
+                              <Image url="@../image/icons8-avatar-100.png" />
                            </image>
                         </ImageView>
                      </children>

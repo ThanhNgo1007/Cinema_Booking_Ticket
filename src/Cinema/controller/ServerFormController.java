@@ -210,20 +210,25 @@ public class ServerFormController {
                 return;
             }
 
-            String senderId = parts[0].trim(); // sender giờ là userId
+            String senderId = parts[0].trim();
             String message = parts[1].trim();
             String senderName = userMap.get(senderId);
-                if (senderName == null) {
-                    System.err.println("Error: Sender ID '" + senderId + "' not found in userMap.");
-                    senderId = "0";
-                    senderName = "Unknown User";
-                }
-                LocalDateTime timestamp = LocalDateTime.now();
-                
-                    loadChatHistory(selectedUser);
-         
+
+            if (senderName == null) {
+                System.err.println("Error: Sender ID '" + senderId + "' not found in userMap.");
+                senderId = "0";
+                senderName = "Unknown User";
+            }
+
+            LocalDateTime timestamp = LocalDateTime.now();
+            displayMessage(senderName, message, timestamp);
+
+            // Đưa người gửi lên đầu danh sách
+            userListView.getItems().remove(senderName);
+            userListView.getItems().add(0, senderName);
         });
     }
+
 
     private void displayMessage(String sender, String message, LocalDateTime timestamp) {
         HBox hBox = new HBox();

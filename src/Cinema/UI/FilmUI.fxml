@@ -71,7 +71,7 @@
             </HBox>
             <HBox alignment="CENTER">
                <children>
-                  <GridPane fx:id="grid" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity">
+                  <GridPane fx:id="grid" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                      <columnConstraints>
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="298.0" minWidth="-Infinity" prefWidth="270.0" />
                         <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="588.0" minWidth="-Infinity" prefWidth="270.0" />

@@ -118,17 +118,49 @@ public class DBUtility {
             }
         }
     }
+    
+    public static boolean verifyCurrentPassword(String email, String password) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
+        try {
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
+            String query = "SELECT password FROM users WHERE email = ?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, email);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String currentPassword = rs.getString("password");
+                String encryptedInput = EncryptionDecryption.encrypt(password);
+                return currentPassword.equals(encryptedInput);
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     public static Boolean updateUsersPassword(String email, String password) {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
 
             String encryptedPassword = EncryptionDecryption.encrypt(password);
 
-            String updateQuery = "UPDATE USERS SET password = ? WHERE email = ?";
+            String updateQuery = "UPDATE users SET password = ? WHERE email = ?";
             pstmt = conn.prepareStatement(updateQuery);
             pstmt.setString(1, encryptedPassword);
             pstmt.setString(2, email);

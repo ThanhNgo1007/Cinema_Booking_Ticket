@@ -30,7 +30,7 @@ public class EmailUtility {
         return String.format("%06d", (int) (Math.random() * 1000000));
     }
 
-    private static Boolean sendEmail(String message, String subject, String to) {
+    public static Boolean sendEmail(String message, String subject, String to) {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", SMTP_HOST);
@@ -48,7 +48,7 @@ public class EmailUtility {
 
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(EMAIL_USERNAME));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             msg.setSubject(subject);
             msg.setText(message);
 

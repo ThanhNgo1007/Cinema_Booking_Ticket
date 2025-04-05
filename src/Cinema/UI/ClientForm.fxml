@@ -15,27 +15,53 @@
    <content>
       <VBox alignment="TOP_RIGHT" prefHeight="650.0" prefWidth="462.0" style="-fx-background-color: white;">
          <children>
-              <!-- Label hiển thị tên client -->
-              <Label fx:id="txtLabel" text="Client">
+            <!-- Label hiển thị tên client -->
+            <Label fx:id="txtLabel" text="Client">
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <font>
                   <Font size="16.0" />
-               </font></Label>
-      
-                                <!-- ScrollPane chứa VBox hiển thị tin nhắn -->
-              <ScrollPane fx:id="scrollPain" fitToHeight="true" fitToWidth="true" prefHeight="650.0" prefWidth="462.0">
-                  <content>
-                      <VBox fx:id="vBox" alignment="BOTTOM_LEFT" prefHeight="601.0" prefWidth="460.0" spacing="10" style="-fx-background-color: white; -fx-border-color: transparent transparent;" />
-                  </content>
-              </ScrollPane>
+               </font>
+            </Label>
+            
+            <!-- ScrollPane chứa VBox hiển thị tin nhắn -->
+            <ScrollPane fx:id="scrollPain" fitToHeight="true" fitToWidth="true" prefHeight="650.0" prefWidth="462.0">
+               <content>
+                  <VBox fx:id="vBox" alignment="BOTTOM_LEFT" prefHeight="601.0" prefWidth="460.0" spacing="10" style="-fx-background-color: white; -fx-border-color: transparent transparent;" />
+               </content>
+            </ScrollPane>
+
+            <!-- Button điều khiển hiển thị/ẩn câu hỏi mẫu -->
+            <HBox alignment="CENTER_LEFT" prefWidth="462.0" />
+
+            <!-- VBox chứa các câu hỏi mẫu -->
+            <VBox fx:id="sampleQuestionsVBox" alignment="CENTER_LEFT" prefWidth="462.0" spacing="5" visible="false" VBox.vgrow="NEVER">
+               <padding>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </padding>
+            </VBox>
+
+            <!-- HBox chứa TextField và nút gửi -->
             <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="489.0">
                <children>
-                  <TextField fx:id="txtMsg" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="441.0" promptText="Aa" style="-fx-background-radius: 50;" HBox.hgrow="ALWAYS">
+                  <Button fx:id="toggleQuestionsButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#toggleSampleQuestions" prefHeight="26.0" prefWidth="37.0" style="-fx-background-color: transparent;">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true">
+                           <image>
+                              <Image url="@../../../../HelloFX/src/Cinema/image/icons8-menu-30.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                      <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin></TextField>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <TextField fx:id="txtMsg" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="366.0" promptText="Aa" style="-fx-background-radius: 50;" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TextField>
                   <Button contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#sendButtonOnAction" style="-fx-background-color: transparent; -fx-font-weight: 800;">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

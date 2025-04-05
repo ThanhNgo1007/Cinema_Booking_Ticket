@@ -5,10 +5,10 @@ import Cinema.database.JSONUtility.User;
 import Cinema.database.mysqlconnect;
 import com.rabbitmq.client.*;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -25,6 +25,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientFormController {
     @FXML
@@ -35,6 +37,10 @@ public class ClientFormController {
     private VBox vBox;
     @FXML
     private TextField txtMsg;
+    @FXML
+    private VBox sampleQuestionsVBox;
+    @FXML
+    private Button toggleQuestionsButton;
 
     private String clientName;
     private String userId;
@@ -44,7 +50,6 @@ public class ClientFormController {
     private static final String DB_URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
-    private static final String JSON_FILE_PATH = "src/Cinema/database/userdata.json";
 
     public void initialize() {
         User userData = JSONUtility.getUserData();
@@ -64,15 +69,7 @@ public class ClientFormController {
                         clientName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
                         clientName = clientName.trim();
                         if (clientName.isEmpty()) clientName = "Unknown Client";
-                    } else {
-                        clientName = "Unknown Client";
-                        userId = "0";
-                        System.err.println("Không tìm thấy người dùng trong CSDL");
                     }
-                } else {
-                    clientName = "Unknown Client";
-                    userId = "0";
-                    System.err.println("Không thể kết nối CSDL và không đọc được JSON");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -89,13 +86,7 @@ public class ClientFormController {
                 if (rs.next()) {
                     adminId = rs.getString("id");
                     System.out.println("Admin ID retrieved from database: " + adminId);
-                } else {
-                    adminId = "1";
-                    System.err.println("Không tìm thấy tài khoản admin trong CSDL, sử dụng ID mặc định: " + adminId);
                 }
-            } else {
-                adminId = "1";
-                System.err.println("Không thể kết nối CSDL, sử dụng ID admin mặc định: " + adminId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,15 +96,11 @@ public class ClientFormController {
 
         txtLabel.setText(clientName);
         if (vBox != null) {
-            vBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue(1.0)); // Cuộn xuống dưới cùng
-        } else {
-            System.err.println("Error: vBox is null. Check FXML mapping.");
+            vBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollPain.setVvalue(1.0));
         }
 
         if (txtMsg != null) {
             txtMsg.setOnAction(event -> sendMsg(txtMsg.getText()));
-        } else {
-            System.err.println("Error: txtMsg is null during initialization. Check FXML mapping.");
         }
 
         try {
@@ -130,6 +117,72 @@ public class ClientFormController {
             rabbitMQ.receiveMessages(consumer);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+            displayWelcomeMessage();
+            loadSampleQuestions();
+        sampleQuestionsVBox.setManaged(false);
+    }
+
+    private void displayWelcomeMessage() {
+        String welcomeMessage = "Xin chào! " +
+                "Bạn cần hỗ trợ về hệ thống đặt vé xem phim.\n" +
+                "Vui lòng đợi trong giây lát! Nhân viên của chúng tôi sẽ trả lời bạn trong thời gian sớm nhất !!!";
+        displaySystemMessage("Hệ thống", welcomeMessage);
+    }
+
+    private void displaySystemMessage(String sender, String message) {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setPadding(new Insets(5, 5, 5, 10));
+
+        Text text = new Text(message);
+        TextFlow textFlow = new TextFlow(text);
+        textFlow.setStyle("-fx-background-color: #f0f0f0; -fx-background-radius: 20px; -fx-border-color: #cccccc; -fx-border-radius: 20px");
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        text.setFill(Color.BLACK);
+
+        hBox.getChildren().add(textFlow);
+
+        HBox hBoxTime = new HBox();
+        hBoxTime.setAlignment(Pos.CENTER_LEFT);
+        hBoxTime.setPadding(new Insets(0, 5, 5, 10));
+        String stringTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        Text time = new Text(stringTime);
+        time.setStyle("-fx-font-size: 8");
+        hBoxTime.getChildren().add(time);
+
+        vBox.getChildren().add(hBox);
+        vBox.getChildren().add(hBoxTime);
+        scrollPain.setVvalue(1.0);
+    }
+
+    private void loadSampleQuestions() {
+        List<String> sampleQuestions = new ArrayList<>();
+        try (Connection conn = mysqlconnect.ConnectDb(DB_URL, DB_USER, DB_PASSWORD)) {
+            if (conn != null) {
+                String sql = "SELECT question_text FROM sample_questions LIMIT 3";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    sampleQuestions.add(rs.getString("question_text"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sampleQuestions.add("Tôi có thể đặt vé xem phim ở đâu?");
+            sampleQuestions.add("Làm thế nào để hủy vé đã đặt?");
+            sampleQuestions.add("Giá vé được tính như thế nào?");
+        }
+
+        for (String question : sampleQuestions) {
+            Button questionButton = new Button(question);
+            questionButton.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10px; -fx-padding: 5 10 5 10;");
+            questionButton.setOnAction(event -> sendMsg(question)); // Sử dụng sendMsg thay vì sendSampleQuestion
+            HBox buttonBox = new HBox(questionButton);
+            buttonBox.setAlignment(Pos.CENTER_LEFT);
+            buttonBox.setPadding(new Insets(5, 0, 5, 10));
+            sampleQuestionsVBox.getChildren().add(buttonBox);
         }
     }
 
@@ -189,9 +242,9 @@ public class ClientFormController {
                 System.err.println("Invalid message format: " + msg);
                 return;
             }
-            String senderId = parts[0]; // senderId từ admin hoặc client khác
+            String senderId = parts[0];
             String message = parts[1];
-            String senderName = senderId.equals(adminId) ? "Admin" : senderId; // Hiển thị "Admin" nếu là adminId
+            String senderName = senderId.equals(adminId) ? "Admin" : senderId;
             displayMessage(senderName, message);
         });
     }
@@ -204,11 +257,11 @@ public class ClientFormController {
         TextFlow textFlow = new TextFlow(text);
         textFlow.setPadding(new Insets(5, 10, 5, 10));
 
-        if (sender.equals(clientName)) { // Tin nhắn của chính client
+        if (sender.equals(clientName)) {
             hBox.setAlignment(Pos.CENTER_RIGHT);
             textFlow.setStyle("-fx-background-color: #0693e3; -fx-background-radius: 20px");
             text.setFill(Color.WHITE);
-        } else { // Tin nhắn từ admin hoặc người khác
+        } else {
             hBox.setAlignment(Pos.CENTER_LEFT);
             textFlow.setStyle("-fx-background-color: #abb8c3; -fx-background-radius: 20px");
             text.setFill(Color.BLACK);
@@ -217,7 +270,7 @@ public class ClientFormController {
             Text textName = new Text(sender);
             TextFlow textFlowName = new TextFlow(textName);
             hBoxName.getChildren().add(textFlowName);
-            vBox.getChildren().add(hBoxName); // Thêm tên người gửi
+            vBox.getChildren().add(hBoxName);
         }
 
         hBox.getChildren().add(textFlow);
@@ -232,7 +285,7 @@ public class ClientFormController {
 
         vBox.getChildren().add(hBox);
         vBox.getChildren().add(hBoxTime);
-        scrollPain.setVvalue(1.0); // Cuộn xuống dưới cùng
+        scrollPain.setVvalue(1.0);
     }
 
     private void saveMessageToDatabase(String senderId, String receiverId, String messageText) {
@@ -250,6 +303,13 @@ public class ClientFormController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void toggleSampleQuestions(MouseEvent event) {
+        boolean isVisible = sampleQuestionsVBox.isVisible();
+        sampleQuestionsVBox.setVisible(!isVisible);
+        sampleQuestionsVBox.setManaged(!isVisible);
     }
 
     private static class RabbitMQService {

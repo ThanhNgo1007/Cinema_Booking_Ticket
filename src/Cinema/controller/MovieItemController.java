@@ -20,7 +20,7 @@ import javafx.stage.StageStyle;
 
 public class MovieItemController {
 	@FXML
-    private Label setMovieGener;
+    private Text setMovieGener;
 
     @FXML
     private Text setMovieName;

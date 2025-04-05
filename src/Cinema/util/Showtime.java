@@ -7,14 +7,16 @@ public class Showtime {
     private String showTime;
     private Integer totalNumberSeats;
     private Integer bookedSeatsCount;
+    private Integer screen;
 
-    public Showtime(String id, String movieId, String showDate, String showTime, Integer totalNumberSeats, Integer bookedSeatsCount) {
+    public Showtime(String id, String movieId, String showDate, String showTime, Integer totalNumberSeats, Integer bookedSeatsCount, Integer screen) {
         this.id = id;
         this.movieId = movieId;
         this.showDate = showDate;
         this.showTime = showTime;
         this.totalNumberSeats = totalNumberSeats;
         this.bookedSeatsCount = bookedSeatsCount;
+        this.setScreen(screen);
     }
 
     // Getter và Setter
@@ -65,4 +67,12 @@ public class Showtime {
     public void setBookedSeatsCount(Integer bookedSeatsCount) {
         this.bookedSeatsCount = bookedSeatsCount;
     }
+
+	public Integer getScreen() {
+		return screen;
+	}
+
+	public void setScreen(Integer screen) {
+		this.screen = screen;
+	}
 }

@@ -38,7 +38,7 @@
                                  <Insets bottom="20.0" left="20.0" right="20.0" top="60.0" />
                               </StackPane.margin>
                               <font>
-                                 <Font name="System Bold" size="18.0" />
+                                 <Font size="18.0" />
                               </font>
                            </Label>
                            <Label fx:id="btn_menuback1" prefHeight="50.0" prefWidth="100.0" text="MENU">
@@ -53,7 +53,7 @@
                                  <Insets bottom="20.0" left="20.0" right="20.0" top="60.0" />
                               </StackPane.margin>
                               <font>
-                                 <Font name="System Bold" size="18.0" />
+                                 <Font size="18.0" />
                               </font>
                               <cursor>
                                  <Cursor fx:constant="HAND" />
@@ -76,7 +76,7 @@
                            <Image url="@../image/icons8-vietnam-50.png" />
                         </image>
                         <HBox.margin>
-                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           <Insets bottom="35.0" left="20.0" right="20.0" top="20.0" />
                         </HBox.margin>
                      </ImageView>
                      <ImageView fx:id="settings_icon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -84,7 +84,7 @@
                            <Image url="@../image/icons8-setting-64.png" />
                         </image>
                         <HBox.margin>
-                           <Insets right="10.0" />
+                           <Insets bottom="15.0" right="10.0" />
                         </HBox.margin>
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -269,7 +269,7 @@
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></Label>
-                  <Label style="-fx-font-size: 14px;" text="Đổi mật khẩu">
+                  <Label fx:id="changePassword" style="-fx-font-size: 14px;" text="Đổi mật khẩu">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>

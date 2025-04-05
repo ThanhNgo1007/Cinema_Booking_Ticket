@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="603.0" prefWidth="1196.0" style="-fx-background-color: #fdfcf0;" stylesheets="@/css/Event.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.Event1_Controller">
+   <children>
+      <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#goBack" text="Quay lại">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Button>
+      <VBox alignment="TOP_CENTER" layoutX="178.0" layoutY="46.0" prefHeight="557.0" prefWidth="1005.0" spacing="20.0">
+         <children>
+            <Text fx:id="text1" strokeType="OUTSIDE" strokeWidth="0.0" text="ZALOPAY - MÙA NÀO CŨNG KHAO​" textAlignment="CENTER" wrappingWidth="1085.53515625" />
+            <HBox alignment="TOP_CENTER" prefHeight="520.0" prefWidth="1160.0" spacing="30.0">
+               <children>
+                  <ImageView fitHeight="417.0" fitWidth="274.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/event/B_n_sao_c_a_350x495.png" />
+                     </image>
+                  </ImageView>
+                  <VBox prefHeight="647.0" prefWidth="420.0" spacing="5.0">
+                     <children>
+                        <Text fx:id="text2" strokeType="OUTSIDE" strokeWidth="0.0" text="*Thông tin chương trình" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text fx:id="text3" layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. Địa điểm sử dụng: Đặt Vé Phim CGV tại Zalopay" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text fx:id="text6" layoutX="10.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2. Thời gian áp dụng: 01/03/2025 - 31/03/2025 " textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text fx:id="text4" layoutX="10.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3. Đối tượng khuyến mại:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Bạn mới: Lần đầu tiên liên kết thẻ/ tài khoản ngân hàng mới với Zalopay trong thời gian diễn ra chương trình và chưa từng thực hiện giao dịch thanh toán trên Zalopay" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Bạn thân: Tất cả khách hàng của Zalopay đã từng có ít nhất 01 giao dịch thanh toán." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="text5" layoutX="10.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4. Nội dung chương trình:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375" />
+                        <Text layoutX="10.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Dành cho bạn mới:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Bạn mới: Chỉ 9.000đ/vé CGV khi thanh toán bằng Ví điện tử Zalopay." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Áp dụng: nguyên tuần, giới hạn 200 vé áp dụng mỗi tuần " textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="249.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Không áp dụng suất chiếu 1/1/2025, không áp dụng các suất chiếu từ 29/01/2025 - 02/02/2025" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="224.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Dành cho bạn thân:" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Đồng thời bất kì các chương trình khuyến mãi nào khác." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font></Text>
+                        <Text layoutX="10.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Bạn thân: Chỉ 84.000đ/vé CGV khi thanh toán bằng Ví điện tử Zalopay." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Không áp dụng suất chiếu 1/1/2025, không áp dụng các suất chiếu từ 29/01/2025 - 02/02/2025" textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="10.0" layoutY="399.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Áp dụng: T6 - Chủ Nhật." textAlignment="JUSTIFY" wrappingWidth="435.21630859375">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <!-- Nội dung của Event1 -->
+   </children>
+</AnchorPane>

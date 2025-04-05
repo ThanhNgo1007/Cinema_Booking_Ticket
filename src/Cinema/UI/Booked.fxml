@@ -17,7 +17,7 @@
       </Label>
       <ImageView fitHeight="200.0" fitWidth="200.0" layoutX="369.0" layoutY="162.0" pickOnBounds="true" preserveRatio="true" style="-fx-translate-y: 12;">
          <image>
-            <Image url="@../../../../HelloFX/src/Cinema/image/checked.png" />
+            <Image url="@../image/checked.png" />
          </image>
       </ImageView>
       <Button alignment="BOTTOM_LEFT" layoutX="402.0" layoutY="449.0" mnemonicParsing="false" onAction="#goBack" style="-fx-background-color: red; -fx-background-radius: 10;" text=" Hoàn Thành" textFill="WHITE">

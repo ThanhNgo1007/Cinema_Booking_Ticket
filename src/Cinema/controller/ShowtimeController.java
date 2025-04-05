@@ -209,10 +209,11 @@ public class ShowtimeController {
             String time = "";
             String timing = "";
             String movieId = "";
+            String screen = "";  // Thêm biến để lấy thông tin screen
             int basePrice = 0;
 
             try (Connection conn = mysqlconnect.ConnectDb(url, username, password);
-                 PreparedStatement pstmt = conn.prepareStatement("SELECT date, time, id_movie FROM showtimes WHERE id_lichchieu = ?")) {
+                 PreparedStatement pstmt = conn.prepareStatement("SELECT date, time, id_movie, screen FROM showtimes WHERE id_lichchieu = ?")) {
                 pstmt.setString(1, id_lichchieu);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
@@ -220,6 +221,7 @@ public class ShowtimeController {
                     time = rs.getTime("time").toString().substring(0, 5);
                     timing = time + ", " + formatDate(date);
                     movieId = rs.getString("id_movie");
+                    screen = rs.getString("screen");  // Lấy thông tin screen
 
                     PreparedStatement pstmtMovie = conn.prepareStatement("SELECT name, basePrice FROM movies WHERE id = ?");
                     pstmtMovie.setString(1, movieId);
@@ -233,8 +235,9 @@ public class ShowtimeController {
                 e.printStackTrace();
             }
 
+            // Gọi JSONUtility với thêm tham số screen
             JSONUtility jsonUtil = new JSONUtility();
-            jsonUtil.createMovieJson(id_lichchieu, movieName, timing, "", basePrice);
+            jsonUtil.createMovieJson(id_lichchieu, movieName, timing, "", basePrice, screen);
             controller.initializeSeatSelection(id_lichchieu, totalNumberSeats);
 
             Stage stage = new Stage();
@@ -249,6 +252,7 @@ public class ShowtimeController {
             e.printStackTrace();
         }
     }
+
 
     private String formatDate(String date) {
         String[] parts = date.split("-");

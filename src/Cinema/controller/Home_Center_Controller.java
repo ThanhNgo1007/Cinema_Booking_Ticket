@@ -29,10 +29,10 @@ public class Home_Center_Controller {
     private HBox container;
 
     @FXML
-    private ImageView img_side_left, img_side_right;
+    private ImageView img_side_left, img_side_right,zalo_banner;
 
     @FXML
-    private ImageView event1, event2, event3, event4, event5, event6;
+    private ImageView event1, event2, event3, event4;
 
     private List<String> imagePaths;
     private int currentIndex = 0;
@@ -76,8 +76,9 @@ public class Home_Center_Controller {
         event2.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event2.fxml"));
         event3.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event3.fxml"));
         event4.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event4.fxml"));
-        event5.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event5.fxml"));
-        event6.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event6.fxml"));
+        img_side_left.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event5.fxml"));
+        img_side_right.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event5.fxml"));
+        zalo_banner.setOnMouseClicked(event -> loadEventContent("/Cinema/UI/Event5.fxml"));
     }
     
     private void loadEventContent(String fxmlFile) {

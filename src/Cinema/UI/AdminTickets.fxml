@@ -10,9 +10,10 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="662.0" prefWidth="1233.0" style="-fx-background-color: #fcfdf0;" stylesheets="@../../../bin/css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminTicketsController">
+<VBox prefHeight="662.0" prefWidth="1233.0" style="-fx-background-color: #fcfdf0;" stylesheets="@/css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AdminTicketsController">
     <children>
         <!-- Thanh điều khiển bộ lọc, sắp xếp và tìm kiếm -->
         <HBox spacing="10" style="-fx-padding: 10;">
@@ -37,8 +38,14 @@
                   <ComboBox fx:id="yearFilter" prefWidth="100.0" visible="false" />
               </children>
           </HBox>
-      <HBox alignment="TOP_RIGHT">
+      <HBox alignment="BOTTOM_LEFT">
          <children>
+            <Label prefHeight="17.0" prefWidth="317.0" text="Nhấn đúp để xem thông tin vé chi tiết !!!" textFill="#d30f0f">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <Pane prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                 <ComboBox fx:id="sortTypeComboBox" prefWidth="200.0" promptText="Hiển thị theo" style="-fx-background-color: transparent; -fx-border-color: black;">
                <HBox.margin>
                   <Insets bottom="10.0" right="10.0" />

@@ -112,7 +112,7 @@
                                  <graphic>
                                     <ImageView fitHeight="25.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../../../../HelloFX/src/Cinema/image/icons8-detail-24.png" />
+                                          <Image url="@../image/icons8-detail-24.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

@@ -31,23 +31,23 @@
       </ImageView>
       <AnchorPane fx:id="signUpFormContainer" maxHeight="600.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
          <children>
-            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="127.0" text="SignUp" textFill="WHITE" AnchorPane.leftAnchor="50.0">
+            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="127.0" text="ĐĂNG KÝ" textFill="WHITE" AnchorPane.leftAnchor="50.0">
                <font>
                   <Font name="Impact" size="36.0" />
                </font>
             </Label>
-            <TextField fx:id="inputSignUpFullNameField" layoutX="50.4" layoutY="210.0" prefHeight="40.0" promptText="Enter Full Name" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
-            <Label layoutX="50.4" layoutY="178.0" text="Full Name" textFill="WHITE" AnchorPane.leftAnchor="50.0">
+            <TextField fx:id="inputSignUpFullNameField" layoutX="50.4" layoutY="210.0" prefHeight="40.0" promptText="Nhập họ và tên" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
+            <Label layoutX="50.4" layoutY="178.0" text="Họ và Tên" textFill="WHITE" AnchorPane.leftAnchor="50.0">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
             </Label>
-            <Label layoutX="50.4" layoutY="274.0" text="Email Address" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="274.0" text="Địa chỉ email" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
             </Label>
-            <Button fx:id="btnSignUp" layoutX="50.4" layoutY="375.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#handleSentOtpBtn" prefHeight="45.0" prefWidth="89.0" text="Send OTP" textAlignment="CENTER" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998">
+            <Button fx:id="btnSignUp" layoutX="50.4" layoutY="375.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#handleSentOtpBtn" prefHeight="45.0" prefWidth="89.0" text="Gửi mã OTP" textAlignment="CENTER" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
@@ -55,17 +55,17 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Label layoutX="50.4" layoutY="451.0" text="Already Registered?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="451.0" text="Đã đăng ký?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>
             </Label>
-            <Hyperlink layoutX="195.2" layoutY="447.0" onAction="#goToLoginScreen" text="Login here" textFill="#65aefd" AnchorPane.leftAnchor="195.2">
+            <Hyperlink layoutX="195.2" layoutY="447.0" onAction="#goToLoginScreen" text="Đăng nhập " textFill="#65aefd" AnchorPane.leftAnchor="195.2">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>
             </Hyperlink>
-            <TextField fx:id="inputSignUpEmailAddressField" layoutX="50.4" layoutY="305.0" prefHeight="40.0" prefWidth="299.0" promptText="movies@fun.com" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998" />
+            <TextField fx:id="inputSignUpEmailAddressField" layoutX="50.4" layoutY="305.0" prefHeight="40.0" prefWidth="299.0" promptText="thanh@gmail.com" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998" />
             <Label fx:id="errorFullNameMessage" layoutX="50.0" layoutY="253.0" textFill="RED" AnchorPane.leftAnchor="50.0" />
             <Label fx:id="errorEmailAddressMessage" layoutX="60.0" layoutY="348.0" textFill="RED" AnchorPane.leftAnchor="50.0" />
             <Label fx:id="errorVerifyEmailMessage" layoutX="70.0" layoutY="425.0" textFill="RED" AnchorPane.leftAnchor="50.0" />

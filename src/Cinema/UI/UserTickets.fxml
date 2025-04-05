@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -12,19 +13,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="container" alignment="CENTER" prefHeight="624.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #fdfcf0;" stylesheets="@/css/UserTickets.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.UserTicketsController">
+<VBox fx:id="container" alignment="CENTER" prefHeight="725.0" prefWidth="800.0" spacing="10.0" style="-fx-background-color: #fdfcf0;" stylesheets="@/css/UserTickets.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.UserTicketsController">
    <children>
-      <HBox alignment="CENTER" prefHeight="40.0" prefWidth="800.0">
+      <HBox alignment="CENTER" prefHeight="24.0" prefWidth="800.0">
          <children>
             <Label alignment="CENTER" style="-fx-font-size: 26px; -fx-font-weight: bold;" text="VÉ ĐÃ ĐẶT">
                <HBox.margin>
-                  <Insets top="10.0" />
-               </HBox.margin></Label>
+                  <Insets />
+               </HBox.margin>
+            </Label>
          </children>
       </HBox>
 
       <!-- Container cho các thành phần lọc và tìm kiếm -->
-      <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 10px;">
+      <HBox alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="800.0" spacing="15.0" style="-fx-padding: 10px;">
          <children>
             <Label prefHeight="26.0" prefWidth="109.0" text="Tìm kiếm: " />
             <TextField fx:id="searchField" prefWidth="200.0" promptText="Nhập từ khóa..." />
@@ -46,19 +48,20 @@
       </HBox>
       
       <!-- Bộ chọn kiểu sắp xếp -->
-      <HBox alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="800.0" spacing="15.0" style="-fx-padding: 10px;">
+      <HBox alignment="CENTER_RIGHT" prefHeight="13.0" prefWidth="800.0" style="-fx-padding: 10px;">
          <ComboBox fx:id="sortTypeComboBox" prefWidth="200.0" promptText="Chọn kiểu sắp xếp" style="-fx-background-color: transparent; -fx-border-color: black;" />
       </HBox>
 
-                  <!-- TableView hiển thị vé đã đặt -->
-      <TableView fx:id="ticketTable" fixedCellSize="0.0" prefHeight="408.0" style="-fx-background-color: #fdfcf0;">
+      <!-- TableView hiển thị vé đã đặt -->
+      <TableView fx:id="ticketTable" fixedCellSize="0.0" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #fdfcf0;">
          <columns>
             <TableColumn fx:id="colTicketId" prefWidth="83.10192894935608" text="Mã số vé" />
             <TableColumn fx:id="colMovieName" prefWidth="193.6364517211914" text="Tên phim" />
             <TableColumn fx:id="colTotalPrice" prefWidth="125.99996948242188" text="Tổng giá vé" />
             <TableColumn fx:id="colSeats" prefWidth="127.00003051757812" text="Ghế đã đặt" />
             <TableColumn fx:id="colShowtime" minWidth="0.0" prefWidth="116.14337158203125" text="Giờ chiếu" />
-            <TableColumn fx:id="colBookingDate" prefWidth="150.3565673828125" text="Ngày đặt" /> <!-- Thêm cột Ngày đặt -->
+            <TableColumn fx:id="colScreen" prefWidth="86.3961181640625" text="Phòng chiếu" />
+            <TableColumn fx:id="colBookingDate" prefWidth="167.6038818359375" text="Ngày đặt" />
          </columns>
          <placeholder>
             <Label alignment="CENTER" style="-fx-font-size: 14px; -fx-text-fill: #e74c3c;" text="Không có vé nào được tìm thấy." />
@@ -67,6 +70,18 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+	<HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 20px 0 0;">
+         <Label fx:id="lblTotalTickets" alignment="TOP_LEFT" prefHeight="17.0" prefWidth="1100.0" style="-fx-font-weight: bold;" text="Tổng số vé: 0" />
+      </HBox>
+      <!-- Phần phân trang -->
+      <HBox alignment="CENTER" spacing="10.0">
+         <Button fx:id="btnFirstPage" text="go to first" />
+         <Button fx:id="btnPrevPage" text="previous" />
+         <Label fx:id="lblPageInfo" text="Trang 1/1" />
+         <Button fx:id="btnNextPage" text="next" />
+         <Button fx:id="btnLastPage" text="go to last" />
+      </HBox>
+
       <ImageView fitHeight="55.0" fitWidth="799.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../HelloFX/src/Cinema/image/movie/brand-type-film-footer_ver2.png" />

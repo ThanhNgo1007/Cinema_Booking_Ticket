@@ -34,23 +34,23 @@
       </ImageView>
       <AnchorPane fx:id="SignUpVerificationContainer" maxHeight="600.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
          <children>
-            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="253.0" text="Create Account" textFill="WHITE" AnchorPane.leftAnchor="50.0">
+            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="293.0" style="-fx-font-weight: bold;" text="TẠO TÀI KHOẢN" textFill="WHITE" AnchorPane.leftAnchor="50.0">
                <font>
-                  <Font name="Impact" size="36.0" />
+                  <Font size="36.0" />
                </font>
             </Label>
             <TextField fx:id="inputOTPVerification" layoutX="50.4" layoutY="210.0" prefHeight="40.0" promptText="OTP Code" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
-            <Label layoutX="50.4" layoutY="181.0" text="Enter Verification OTP: 6 Digit" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="181.0" text="Nhập mã OTP: gồm có 6 số" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="22.0" />
                </font>
             </Label>
-            <Label layoutX="50.4" layoutY="278.0" text="Enter Password" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="278.0" text="Mật khẩu đăng ký" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
             </Label>
-            <Button fx:id="btnCreateAccount" layoutX="50.6" layoutY="382.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#createAccount" prefHeight="45.0" prefWidth="89.0" text="Sign Up" textAlignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.19999999999999">
+            <Button fx:id="btnCreateAccount" layoutX="50.6" layoutY="382.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#createAccount" prefHeight="45.0" prefWidth="89.0" text="Đăng ký" textAlignment="CENTER" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.19999999999999">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
@@ -66,15 +66,18 @@
                      <StackPane.margin>
                         <Insets right="10.0" />
                      </StackPane.margin>
+                     <image>
+                        <Image url="@../image/icons8-eye-24.png" />
+                     </image>
                   </ImageView>
                </children>
             </StackPane>
-            <Label layoutX="50.4" layoutY="455.0" text="Already Registered?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="455.0" text="Đã đăng ký?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>
             </Label>
-            <Hyperlink layoutX="196.8" layoutY="451.0" onAction="#goToLoginScreen" text="Login here" textFill="#65aefd" AnchorPane.leftAnchor="196.8">
+            <Hyperlink layoutX="196.8" layoutY="451.0" onAction="#goToLoginScreen" text="Đăng nhập" textFill="#65aefd" AnchorPane.leftAnchor="196.8">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>

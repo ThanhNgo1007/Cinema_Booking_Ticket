@@ -14,9 +14,10 @@ public class Ticket {
     private int status;
     private String userName;
     private String userEmail;
+    private int screen;
 
     public Ticket(int ticketId, int userId, String movieName, double totalPrice, String seats,
-                  String showtime, String bookingDate, LocalDateTime bookingDateTime, int status, String userName, String userEmail) {
+                  String showtime, String bookingDate, LocalDateTime bookingDateTime, int status, String userName, String userEmail, Integer screen) {
         this.ticketId = ticketId;
         this.userId = userId;
         this.movieName = movieName;
@@ -28,6 +29,7 @@ public class Ticket {
         this.status = status;
         this.userName = userName;
         this.userEmail = userEmail;
+        this.screen = screen;
     }
 
     // Getters và setters
@@ -118,4 +120,12 @@ public class Ticket {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
+
+	public int getScreen() {
+		return screen;
+	}
+
+	public void setScreen(Integer screen) {
+		this.screen = screen;
+	}
 }

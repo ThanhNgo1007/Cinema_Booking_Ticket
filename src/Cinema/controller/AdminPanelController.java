@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -36,6 +37,7 @@ public class AdminPanelController implements Initializable {
     @FXML private Button add_btn;
     @FXML private Button delete_btn;
     @FXML private Button update_btn;
+    @FXML private Button resetButton;
     
     @FXML private TableView<Movie> movieTable;
     @FXML private TableColumn<Movie, String> col_id;
@@ -47,28 +49,51 @@ public class AdminPanelController implements Initializable {
     @FXML private TableColumn<Movie, String> col_updatedate;
     @FXML private TableColumn<Movie, Integer> col_status;
     @FXML private TableColumn<Movie, String> col_release;
-    @FXML private TableColumn<Movie, Void> col_release1; // Cột hiển thị biểu tượng lịch chiếu
+    @FXML private TableColumn<Movie, Void> col_release1;
 
-    @FXML
-    private VBox rootPane;
+    @FXML private ComboBox<String> filterComboBox;
+
+    @FXML private VBox rootPane;
 
     private static final String URL = "jdbc:mysql://localhost/Cinema_DB";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
     private ObservableList<Movie> movieList = FXCollections.observableArrayList();
-    private Map<Integer, Boolean> expandedRows = new HashMap<>(); // Không cần nữa nhưng giữ lại để tương thích
-    private Map<Integer, Double> originalRowHeights = new HashMap<>(); // Không cần nữa nhưng giữ lại để tương thích
+    private ObservableList<Movie> fullMovieList = FXCollections.observableArrayList();
+    private Map<Integer, Boolean> expandedRows = new HashMap<>();
+    private Map<Integer, Double> originalRowHeights = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupTable();
         loadMoviesFromDatabase();
 
+        // Thiết lập danh sách cho ComboBox
+        filterComboBox.getItems().addAll(
+            "Không lọc",
+            "Status: Đang chiếu",
+            "Status: Ngừng chiếu",
+            "Ngày ra mắt: Gần đây nhất",
+            "Ngày ra mắt: Lâu nhất",
+            "Ngày thêm: Gần đây nhất",
+            "Ngày thêm: Lâu nhất",
+            "Ngày cập nhật: Gần đây nhất",
+            "Ngày cập nhật: Lâu nhất"
+        );
+        filterComboBox.setValue("Không lọc");
+
+        // Thêm listener để tự động lọc khi chọn item trong ComboBox
+        filterComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                applyFilters(newValue);
+            }
+        });
+
         movieTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 update_btn.setDisable(false);
-                delete_btn.setDisable(false);
+                delete_btn.setDisable(newSelection.getStatus() == 0);
                 add_btn.setDisable(true);
             } else {
                 update_btn.setDisable(true);
@@ -76,6 +101,7 @@ public class AdminPanelController implements Initializable {
                 add_btn.setDisable(false);
             }
         });
+
         rootPane.setOnMouseClicked(event -> {
             if (!movieTable.getBoundsInParent().contains(event.getX(), event.getY())) {
                 movieTable.getSelectionModel().clearSelection();
@@ -91,10 +117,21 @@ public class AdminPanelController implements Initializable {
         col_duration.setCellValueFactory(new PropertyValueFactory<>("movieTime"));
         col_date.setCellValueFactory(new PropertyValueFactory<>("createDate"));
         col_updatedate.setCellValueFactory(new PropertyValueFactory<>("updateDate"));
-        col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
         col_release.setCellValueFactory(new PropertyValueFactory<>("movieRealeseDate"));
 
-        // Tùy chỉnh cột "Lịch chiếu" với biểu tượng
+        col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        col_status.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setText(null);
+                } else {
+                    setText(status == 1 ? "Đang chiếu" : "Ngừng chiếu");
+                }
+            }
+        });
+
         setupShowtimesColumn();
         
         movieTable.setItems(movieList);
@@ -106,7 +143,6 @@ public class AdminPanelController implements Initializable {
             private final ImageView imageView = new ImageView();
 
             {
-                // Tải hình ảnh từ file
                 Image icon = null;
                 try {
                     InputStream inputStream = getClass().getResourceAsStream("/Cinema/image/icons8-calendar-24.png");
@@ -125,15 +161,13 @@ public class AdminPanelController implements Initializable {
                     imageView.setFitHeight(16);
                     showtimesButton.setGraphic(imageView);
                 } else {
-                    // Sử dụng ký tự mặc định nếu không tìm thấy file
                     showtimesButton.setText("📅");
                 }
                 showtimesButton.setStyle("-fx-background-color: transparent;");
 
-                // Xử lý sự kiện khi nhấp vào biểu tượng
                 showtimesButton.setOnAction(event -> {
                     Movie movie = getTableView().getItems().get(getIndex());
-                    openShowtimeWindow(movie); // Mở cửa sổ mới
+                    openShowtimeWindow(movie);
                 });
             }
 
@@ -150,6 +184,7 @@ public class AdminPanelController implements Initializable {
     }
 
     public void loadMoviesFromDatabase() {
+        fullMovieList.clear();
         movieList.clear();
         String query = "SELECT * FROM movies";
 
@@ -190,13 +225,65 @@ public class AdminPanelController implements Initializable {
                 movie.setUpdateDate(getUpdateDate);
                 movie.setStatus(status);
                 movie.setPrice(getMoviePrice);
-                movieList.add(movie);
+                fullMovieList.add(movie);
             }
+            movieList.addAll(fullMovieList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
+    // Phương thức lọc dựa trên giá trị ComboBox
+    private void applyFilters(String selectedFilter) {
+        movieList.clear();
+
+        switch (selectedFilter) {
+            case "Không lọc":
+                movieList.addAll(fullMovieList);
+                break;
+            case "Status: Đang chiếu":
+                movieList.addAll(fullMovieList.filtered(movie -> movie.getStatus() == 1));
+                break;
+            case "Status: Ngừng chiếu":
+                movieList.addAll(fullMovieList.filtered(movie -> movie.getStatus() == 0));
+                break;
+            case "Ngày ra mắt: Gần đây nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getMovieRealeseDate, Comparator.nullsLast(Comparator.reverseOrder())));
+                break;
+            case "Ngày ra mắt: Lâu nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getMovieRealeseDate, Comparator.nullsLast(Comparator.naturalOrder())));
+                break;
+            case "Ngày thêm: Gần đây nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getCreateDate, Comparator.nullsLast(Comparator.reverseOrder())));
+                break;
+            case "Ngày thêm: Lâu nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getCreateDate, Comparator.nullsLast(Comparator.naturalOrder())));
+                break;
+            case "Ngày cập nhật: Gần đây nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getUpdateDate, Comparator.nullsLast(Comparator.reverseOrder())));
+                break;
+            case "Ngày cập nhật: Lâu nhất":
+                movieList.addAll(fullMovieList);
+                movieList.sort(Comparator.comparing(Movie::getUpdateDate, Comparator.nullsLast(Comparator.naturalOrder())));
+                break;
+            default:
+                movieList.addAll(fullMovieList);
+                break;
+        }
+    }
+
+    @FXML
+    public void resetFilters(MouseEvent event) {
+        filterComboBox.setValue("Không lọc"); // Đặt lại ComboBox về "Không lọc"
+        movieList.clear();
+        movieList.addAll(fullMovieList); // Đặt lại danh sách phim về trạng thái gốc
+    }
+
     @FXML
     public void openAddPanel(MouseEvent event) {
         try {
@@ -236,12 +323,8 @@ public class AdminPanelController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/UpdateMovie.fxml"));
             Parent root = loader.load();
 
-            // Lấy controller của trang cập nhật
             UpdateMovieController updateController = loader.getController();
-            
-            // Truyền dữ liệu phim vào trang cập nhật
             updateController.setMovieData(selectedMovie);
-            
             updateController.setAdminPanelController(this);
 
             Stage stage = new Stage();
@@ -270,7 +353,6 @@ public class AdminPanelController implements Initializable {
             System.out.println("Movie status is already 0. No action taken.");
         }
 
-        // Refresh danh sách phim
         loadMoviesFromDatabase();
     }
 
@@ -289,36 +371,28 @@ public class AdminPanelController implements Initializable {
     }
 
     private void openShowtimeWindow(Movie movie) {
-        // Tạo Stage mới
         Stage showtimeStage = new Stage();
         showtimeStage.setTitle("Lịch chiếu của " + movie.getMovieName());
-        showtimeStage.initStyle(StageStyle.DECORATED); // Có thể thay đổi thành UNDECORATED nếu muốn
+        showtimeStage.initStyle(StageStyle.DECORATED);
 
-        // Tạo ScrollPane chứa nội dung
         ScrollPane scrollPane = createShowtimePane(movie);
 
-        // Tạo Scene và đặt ScrollPane làm nội dung
-        Scene scene = new Scene(scrollPane, 800, 400); // Kích thước cửa sổ: 800x400
-
-        // Áp dụng CSS (nếu có)
-        URL cssURL = getClass().getResource("/resource/css/Showtime.css");
+        Scene scene = new Scene(scrollPane, 800, 400);
+        URL cssURL = getClass().getResource("/css/Showtime.css");
         if (cssURL != null) {
             scene.getStylesheets().add(cssURL.toExternalForm());
         } else {
             System.err.println("Không tìm thấy file CSS: /resource/css/Showtime.css");
         }
 
-        // Hiển thị cửa sổ
         showtimeStage.setScene(scene);
         showtimeStage.show();
     }
 
     private ScrollPane createShowtimePane(Movie movie) {
-        // Tạo TableView nhỏ để hiển thị lịch chiếu
         TableView<Showtime> showtimeTable = new TableView<>();
-        showtimeTable.getStyleClass().add("showtime-table"); // Thêm class để áp dụng CSS
+        showtimeTable.getStyleClass().add("showtime-table");
 
-        // Cấu hình các cột cho TableView nhỏ
         TableColumn<Showtime, String> idCol = new TableColumn<>("ID Lịch chiếu");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setPrefWidth(100);
@@ -342,12 +416,15 @@ public class AdminPanelController implements Initializable {
         TableColumn<Showtime, Integer> bookedSeatsCol = new TableColumn<>("Số ghế đã đặt");
         bookedSeatsCol.setCellValueFactory(new PropertyValueFactory<>("bookedSeatsCount"));
         bookedSeatsCol.setPrefWidth(100);
+        
+        TableColumn<Showtime, Integer> screenCol = new TableColumn<>("Phòng chiếu");
+        screenCol.setCellValueFactory(new PropertyValueFactory<>("screen"));
+        screenCol.setPrefWidth(100);
 
-        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, totalSeatsCol, bookedSeatsCol);
+        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, totalSeatsCol, bookedSeatsCol, screenCol);
 
-        // Tải dữ liệu lịch chiếu từ bảng showtimes
         ObservableList<Showtime> showtimes = FXCollections.observableArrayList();
-        String query = "SELECT id_lichchieu, id_movie, date, time, totalNumberSeats, bookedSeatsCount FROM showtimes WHERE id_movie = ?";
+        String query = "SELECT id_lichchieu, id_movie, date, time, totalNumberSeats, bookedSeatsCount, screen FROM showtimes WHERE id_movie = ?";
 
         try (Connection conn = mysqlconnect.ConnectDb(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -361,7 +438,8 @@ public class AdminPanelController implements Initializable {
                 String showTime = rs.getString("time");
                 Integer totalNumberSeats = rs.getInt("totalNumberSeats");
                 Integer bookedSeatsCount = rs.getInt("bookedSeatsCount");
-                showtimes.add(new Showtime(id, movieId, showDate, showTime, totalNumberSeats, bookedSeatsCount));
+                Integer screen = rs.getInt("screen");
+                showtimes.add(new Showtime(id, movieId, showDate, showTime, totalNumberSeats, bookedSeatsCount, screen));
             }
 
             showtimeTable.setItems(showtimes);
@@ -369,33 +447,28 @@ public class AdminPanelController implements Initializable {
             System.err.println("Lỗi khi lấy dữ liệu lịch chiếu: " + e.getMessage());
         }
 
-        // Nếu không có lịch chiếu, hiển thị thông báo
         if (showtimes.isEmpty()) {
             showtimeTable.setPlaceholder(new Label("Không có lịch chiếu cho phim này."));
         }
 
-        // Tạo nút "Thêm lịch chiếu"
         Button addShowtimeButton = new Button("Thêm lịch chiếu");
-        addShowtimeButton.getStyleClass().add("add-showtime-button"); // Thêm class để áp dụng CSS
+        addShowtimeButton.getStyleClass().add("add-showtime-button");
         addShowtimeButton.setOnAction(event -> openAddShowtimePanel(movie));
 
-        // Sử dụng HBox để đặt nút bên phải
         HBox buttonBox = new HBox(addShowtimeButton);
         buttonBox.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
         buttonBox.setPadding(new javafx.geometry.Insets(5));
-        buttonBox.setPrefHeight(40); // Chiều cao cố định cho HBox
+        buttonBox.setPrefHeight(40);
 
-        // Tạo VBox chứa TableView và nút
         VBox contentBox = new VBox(showtimeTable, buttonBox);
         contentBox.setSpacing(5);
         contentBox.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0;");
 
-        // Tạo ScrollPane và đặt nội dung là contentBox
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(contentBox);
-        scrollPane.setFitToWidth(true); // Fit với chiều rộng của cửa sổ
-        scrollPane.setFitToHeight(true); // Fit với chiều cao của cửa sổ
-        scrollPane.setStyle("-fx-background-color: #f0f0f0;"); // Đồng bộ màu nền với contentBox
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background-color: #f0f0f0;");
 
         return scrollPane;
     }
@@ -405,7 +478,6 @@ public class AdminPanelController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Cinema/UI/AddShowtime.fxml"));
             Parent root = loader.load();
 
-            // Lấy controller của giao diện thêm lịch chiếu
             AddShowtimeController addShowtimeController = loader.getController();
             addShowtimeController.setMovie(movie);
             addShowtimeController.setAdminPanelController(this);
@@ -420,9 +492,7 @@ public class AdminPanelController implements Initializable {
         }
     }
 
-    // Phương thức để làm mới danh sách phim sau khi thêm lịch chiếu
     public void refreshShowtimes() {
-        // Làm mới danh sách phim
         loadMoviesFromDatabase();
     }
 }

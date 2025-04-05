@@ -34,23 +34,23 @@
         </ImageView>
       <AnchorPane fx:id="loginFormContainer" maxHeight="600.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
          <children>
-            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="127.0" text="Login" textFill="WHITE" AnchorPane.leftAnchor="50.0">
+            <Label layoutX="54.0" layoutY="96.0" lineSpacing="1.0" prefHeight="48.0" prefWidth="211.0" style="-fx-font-weight: bold;" text="ĐĂNG NHẬP" textFill="WHITE" AnchorPane.leftAnchor="50.0">
                <font>
-                  <Font name="Impact" size="36.0" />
+                  <Font size="36.0" />
                </font>
             </Label>
             <TextField fx:id="inputLoginEmailField" layoutX="50.4" layoutY="210.0" onKeyTyped="#resetErrorMessage" prefHeight="40.0" promptText="thanh@gmail.com" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" />
-            <Label layoutX="50.4" layoutY="178.0" text="Email Address" textFill="WHITE" AnchorPane.leftAnchor="50.0">
+            <Label layoutX="50.4" layoutY="178.0" text="Địa chỉ email" textFill="WHITE" AnchorPane.leftAnchor="50.0">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
             </Label>
-            <Label layoutX="50.4" layoutY="278.0" text="Password" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="278.0" text="Mật khẩu" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
             </Label>
-            <Button fx:id="btnLogin" layoutX="50.4" layoutY="376.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#login" prefHeight="45.0" prefWidth="89.0" text="Login" textAlignment="CENTER" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998">
+            <Button fx:id="btnLogin" layoutX="50.4" layoutY="376.0" lineSpacing="1.0" mnemonicParsing="false" onAction="#login" prefHeight="45.0" prefWidth="89.0" text="Đăng nhập" textAlignment="CENTER" AnchorPane.leftAnchor="50.4" AnchorPane.rightAnchor="50.39999999999998">
                <font>
                   <Font name="Calibri" size="24.0" />
                </font>
@@ -72,17 +72,17 @@
                   </ImageView>
                </children>
             </StackPane>
-            <Hyperlink layoutX="214.0" layoutY="275.0" onAction="#forgetPassword" text="Forgot Password?" textFill="#65aefd" AnchorPane.rightAnchor="50.80000000000001">
+            <Hyperlink layoutX="214.0" layoutY="275.0" onAction="#forgetPassword" text="Quên mật khẩu?" textFill="#65aefd" AnchorPane.rightAnchor="50.80000000000001">
                <font>
                   <Font size="16.0" />
                </font>
             </Hyperlink>
-            <Label layoutX="50.4" layoutY="447.0" text="Don’t have an account?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
+            <Label layoutX="50.4" layoutY="447.0" text="Chưa có tài khoản?" textFill="WHITE" AnchorPane.leftAnchor="50.4">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>
             </Label>
-            <Hyperlink layoutX="223.2" layoutY="443.0" onAction="#signUp" text="Sign Up" textFill="#65aefd" AnchorPane.leftAnchor="223.2">
+            <Hyperlink layoutX="223.2" layoutY="443.0" onAction="#signUp" text="Đăng ký" textFill="#65aefd" AnchorPane.leftAnchor="223.2">
                <font>
                   <Font name="Calibri" size="18.0" />
                </font>

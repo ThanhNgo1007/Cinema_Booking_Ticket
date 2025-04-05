@@ -370,9 +370,4 @@ public class AccountSettingController {
             alert.showAndWait();
         }
     }
-
-    @FXML
-    private void handleChangePasswordButton() {
-        // Chưa triển khai
-    }
 }

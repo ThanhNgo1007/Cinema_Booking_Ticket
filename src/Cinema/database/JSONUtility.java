@@ -15,9 +15,9 @@ import java.sql.SQLException;
 
 public class JSONUtility {
 
-    static String path_userdata = "src/Cinema/database/userdata.json";
-    static String path_admindata = "src/Cinema/database/admindata.json"; // Đường dẫn file admindata.json
-    String path_moviedata = "src/Cinema/database/moviedata.json";
+    static String path_userdata = "/Users/ngochan0808/eclipse-workspace/HelloFX/src/Cinema/database/userdata.json";
+    static String path_admindata = "/Users/ngochan0808/eclipse-workspace/HelloFX/src/Cinema/database/admindata.json";
+    static String path_moviedata = "/Users/ngochan0808/eclipse-workspace/HelloFX/src/Cinema/database/moviedata.json";
 
     // Lưu thông tin người dùng vào userdata.json
     public static void storeUserDataFromResultSet(ResultSet rs) throws IOException, SQLException {
@@ -50,14 +50,14 @@ public class JSONUtility {
             quan = "";
         }
         if (phuong == null || phuong.isEmpty()) {
-        	phuong = "";
+            phuong = "";
         }
         if (homeAddress == null || homeAddress.isEmpty()) {
             homeAddress = "";
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName,quan,phuong,homeAddress);
+        User user = new User(userId, firstName, lastName, userEmail, phoneNumber, cityName, quan, phuong, homeAddress);
         String jsonString = gson.toJson(user);
 
         try (FileWriter writer = new FileWriter(path_userdata)) {
@@ -98,14 +98,14 @@ public class JSONUtility {
             quan = "";
         }
         if (huyen == null || huyen.isEmpty()) {
-           huyen = "";
+            huyen = "";
         }
         if (homeAddress == null || homeAddress.isEmpty()) {
             homeAddress = "";
         }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User admin = new User(adminId, firstName, lastName, adminEmail, phoneNumber, cityName,quan,huyen,homeAddress);
+        User admin = new User(adminId, firstName, lastName, adminEmail, phoneNumber, cityName, quan, huyen, homeAddress);
         String jsonString = gson.toJson(admin);
 
         try (FileWriter writer = new FileWriter(path_admindata)) {
@@ -114,9 +114,9 @@ public class JSONUtility {
             e.printStackTrace();
         }
     }
-    
- // Phương thức mới: Lưu dữ liệu người dùng trực tiếp từ tham số
-    public static void storeUserData(int userId, String firstName, String lastName, String email, String phoneNumber, String cityName,String quan, String phuong, String homeAddress) throws IOException {
+
+    // Phương thức mới: Lưu dữ liệu người dùng trực tiếp từ tham số
+    public static void storeUserData(int userId, String firstName, String lastName, String email, String phoneNumber, String cityName, String quan, String phuong, String homeAddress) throws IOException {
         // Xử lý giá trị null hoặc rỗng
         if (phoneNumber == null || phoneNumber.isEmpty()) phoneNumber = "";
         if (firstName == null || firstName.isEmpty()) firstName = "";
@@ -128,7 +128,7 @@ public class JSONUtility {
         if (homeAddress == null || homeAddress.isEmpty()) homeAddress = "";
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        User user = new User(userId, firstName, lastName, email, phoneNumber, cityName,quan,phuong,homeAddress);
+        User user = new User(userId, firstName, lastName, email, phoneNumber, cityName, quan, phuong, homeAddress);
         String jsonString = gson.toJson(user);
 
         try (FileWriter writer = new FileWriter(path_userdata)) {
@@ -141,7 +141,13 @@ public class JSONUtility {
     // Inner class representing User
     public static class User {
         public int userId;
-        String firstName, lastName, email, phoneNumber, cityName,quan, phuong, homeAddress;
+        String firstName, lastName;
+		public String email;
+		String phoneNumber;
+		String cityName;
+		String quan;
+		String phuong;
+		String homeAddress;
 
         public User(int id, String fname, String lname, String email, String phoneNumber, String cityName, String quan, String phuong, String homeAddress) {
             this.userId = id;
@@ -160,18 +166,18 @@ public class JSONUtility {
         }
 
         public String getUserName() {
-            return firstName + lastName;
+            return firstName + " " + lastName;
         }
-        
+
         public String getEmail() {
-        	return email;
+            return email;
         }
     }
 
     // Các phương thức khác giữ nguyên
     public static boolean userIsLoggedIn() {
-        String filePath = "src/application/database/userdata.json";
-        try (FileReader reader = new FileReader(filePath)) {
+        String filePath = "src/Cinema/database/userdata.json";
+        try (FileReader reader = new FileReader(path_userdata)) {
             JsonElement jsonElement = JsonParser.parseReader(reader);
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             return jsonObject.has("userId") && !jsonObject.get("userId").isJsonNull() && jsonObject.has("email")
@@ -185,11 +191,10 @@ public class JSONUtility {
 
     public static boolean removeValuesAndSave() {
         String userFilePath = "src/Cinema/database/userdata.json";
-        String adminFilePath = "src/Cinema/database/admindata.json";
 
         try {
             // Xóa userdata.json
-            FileReader userReader = new FileReader(userFilePath);
+            FileReader userReader = new FileReader(path_userdata);
             JsonObject userJsonObject = JsonParser.parseReader(userReader).getAsJsonObject();
             userReader.close();
 
@@ -203,7 +208,7 @@ public class JSONUtility {
             userJsonObject.addProperty("phuong", "");
             userJsonObject.addProperty("homeAddress", "");
 
-            FileWriter userWriter = new FileWriter(userFilePath);
+            FileWriter userWriter = new FileWriter(path_userdata);
             Gson gson = new Gson();
             gson.toJson(userJsonObject, userWriter);
             userWriter.close();
@@ -214,15 +219,14 @@ public class JSONUtility {
         }
         return false;
     }
-    
+
     public static boolean removeValuesAndSaveAdmin() {
         String adminFilePath = "src/Cinema/database/admindata.json";
 
         try {
-           
             Gson gson = new Gson();
             // Xóa admindata.json
-            FileReader adminReader = new FileReader(adminFilePath);
+            FileReader adminReader = new FileReader(path_admindata);
             JsonObject adminJsonObject = JsonParser.parseReader(adminReader).getAsJsonObject();
             adminReader.close();
 
@@ -236,7 +240,7 @@ public class JSONUtility {
             adminJsonObject.addProperty("phuong", "");
             adminJsonObject.addProperty("homeAddress", "");
 
-            FileWriter adminWriter = new FileWriter(adminFilePath);
+            FileWriter adminWriter = new FileWriter(path_admindata);
             gson.toJson(adminJsonObject, adminWriter);
             adminWriter.close();
 
@@ -246,7 +250,7 @@ public class JSONUtility {
         }
         return false;
     }
-    
+
     public static User getUserData() {
         try (FileReader reader = new FileReader(path_userdata)) {
             JsonElement jsonElement = JsonParser.parseReader(reader);
@@ -261,7 +265,7 @@ public class JSONUtility {
             String quan = jsonObject.has("quan") && !jsonObject.get("quan").isJsonNull() ? jsonObject.get("quan").getAsString() : "";
             String huyen = jsonObject.has("phuong") && !jsonObject.get("phuong").isJsonNull() ? jsonObject.get("phuong").getAsString() : "";
             String homeAddress = jsonObject.has("homeAddress") && !jsonObject.get("homeAddress").isJsonNull() ? jsonObject.get("homeAddress").getAsString() : "";
-            return new User(userId, firstName, lastName, email, phoneNumber, cityName,quan, huyen, homeAddress);
+            return new User(userId, firstName, lastName, email, phoneNumber, cityName, quan, huyen, homeAddress);
         } catch (IOException e) {
             System.err.println("Lỗi lấy dữ liệu người dùng: " + e.getMessage());
             return null;
@@ -284,30 +288,32 @@ public class JSONUtility {
 
     public class MovieData {
         public String id;
-        public int price, basePrice, totalPrice = 0, numberOfSeats = 0;
-        public String name, timing, booked, selected;
-        public String[] bookedSeats = {}, selectedSeats = {};
+        public int basePrice, totalPrice = 0, numberOfSeats = 0; // Xóa price
+        public String name, timing, selected, screen;
+        public String[] selectedSeats = {}; // Xóa bookedSeats
 
-        public MovieData(String id, String name, String timing, String[] booked, int basePrice) {
+        public MovieData(String id, String name, String timing, int basePrice, String screen) {
             this.id = id;
             this.name = name;
             this.timing = timing;
-            this.bookedSeats = booked;
             this.basePrice = basePrice;
+            this.screen = screen;
         }
     }
 
-    public boolean createMovieJson(String id, String name, String timing, String booked, int basePrice) {
-        try {
-            FileWriter writer = new FileWriter(path_moviedata);
-            Gson gson = new Gson();
-            MovieData movieData = new MovieData(id, name, timing, booked.split(","), basePrice);
-            gson.toJson(movieData, writer);
-            writer.close();
-            return true;
+    // Sửa phương thức createMovieJson để không sử dụng price và bookedSeats
+    public void createMovieJson(String id_lichchieu, String movieName, String timing, String seatInfo, int basePrice, String screen) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        MovieData movieData = new MovieData(id_lichchieu, movieName, timing, basePrice, screen);
+        movieData.totalPrice = 0;
+        movieData.numberOfSeats = 0;
+        movieData.selected = "";
+        movieData.selectedSeats = new String[]{};
+
+        try (FileWriter file = new FileWriter(path_moviedata)) {
+            gson.toJson(movieData, file);
         } catch (IOException e) {
-            System.out.println("Error storing movie data: " + e.getMessage());
-            return false;
+            e.printStackTrace();
         }
     }
 
@@ -316,20 +322,16 @@ public class JSONUtility {
             FileReader reader = new FileReader(path_moviedata);
             JsonElement jsonElement = JsonParser.parseReader(reader);
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-            JsonArray arr = jsonObject.getAsJsonArray("bookedSeats");
-            String[] booked = new String[arr.size()];
-            for (int i = 0; i < arr.size(); i++) {
-                booked[i] = arr.get(i).getAsString();
-            }
             MovieData movieData = new MovieData(
                 jsonObject.get("id").getAsString(),
                 jsonObject.get("name").getAsString(),
                 jsonObject.get("timing").getAsString(),
-                booked,
-                jsonObject.get("basePrice").getAsInt()
+                jsonObject.get("basePrice").getAsInt(),
+                jsonObject.has("screen") ? jsonObject.get("screen").getAsString() : ""
             );
             movieData.totalPrice = jsonObject.get("totalPrice").getAsInt();
             movieData.numberOfSeats = jsonObject.has("numberOfSeats") ? jsonObject.get("numberOfSeats").getAsInt() : 0;
+            movieData.selected = jsonObject.has("selected") ? jsonObject.get("selected").getAsString() : "";
             JsonArray selectedArr = jsonObject.getAsJsonArray("selectedSeats");
             movieData.selectedSeats = new String[selectedArr.size()];
             for (int i = 0; i < selectedArr.size(); i++) {
@@ -361,6 +363,48 @@ public class JSONUtility {
             return true;
         } catch (IOException e) {
             System.out.println("Error updating movie data: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Sửa phương thức clearMovieData để không sử dụng price và bookedSeats
+    public boolean clearMovieData() {
+        try {
+            FileReader reader = new FileReader(path_moviedata);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            MovieData movieData = gson.fromJson(reader, MovieData.class);
+            reader.close();
+
+            // Xóa các trường liên quan đến vé đã đặt
+            movieData.selected = "";
+            movieData.selectedSeats = new String[]{};
+            movieData.totalPrice = 0;
+            movieData.numberOfSeats = 0;
+
+            FileWriter writer = new FileWriter(path_moviedata);
+            gson.toJson(movieData, writer);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error clearing movie data: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean updateMoviePrice(int newTotalPrice) {
+        try {
+            FileReader reader = new FileReader(path_moviedata);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            MovieData movieData = gson.fromJson(reader, MovieData.class);
+            reader.close();
+
+            movieData.totalPrice = newTotalPrice;
+
+            FileWriter writer = new FileWriter(path_moviedata);
+            gson.toJson(movieData, writer);
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error updating movie price: " + e.getMessage());
             return false;
         }
     }

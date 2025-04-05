@@ -213,7 +213,7 @@ public class AdminTicketsController implements Initializable {
     private void loadTicketsFromDatabase() {
         ticketList.clear();
         String query = "SELECT t.id, t.userID, t.movieID, t.showtimeID, t.seatNumbers, t.totalPrice, t.status, t.createDate, " +
-                      "s.date, s.time, m.name, u.first_name, u.last_name, u.email " +
+                      "s.date, s.time, m.name, u.first_name, u.last_name, u.email, s.screen " +
                       "FROM bookedTickets t " +
                       "JOIN showtimes s ON t.showtimeID = s.id_lichchieu " +
                       "JOIN movies m ON t.movieID = m.id " +
@@ -248,8 +248,9 @@ public class AdminTicketsController implements Initializable {
                 userName = userName.trim();
                 if (userName.isEmpty()) userName = "Unknown User";
                 String userEmail = rs.getString("email");
+                int screen = rs.getInt("screen");
 
-                ticketList.add(new Ticket(ticketId, userId, movieName, totalPrice, seats, showtime, bookingDate, bookingDateTime, status, userName, userEmail));
+                ticketList.add(new Ticket(ticketId, userId, movieName, totalPrice, seats, showtime, bookingDate, bookingDateTime, status, userName, userEmail, screen));
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy dữ liệu vé: " + e.getMessage());
@@ -387,12 +388,6 @@ public class AdminTicketsController implements Initializable {
     private void openTicketDetail(Ticket ticket) {
         try {
             URL fxmlLocation = getClass().getResource("/Cinema/UI/TicketDetailView.fxml");
-            if (fxmlLocation == null) {
-                System.err.println("Không tìm thấy file FXML: /Cinema/UI/TicketDetailView.fxml");
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Không thể mở trang chi tiết vé: File FXML không tồn tại.");
-                alert.showAndWait();
-                return;
-            }
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();

@@ -61,9 +61,7 @@ public class ForgotPassword {
 		if (isEmailValid) {
 			// disable the input field and buttons for email address
 			errorForgotEmailField.setVisible(true);
-			inputForgotEmailField.setDisable(true);
-			btnSendOTP.setDisable(true);
-
+			
 			// validate Email presence in DB for existing user account
 			Boolean isEmailExisting = DBUtility.checkExistinguserEmailAddress(emailAddress);
 
@@ -79,10 +77,8 @@ public class ForgotPassword {
 				Boolean isEmailSent = EmailUtility.sendVerificationEmail(emailAddress);
 
 				if (isEmailSent) {
-					btnSendOTP.setDisable(true);
 					errorForgotEmailField.setTextFill(Color.GREEN);
 					errorForgotEmailField.setText("Email Sent Successfully!");
-					inputForgotOTPField.setDisable(false);
 					errorForgotOTPField.setText(null);
 					userEmailAddress = emailAddress;
 					emailSentSuccessfully = true;

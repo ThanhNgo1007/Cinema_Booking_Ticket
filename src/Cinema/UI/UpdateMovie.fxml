@@ -51,7 +51,7 @@
                   <HBox alignment="TOP_RIGHT" prefHeight="23.0" prefWidth="508.0">
                      <children>
                         <Label text="Actor/ Actress: " />
-                        <TextArea fx:id="actorsField" prefHeight="39.0" prefWidth="295.0" />
+                        <TextArea fx:id="actorsField" prefHeight="39.0" prefWidth="295.0" wrapText="true" />
                      </children>
                   </HBox>
                   <HBox alignment="TOP_RIGHT" prefHeight="26.0" prefWidth="373.0">
@@ -70,7 +70,7 @@
                   <HBox alignment="TOP_RIGHT" prefHeight="176.0" prefWidth="400.0">
                      <children>
                         <Label text="Descripton: " />
-                        <TextArea fx:id="descriptionField" prefHeight="122.0" prefWidth="320.0" />
+                        <TextArea fx:id="descriptionField" prefHeight="122.0" prefWidth="320.0" wrapText="true" />
                      </children>
                   </HBox>
                   <HBox alignment="TOP_RIGHT" layoutX="10.0" layoutY="10.0" prefHeight="13.0" prefWidth="420.0">

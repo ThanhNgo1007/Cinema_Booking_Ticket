@@ -22,6 +22,7 @@ public class TicketDetailController {
     @FXML private Label showtimeLabel;
     @FXML private Label bookingDateLabel; // Thêm bookingDateLabel
     @FXML private Label statusLabel;
+    @FXML private Label screenLabel;
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
     @FXML private Button deactivateButton;
@@ -52,6 +53,7 @@ public class TicketDetailController {
         statusLabel.setText("Trạng thái: " + (ticket.getStatus() == 1 ? "Active" : "Deactivated"));
         userNameLabel.setText("Người đặt: " + ticket.getUserName());
         userEmailLabel.setText("Email: " + ticket.getUserEmail());
+        screenLabel.setText("Phòng chiếu: " + ticket.getScreen());
     }
 
     private void updateDeactivateButton() {

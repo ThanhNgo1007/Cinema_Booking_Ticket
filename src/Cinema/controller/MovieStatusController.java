@@ -35,10 +35,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class MovieStatusController {
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
-
     @FXML
     private Text movieActors, movieDescription, director;
     @FXML
@@ -97,6 +93,11 @@ public class MovieStatusController {
         newStage.setScene(scene);
         newStage.initStyle(StageStyle.UNDECORATED);
         newStage.show();
+        newStage.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                newStage.close();
+            }
+        });
     }
 
     public void setMovieData(String ID, String name, String gener, String duration, String releaseDate) {
