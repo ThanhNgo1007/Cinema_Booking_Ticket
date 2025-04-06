@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import Cinema.database.DBUtility;
 import Cinema.database.Form;
 import Cinema.database.JSONUtility;
+import Cinema.util.User;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -89,7 +90,7 @@ public class ChangePasswordController implements Initializable {
     }
 
     private boolean verifyCurrentPassword(String currentPassword) {
-        JSONUtility.User currentUser = JSONUtility.getUserData();
+        User currentUser = JSONUtility.getUserData();
         if (currentUser == null) {
             errorCurrentPassword.setText("Không tìm thấy thông tin người dùng");
             return false;
@@ -100,7 +101,7 @@ public class ChangePasswordController implements Initializable {
             return false;
         }
 
-        if (!DBUtility.verifyCurrentPassword(currentUser.email, currentPassword)) {
+        if (!DBUtility.verifyCurrentPassword(currentUser.getEmail(), currentPassword)) {
             errorCurrentPassword.setText("Mật khẩu hiện tại không đúng");
             return false;
         }
@@ -143,9 +144,9 @@ public class ChangePasswordController implements Initializable {
     }
 
  private void updatePasswordInDatabase(String newPassword) {
-	    JSONUtility.User currentUser = JSONUtility.getUserData();
+	   User currentUser = JSONUtility.getUserData();
 	    if (currentUser != null) {
-	        boolean success = DBUtility.updateUsersPassword(currentUser.email, newPassword);
+	        boolean success = DBUtility.updateUsersPassword(currentUser.getEmail(), newPassword);
 	        if (success) {
 	            showSuccessMessage();
 	            clearPasswordFields();

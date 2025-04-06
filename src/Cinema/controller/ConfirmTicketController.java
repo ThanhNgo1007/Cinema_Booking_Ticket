@@ -14,7 +14,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -23,7 +25,7 @@ import javafx.stage.Screen;
 
 import Cinema.database.JSONUtility;
 import Cinema.database.JSONUtility.MovieData;
-import Cinema.database.JSONUtility.User;
+import Cinema.util.User;
 import Cinema.database.mysqlconnect;
 
 public class ConfirmTicketController {
@@ -35,6 +37,8 @@ public class ConfirmTicketController {
     private MovieData moviedata;
     private String voucherId = null;
     private int discountAmount = 0;
+    private int originalPrice = 0;
+
 
     @FXML
     private Label titleLabel, movieNameLabel, showtimeLabel, cinemaLabel, seatLabel, 
@@ -45,6 +49,18 @@ public class ConfirmTicketController {
     private Text voucherDetail;
     @FXML
     private VBox voucherSection;
+    @FXML
+    private RadioButton BANK;
+
+    @FXML
+    private RadioButton COD;
+
+    @FXML
+    private RadioButton MOMO;
+
+    @FXML
+    private RadioButton VNPAY;
+
 
     private static final DecimalFormat formatter = new DecimalFormat("#,###");
 
@@ -55,9 +71,16 @@ public class ConfirmTicketController {
             showtimeLabel.setText("Thời gian chiếu: " + moviedata.timing);
             cinemaLabel.setText("Rạp: CGV Sense City Cần Thơ ");
             seatLabel.setText("Ghế: " + String.join(", ", moviedata.selectedSeats));
-            updatePriceLabels();
+            originalPrice = moviedata.totalPrice; // Lưu giá gốc
+            updatePriceLabels(); 
         }
+        ToggleGroup group = new ToggleGroup();
+        BANK.setToggleGroup(group);
+        MOMO.setToggleGroup(group);
+        VNPAY.setToggleGroup(group);
+        COD.setToggleGroup(group);
     }
+
 
     @FXML
     public void toggleVoucherSection() {
@@ -93,32 +116,24 @@ public class ConfirmTicketController {
                     voucherId = rs.getString("id_voucher");
                     String discountStr = rs.getString("discountAmount");
                     String description = rs.getString("discountDetails");
-                    
                     // Calculate discount amount
                     if (discountStr.contains("%")) {
-                        // Percentage discount
                         int percent = Integer.parseInt(discountStr.replace("%", "").trim());
-                        discountAmount = (int) (moviedata.totalPrice * (percent / 100.0));
+                        discountAmount = (int) (originalPrice * (percent / 100.0));
                     } else {
-                        // Fixed amount discount
                         discountAmount = Integer.parseInt(discountStr);
                     }
-                    
-                    // Calculate final price
-                    int finalPrice = moviedata.totalPrice - discountAmount;
-                    
-                    // Update JSON file
+
+                    int finalPrice = originalPrice - discountAmount;
                     util.updateMoviePrice(finalPrice);
-                    
-                    // Update UI
                     voucherDetail.setText(description);
-                    voucherDiscountLabel.setText(formatter.format(discountAmount) + " VND");
+                    voucherDiscountLabel.setText(formatter.format(discountAmount) + "đ");
                     updatePriceLabels();
                 } else {
                     voucherDetail.setText("Mã giảm giá không hợp lệ hoặc đã hết hạn");
                     voucherId = null;
                     discountAmount = 0;
-                    voucherDiscountLabel.setText("0 VND");
+                    voucherDiscountLabel.setText("0.00 đ");
                     updatePriceLabels();
                 }
             }
@@ -131,29 +146,29 @@ public class ConfirmTicketController {
             voucherDetail.setText("Lỗi định dạng mã giảm giá");
             voucherId = null;
             discountAmount = 0;
-            voucherDiscountLabel.setText("0 VND");
+            voucherDiscountLabel.setText("0.00 đ");
             updatePriceLabels();
         }
     }
 
     private void updatePriceLabels() {
-        int finalPrice = moviedata.totalPrice - discountAmount;
-        totalPriceLabel1.setText(formatter.format(moviedata.totalPrice) + " đ");
+        int finalPrice = originalPrice - discountAmount;
+        totalPriceLabel1.setText(formatter.format(originalPrice) + " đ");
         totalPriceLabel.setText(formatter.format(finalPrice) + " đ");
-        
-        // Cập nhật lại moviedata trong bộ nhớ
+
+        // Cập nhật lại moviedata nhưng KHÔNG thay đổi originalPrice
         moviedata.totalPrice = finalPrice;
     }
 
     @FXML
     public void handleConfirmBtnClick(ActionEvent event) throws IOException {
-        JSONUtility.User userData = JSONUtility.getUserData();
-        if (userData == null || userData.userId == 0) {
+    	User userData = JSONUtility.getUserData();
+        if (userData == null || userData.getUserId() == 0) {
             System.err.println("Không thể lấy thông tin người dùng hợp lệ từ userdata.json.");
             return;
         }
 
-        saveTicketToDatabase(userData.userId);
+        saveTicketToDatabase(userData.getUserId());
         updateNumberOfSeatsInShowtimes();
 
         root = FXMLLoader.load(getClass().getResource("/Cinema/UI/Booked.fxml"));

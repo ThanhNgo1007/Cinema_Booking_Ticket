@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import Cinema.database.JSONUtility.MovieData;
-import Cinema.database.JSONUtility.User;
+import Cinema.util.User;
 import Cinema.util.Movie;
 
 public class DBUtility {
@@ -96,7 +96,7 @@ public class DBUtility {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
 
             String query = "SELECT * FROM users WHERE email = ?";
             pstmt = conn.prepareStatement(query);
@@ -251,83 +251,4 @@ public class DBUtility {
         }
     }
 
-    public static double calculateTotalPrice() {
-        double total = 0;
-        Connection conn = null;
-
-        try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-
-            String query = "SELECT totalPrice FROM booked_ticket";
-            try (PreparedStatement statement = conn.prepareStatement(query)) {
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    total += resultSet.getDouble("totalPrice");
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error calculating total price: " + e.getMessage());
-        } finally {
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return total;
-    }
-
-    public static int countMovies() {
-        int movieCount = 0;
-        Connection conn = null;
-
-        try {
-            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            String sql = "SELECT COUNT(*) AS count FROM movies";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        movieCount = rs.getInt("count");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return movieCount;
-    }
-
-    public static int totalTicketsSold() {
-        int ticketCount = 0;
-        Connection conn = null;
-
-        try {
-            conn = mysqlconnect.ConnectDb(DB_URL, USERNAME, PASSWORD);
-            String sql = "SELECT COUNT(*) AS count FROM bookedTickets";
-
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        ticketCount = rs.getInt("count");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return ticketCount;
-    }
 }

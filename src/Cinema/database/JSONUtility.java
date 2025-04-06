@@ -7,6 +7,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import Cinema.util.User;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -135,42 +137,6 @@ public class JSONUtility {
             writer.write(jsonString);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    // Inner class representing User
-    public static class User {
-        public int userId;
-        String firstName, lastName;
-		public String email;
-		String phoneNumber;
-		String cityName;
-		String quan;
-		String phuong;
-		String homeAddress;
-
-        public User(int id, String fname, String lname, String email, String phoneNumber, String cityName, String quan, String phuong, String homeAddress) {
-            this.userId = id;
-            this.firstName = fname;
-            this.lastName = lname;
-            this.email = email;
-            this.phoneNumber = phoneNumber;
-            this.cityName = cityName;
-            this.quan = quan;
-            this.phuong = phuong;
-            this.homeAddress = homeAddress;
-        }
-
-        public int getUserId() {
-            return userId;
-        }
-
-        public String getUserName() {
-            return firstName + " " + lastName;
-        }
-
-        public String getEmail() {
-            return email;
         }
     }
 

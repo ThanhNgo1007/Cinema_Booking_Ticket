@@ -3,6 +3,7 @@ package Cinema.controller;
 import Cinema.database.JSONUtility;
 import Cinema.database.mysqlconnect;
 import Cinema.util.Ticket;
+import Cinema.util.User;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -76,7 +77,7 @@ public class UserTicketsController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Lấy userID từ file userdata.json
-        JSONUtility.User user = JSONUtility.getUserData();
+        User user = JSONUtility.getUserData();
         if (user != null) {
             this.userID = String.valueOf(user.getUserId());
         } else {

@@ -26,6 +26,7 @@ import java.util.List;
 
 import Cinema.database.JSONUtility;
 import Cinema.database.mysqlconnect;
+import Cinema.util.Showtime;
 
 public class ShowtimeController {
 
@@ -43,52 +44,6 @@ public class ShowtimeController {
     private List<Showtime> showtimes;
     private String movieID;
     private List<Button> dayButtons = new ArrayList<>();
-
-    public static class Showtime {
-        private String id_lichchieu;
-        private LocalDate date;
-        private String time;
-        private String id_movie;
-        private int bookedSeatsCount;
-        private int totalNumberSeats;
-
-        public Showtime(String id_lichchieu, LocalDate date, String time, String id_movie, int bookedSeatsCount, int totalNumberSeats) {
-            this.id_lichchieu = id_lichchieu;
-            this.date = date;
-            this.time = time;
-            this.setId_movie(id_movie);
-            this.bookedSeatsCount = bookedSeatsCount;
-            this.totalNumberSeats = totalNumberSeats;
-        }
-
-        public String getId_lichchieu() {
-            return id_lichchieu;
-        }
-
-        public LocalDate getDate() {
-            return date;
-        }
-
-        public String getTime() {
-            return time;
-        }
-
-        public int getAvailableSeats() {
-            return totalNumberSeats - bookedSeatsCount;
-        }
-
-        public int getTotalNumberSeats() {
-            return totalNumberSeats;
-        }
-
-        public String getId_movie() {
-            return id_movie;
-        }
-
-        public void setId_movie(String id_movie) {
-            this.id_movie = id_movie;
-        }
-    }
 
     public void setMovieId(String movieID) {
         this.movieID = movieID;
@@ -170,8 +125,11 @@ public class ShowtimeController {
     private void displayShowtimesForDate(LocalDate date) {
         showtimeContainer.getChildren().clear();
 
+        // Chuyển LocalDate thành String để so sánh
+        String dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE); // Định dạng "yyyy-MM-dd"
+
         for (Showtime showtime : showtimes) {
-            if (showtime.getDate().equals(date) && showtime.getId_movie().equals(movieID)) {
+            if (showtime.getDate().equals(dateStr) && showtime.getId_movie().equals(movieID)) { // So sánh String
                 Button showtimeButton = new Button(String.format("%s ( %d/%d )", showtime.getTime(), showtime.getAvailableSeats(), showtime.getTotalNumberSeats()));
                 showtimeButton.getStyleClass().add("showtime-button");
                 showtimeButton.setStyle("-fx-pref-height: 40px;");
@@ -273,13 +231,15 @@ public class ShowtimeController {
 
             while (rs.next()) {
                 String id_lichchieu = rs.getString("id_lichchieu");
-                LocalDate date = rs.getDate("date").toLocalDate();
+                String date = rs.getString("date"); // Lấy ngày dưới dạng String
                 String time = rs.getTime("time").toString().substring(0, 5);
                 String id_movie = rs.getString("id_movie");
                 int bookedSeatsCount = rs.getInt("bookedSeatsCount");
                 int totalNumberSeats = rs.getInt("totalNumberSeats");
+                int screen = rs.getInt("screen");
+                String end_time = rs.getTime("end_time").toString().substring(0, 5);
 
-                showtimes.add(new Showtime(id_lichchieu, date, time, id_movie, bookedSeatsCount, totalNumberSeats));
+                showtimes.add(new Showtime(id_lichchieu, date, time, id_movie, bookedSeatsCount, totalNumberSeats, screen, end_time));
             }
         } catch (SQLException e) {
             System.err.println("Lỗi kết nối CSDL: " + e.getMessage());

@@ -50,7 +50,10 @@
                                     </HBox.margin></Button>
                               </children>
                            </HBox>
-                           <Text fx:id="voucherDetail" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                           <Text fx:id="voucherDetail" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+                              <VBox.margin>
+                                 <Insets left="10.0" />
+                              </VBox.margin></Text>
                         </children>
                      </VBox>
                      <Label fx:id="paymentLabel" alignment="CENTER" prefHeight="39.0" prefWidth="653.0" style="-fx-background-color: #b9c1c1; -fx-font-size: 24px; -fx-font-weight: bold;" text="PHƯƠNG THỨC THANH TOÁN" textAlignment="CENTER">
@@ -92,7 +95,7 @@
                      <VBox prefHeight="80.0" prefWidth="344.0" style="-fx-border-color: black;">
                         <children>
                            <Label alignment="CENTER" prefHeight="43.0" prefWidth="406.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Khuyến mãi" />
-                           <Label fx:id="voucherDiscountLabel" alignment="CENTER" prefHeight="45.0" prefWidth="394.0" style="-fx-background-color: #b9c1c1; -fx-font-size: 24px; -fx-font-weight: bold;" text="0,00 VND" />
+                           <Label fx:id="voucherDiscountLabel" alignment="CENTER" prefHeight="45.0" prefWidth="394.0" style="-fx-background-color: #b9c1c1; -fx-font-size: 24px; -fx-font-weight: bold;" text="0.00 VND" />
                         </children>
                      </VBox>
                      <VBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="344.0" style="-fx-border-color: black;">

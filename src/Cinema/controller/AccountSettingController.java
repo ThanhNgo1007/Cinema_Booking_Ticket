@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import Cinema.database.JSONUtility;
-import Cinema.database.JSONUtility.User;
+import Cinema.util.User;
 import Cinema.util.District;
 import Cinema.util.Province;
 import Cinema.util.Ward;
@@ -68,13 +68,7 @@ public class AccountSettingController {
     private static final String DB_PASSWORD = "";
 
     private String userEmail;
-    private String initialFirstName;
-    private String initialLastName;
-    private String initialPhone;
-    private String initialCity;
-    private String initialQuan;
-    private String initialPhuong;
-    private String initialHomeAddress;
+    private User initialUser; // Thay thế các biến riêng lẻ bằng một đối tượng User
     private int userId;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -117,9 +111,9 @@ public class AccountSettingController {
                 cityField.setItems(cityNames);
                 System.out.println("Loaded " + cityNames.size() + " provinces: " + cityNames);
 
-                if (initialCity != null && cityNames.contains(initialCity)) {
-                    cityField.setValue(initialCity);
-                    loadDistrictsForProvince(initialCity);
+                if (initialUser != null && initialUser.getCityName() != null && cityNames.contains(initialUser.getCityName())) {
+                    cityField.setValue(initialUser.getCityName());
+                    loadDistrictsForProvince(initialUser.getCityName());
                 } else {
                     cityField.setValue("Thành phố Hà Nội");
                     loadDistrictsForProvince("Thành phố Hà Nội");
@@ -166,9 +160,9 @@ public class AccountSettingController {
                 quanField.setItems(districtNames);
                 System.out.println("Loaded " + districtNames.size() + " districts: " + districtNames);
 
-                if (initialQuan != null && districtNames.contains(initialQuan)) {
-                    quanField.setValue(initialQuan);
-                    loadWardsForDistrict(initialQuan, districts);
+                if (initialUser != null && initialUser.getQuan() != null && districtNames.contains(initialUser.getQuan())) {
+                    quanField.setValue(initialUser.getQuan());
+                    loadWardsForDistrict(initialUser.getQuan(), districts);
                 } else if (!districtNames.isEmpty()) {
                     quanField.setValue(districtNames.get(0));
                     loadWardsForDistrict(districtNames.get(0), districts);
@@ -212,8 +206,8 @@ public class AccountSettingController {
                 phuongField.setItems(wardNames);
                 System.out.println("Loaded " + wardNames.size() + " wards: " + wardNames);
 
-                if (initialPhuong != null && wardNames.contains(initialPhuong)) {
-                    phuongField.setValue(initialPhuong);
+                if (initialUser != null && initialUser.getPhuong() != null && wardNames.contains(initialUser.getPhuong())) {
+                    phuongField.setValue(initialUser.getPhuong());
                 } else if (!wardNames.isEmpty()) {
                     phuongField.setValue(wardNames.get(0));
                 }
@@ -234,18 +228,23 @@ public class AccountSettingController {
 
             if (rs.next()) {
                 emailField.setText(userEmail);
-                initialFirstName = rs.getString("first_name");
-                initialLastName = rs.getString("last_name");
-                initialPhone = rs.getString("phone_num");
-                initialCity = rs.getString("city");
-                initialQuan = rs.getString("quan");
-                initialPhuong = rs.getString("phuong");
-                initialHomeAddress = rs.getString("homeAddress");
+                // Tạo đối tượng User để lưu trữ thông tin ban đầu
+                initialUser = new User(
+                    userId,
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    userEmail,
+                    rs.getString("phone_num"),
+                    rs.getString("city"),
+                    rs.getString("quan"),
+                    rs.getString("phuong"),
+                    rs.getString("homeAddress")
+                );
 
-                firstNameField.setText(initialFirstName);
-                lastNameField.setText(initialLastName);
-                phoneField.setText(initialPhone);
-                homeAddressField.setText(initialHomeAddress);
+                firstNameField.setText(initialUser.getFirstName());
+                lastNameField.setText(initialUser.getLastName());
+                phoneField.setText(initialUser.getPhoneNumber());
+                homeAddressField.setText(initialUser.getHomeAddress());
             } else {
                 System.out.println("User not found in database for email: " + userEmail);
             }
@@ -292,13 +291,13 @@ public class AccountSettingController {
         String currentPhuong = phuongField.getValue();
         String currentHomeAddress = homeAddressField.getText();
 
-        boolean hasChanges = !(currentFirstName.equals(initialFirstName) &&
-                              currentLastName.equals(initialLastName) &&
-                              currentPhone.equals(initialPhone) &&
-                              (currentCity == null ? initialCity == null : currentCity.equals(initialCity)) &&
-                              (currentQuan == null ? initialQuan == null : currentQuan.equals(initialQuan)) &&
-                              (currentPhuong == null ? initialPhuong == null : currentPhuong.equals(initialPhuong)) &&
-                              (currentHomeAddress == null ? initialHomeAddress == null : currentHomeAddress.equals(initialHomeAddress)));
+        boolean hasChanges = !(currentFirstName.equals(initialUser.getFirstName()) &&
+                              currentLastName.equals(initialUser.getLastName()) &&
+                              currentPhone.equals(initialUser.getPhoneNumber()) &&
+                              (currentCity == null ? initialUser.getCityName() == null : currentCity.equals(initialUser.getCityName())) &&
+                              (currentQuan == null ? initialUser.getQuan() == null : currentQuan.equals(initialUser.getQuan())) &&
+                              (currentPhuong == null ? initialUser.getPhuong() == null : currentPhuong.equals(initialUser.getPhuong())) &&
+                              (currentHomeAddress == null ? initialUser.getHomeAddress()== null : currentHomeAddress.equals(initialUser.getHomeAddress())));
 
         applyButton.setDisable(!hasChanges);
     }
@@ -328,13 +327,8 @@ public class AccountSettingController {
             int rowsAffected = ps.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("User data updated successfully");
-                initialFirstName = firstName;
-                initialLastName = lastName;
-                initialPhone = phone;
-                initialCity = city;
-                initialQuan = quan;
-                initialPhuong = phuong;
-                initialHomeAddress = homeAddress;
+                // Cập nhật lại initialUser với dữ liệu mới
+                initialUser = new User(userId, firstName, lastName, email, phone, city, quan, phuong, homeAddress);
                 applyButton.setDisable(true);
 
                 JSONUtility.storeUserData(userId, firstName, lastName, email, phone, city, quan, phuong, homeAddress);

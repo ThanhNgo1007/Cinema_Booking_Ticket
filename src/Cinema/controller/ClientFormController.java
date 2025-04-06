@@ -1,7 +1,7 @@
 package Cinema.controller;
 
 import Cinema.database.JSONUtility;
-import Cinema.database.JSONUtility.User;
+import Cinema.util.User;
 import Cinema.database.mysqlconnect;
 import com.rabbitmq.client.*;
 import javafx.application.Platform;
@@ -52,7 +52,7 @@ public class ClientFormController {
     private static final String DB_PASSWORD = "";
 
     public void initialize() {
-        User userData = JSONUtility.getUserData();
+        Cinema.util.User userData = JSONUtility.getUserData();
         if (userData != null) {
             clientName = userData.getUserName();
             userId = String.valueOf(userData.getUserId());

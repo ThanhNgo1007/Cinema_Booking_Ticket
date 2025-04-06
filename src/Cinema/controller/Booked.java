@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import Cinema.database.EmailUtility;
 import Cinema.database.JSONUtility;
 import Cinema.database.JSONUtility.MovieData;
-import Cinema.database.JSONUtility.User;
+import Cinema.util.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;

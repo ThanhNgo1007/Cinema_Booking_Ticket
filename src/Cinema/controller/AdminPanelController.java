@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.ResourceBundle;
 import Cinema.database.mysqlconnect;
 import Cinema.util.Movie;
 import Cinema.util.Showtime;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -61,8 +63,6 @@ public class AdminPanelController implements Initializable {
 
     private ObservableList<Movie> movieList = FXCollections.observableArrayList();
     private ObservableList<Movie> fullMovieList = FXCollections.observableArrayList();
-    private Map<Integer, Boolean> expandedRows = new HashMap<>();
-    private Map<Integer, Double> originalRowHeights = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -394,37 +394,37 @@ public class AdminPanelController implements Initializable {
         showtimeTable.getStyleClass().add("showtime-table");
 
         TableColumn<Showtime, String> idCol = new TableColumn<>("ID Lịch chiếu");
-        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id_lichchieu"));
         idCol.setPrefWidth(100);
 
         TableColumn<Showtime, String> movieIdCol = new TableColumn<>("ID Phim");
-        movieIdCol.setCellValueFactory(new PropertyValueFactory<>("movieId"));
+        movieIdCol.setCellValueFactory(new PropertyValueFactory<>("id_movie"));
         movieIdCol.setPrefWidth(100);
 
         TableColumn<Showtime, String> dateCol = new TableColumn<>("Ngày chiếu");
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("showDate"));
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("date")); // Sử dụng trực tiếp date (String)
         dateCol.setPrefWidth(150);
 
         TableColumn<Showtime, String> timeCol = new TableColumn<>("Giờ chiếu");
-        timeCol.setCellValueFactory(new PropertyValueFactory<>("showTime"));
+        timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
         timeCol.setPrefWidth(100);
+
+        TableColumn<Showtime, String> endTimeCol = new TableColumn<>("Giờ kết thúc");
+        endTimeCol.setCellValueFactory(new PropertyValueFactory<>("end_time"));
+        endTimeCol.setPrefWidth(100);
 
         TableColumn<Showtime, Integer> totalSeatsCol = new TableColumn<>("Tổng số ghế");
         totalSeatsCol.setCellValueFactory(new PropertyValueFactory<>("totalNumberSeats"));
         totalSeatsCol.setPrefWidth(100);
-
-        TableColumn<Showtime, Integer> bookedSeatsCol = new TableColumn<>("Số ghế đã đặt");
-        bookedSeatsCol.setCellValueFactory(new PropertyValueFactory<>("bookedSeatsCount"));
-        bookedSeatsCol.setPrefWidth(100);
         
         TableColumn<Showtime, Integer> screenCol = new TableColumn<>("Phòng chiếu");
         screenCol.setCellValueFactory(new PropertyValueFactory<>("screen"));
         screenCol.setPrefWidth(100);
 
-        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, totalSeatsCol, bookedSeatsCol, screenCol);
+        showtimeTable.getColumns().addAll(idCol, movieIdCol, dateCol, timeCol, endTimeCol, totalSeatsCol, screenCol);
 
         ObservableList<Showtime> showtimes = FXCollections.observableArrayList();
-        String query = "SELECT id_lichchieu, id_movie, date, time, totalNumberSeats, bookedSeatsCount, screen FROM showtimes WHERE id_movie = ?";
+        String query = "SELECT id_lichchieu, id_movie, date, time, end_time, totalNumberSeats, bookedSeatsCount, screen FROM showtimes WHERE id_movie = ?";
 
         try (Connection conn = mysqlconnect.ConnectDb(URL, USER, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -434,12 +434,13 @@ public class AdminPanelController implements Initializable {
             while (rs.next()) {
                 String id = rs.getString("id_lichchieu");
                 String movieId = rs.getString("id_movie");
-                String showDate = rs.getString("date");
-                String showTime = rs.getString("time");
+                String showDate = rs.getDate("date").toString(); // Chuyển đổi sang LocalDate
+                String showTime = rs.getTime("time").toString().substring(0, 5);
+                String end_time = rs.getTime("end_time").toString().substring(0, 5);
                 Integer totalNumberSeats = rs.getInt("totalNumberSeats");
                 Integer bookedSeatsCount = rs.getInt("bookedSeatsCount");
                 Integer screen = rs.getInt("screen");
-                showtimes.add(new Showtime(id, movieId, showDate, showTime, totalNumberSeats, bookedSeatsCount, screen));
+                showtimes.add(new Showtime(id, showDate, showTime, movieId, bookedSeatsCount, totalNumberSeats, screen, end_time));
             }
 
             showtimeTable.setItems(showtimes);
