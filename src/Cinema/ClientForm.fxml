@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.ClientFormController">
+   <content>
+      <VBox alignment="TOP_RIGHT" prefHeight="680.0" prefWidth="462.0" style="-fx-background-color: white;">
+         <children>
+            <!-- Label hiển thị tên client -->
+            <Label fx:id="txtLabel" text="Client">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            
+            <!-- ScrollPane chứa VBox hiển thị tin nhắn -->
+            <ScrollPane fx:id="scrollPain" fitToHeight="true" fitToWidth="true">
+               <content>
+                  <VBox fx:id="vBox" alignment="BOTTOM_LEFT" prefHeight="600.0" prefWidth="460.0" spacing="10" style="-fx-background-color: white; -fx-border-color: transparent transparent;" />
+               </content>
+            </ScrollPane>
+
+            <!-- Button điều khiển hiển thị/ẩn câu hỏi mẫu -->
+            <HBox alignment="CENTER_LEFT" prefWidth="462.0" />
+
+            <!-- VBox chứa các câu hỏi mẫu -->
+            <VBox fx:id="sampleQuestionsVBox" alignment="CENTER_LEFT" prefWidth="462.0" spacing="5" visible="false" VBox.vgrow="NEVER">
+               <padding>
+                  <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+               </padding>
+            </VBox>
+
+            <!-- HBox chứa TextField và nút gửi -->
+            <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="489.0">
+               <children>
+                  <Button fx:id="toggleQuestionsButton" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onMouseClicked="#toggleSampleQuestions" prefHeight="26.0" prefWidth="37.0" style="-fx-background-color: transparent;">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true">
+                           <image>
+                              <Image url="@../image/icons8-menu-30.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <TextField fx:id="txtMsg" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="366.0" promptText="Aa" style="-fx-background-radius: 50;" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TextField>
+                  <Button contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#sendButtonOnAction" style="-fx-background-color: transparent; -fx-font-weight: 800;">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-send-48.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

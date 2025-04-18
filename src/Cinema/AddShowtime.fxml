@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 20;" stylesheets="@/css/Showtime.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Cinema.controller.AddShowtimeController">
+    <children>
+        <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Thêm lịch chiếu" />
+        
+        <Label fx:id="movieNameLabel" style="-fx-font-size: 14px;" text="Phim: [Tên phim]" />
+        
+        <HBox spacing="10">
+            <Label style="-fx-font-size: 14px;" text="ID lịch chiếu:" />
+            <TextField fx:id="showtimeIdField" promptText="Nhập ID lịch chiếu" style="-fx-pref-width: 150px;" />
+        </HBox>
+        
+        <HBox spacing="10">
+            <Label prefHeight="18.0" prefWidth="75.0" style="-fx-font-size: 14px;" text="Ngày chiếu:" />
+         <DatePicker fx:id="showDateField" promptText="Chọn ngày " style="-fx-pref-width: 150px;" />
+        </HBox>
+      <VBox>
+         <children>
+              
+              <HBox spacing="10">
+                  <Label prefHeight="18.0" prefWidth="75.0" style="-fx-font-size: 14px;" text="Giờ chiếu:" />
+                  <TextField fx:id="showTimeField" promptText="HH:MM" style="-fx-pref-width: 150px;" />
+              </HBox>
+               <Label fx:id="timeErrorLabel" style="-fx-text-fill: red; -fx-font-size: 12px;" text="" />
+         </children>
+      </VBox>
+      <HBox layoutX="30.0" layoutY="163.0" spacing="10">
+         <children>
+            <Label prefHeight="18.0" prefWidth="76.0" style="-fx-font-size: 14px;" text="Phòng:" />
+            <ComboBox fx:id="screen" prefWidth="150.0" promptText="chọn phòng chiếu" />
+         </children>
+      </HBox>
+        
+        <HBox spacing="10">
+            <Label style="-fx-font-size: 14px;" text="Tổng số ghế:" />
+            <Label style="-fx-font-size: 14px; -fx-text-fill: #555;" text="150" />
+        </HBox>
+        
+        <HBox alignment="CENTER" spacing="10">
+            <Button onAction="#addShowtime" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Thêm" />
+            <Button onAction="#closeWindow" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="Hủy" />
+        </HBox>
+    </children>
+</VBox>
