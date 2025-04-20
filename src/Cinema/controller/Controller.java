@@ -1,6 +1,5 @@
 package Cinema.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,14 +16,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
 import Cinema.database.JSONUtility;
 
 public class Controller implements Initializable {
 
     @FXML
-    private Label btn_menuback, btn_menuback1, btn_account, btn_home, btn_movie, btn_support, btn_ticket, home_name, logout_btn;
+    private Label btn_menuback, btn_menuback1, btn_account, btn_home, btn_movie, btn_support, btn_ticket, home_name, logout_btn, changePassword;
     @FXML
     private AnchorPane menuPane, settingPane;
     @FXML
@@ -59,7 +57,7 @@ public class Controller implements Initializable {
         btn_home.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/Home_Center.fxml", btn_home));
         btn_support.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/ClientForm.fxml", btn_support));
         btn_ticket.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/UserTickets.fxml", btn_ticket));
-
+        changePassword.setOnMouseClicked(event -> loadCenterContent("/Cinema/UI/ChangePassword.fxml", changePassword));
         if (settings_icon != null) {
             settings_icon.setOnMouseClicked(this::toggleSettingPane);
         } else {
@@ -103,6 +101,8 @@ public class Controller implements Initializable {
             }
             else if (controller instanceof BaseEventController) {
                 ((BaseEventController) controller).setParentController(this);
+            } else if (controller instanceof ChangePasswordController) {
+            	((ChangePasswordController) controller).setParentController(this); 
             }
 
         } catch (IOException e) {
@@ -121,7 +121,7 @@ public class Controller implements Initializable {
             currentSelectedButton.setStyle("-fx-background-color: transparent; -fx-text-fill: black;");
         }
         if (selectedButton != null) {
-            selectedButton.setStyle("-fx-background-color: #e8d15d; -fx-text-fill: white;");
+            selectedButton.setStyle("-fx-background-color: #e8d15d; -fx-text-fill: white; -fx-font-weight:bold;");
             currentSelectedButton = selectedButton;
         }
     }
@@ -171,11 +171,16 @@ public class Controller implements Initializable {
     }
 
     
+ // Trong class Controller
     public void logOutButton(MouseEvent event) throws IOException {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        performLogout(stage);
+    }
+
+    public void performLogout(Stage stage) throws IOException {
         boolean isUserDataClearedSuccessfully = JSONUtility.removeValuesAndSave();
         if (isUserDataClearedSuccessfully) {
             root = FXMLLoader.load(getClass().getResource("/Cinema/UI/Login.fxml"));
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             double currentWidth = stage.getWidth();
             double currentHeight = stage.getHeight();
             scene = new Scene(root, currentWidth, currentHeight);
