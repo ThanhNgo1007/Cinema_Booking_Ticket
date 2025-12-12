@@ -1,53 +1,93 @@
-# 🎬 Cinema Booking System (Desktop Application)
+# 🎬 CINEMA BOOKING MANAGEMENT SYSTEM
 
-> **Hệ thống quản lý và đặt vé xem phim trên nền tảng Desktop**, được xây dựng bằng **Java Core** và **JavaFX**, áp dụng mô hình kiến trúc **MVC** và tích hợp các công nghệ giao tiếp thời gian thực.
+> **Hệ thống đặt vé và quản lý rạp chiếu phim** (Desktop Application) được xây dựng dựa trên kiến trúc **MVC**, sử dụng **JavaFX** cho giao diện, **JDBC** để tối ưu hóa thao tác dữ liệu và **RabbitMQ** cho tính năng giao tiếp thời gian thực.
 
-![Banner](https://via.placeholder.com/1000x400?text=Cinema+Booking+System+Preview)
-*(Hãy thay thế link trên bằng ảnh chụp màn hình giao diện chính của ứng dụng)*
+![Banner Project](https://via.placeholder.com/1000x400?text=Cinema+Booking+System+Preview)
 
 ## 📋 Giới thiệu (Overview)
 
-Dự án này là một ứng dụng Desktop hoàn chỉnh mô phỏng quy trình hoạt động thực tế của một rạp chiếu phim. Ứng dụng cung cấp giải pháp toàn diện cho cả hai đối tượng người dùng: **Khách hàng** (đặt vé, chọn ghế) và **Quản trị viên** (quản lý phim, suất chiếu, doanh thu).
+Dự án là giải pháp phần mềm toàn diện mô phỏng quy trình vận hành thực tế của một cụm rạp chiếu phim. Hệ thống phục vụ hai đối tượng người dùng chính: **Khách hàng** (User) và **Quản trị viên** (Admin), đảm bảo tính toàn vẹn dữ liệu và trải nghiệm người dùng mượt mà thông qua giao diện trực quan.
 
-Điểm nổi bật của dự án là việc xử lý các tác vụ phức tạp như **chọn ghế động (Dynamic Seat Selection)** và **Chat hỗ trợ trực tuyến** sử dụng Message Broker.
+Dự án tập trung giải quyết các bài toán kỹ thuật về:
+* **Concurrency:** Xử lý đồng bộ trạng thái ghế khi nhiều người cùng đặt.
+* **Real-time Communication:** Hỗ trợ khách hàng trực tuyến thông qua Message Broker.
+* **Performance:** Tối ưu hóa truy vấn dữ liệu lớn bằng JDBC thuần.
 
 ## 🛠 Công nghệ sử dụng (Tech Stack)
 
-* **Ngôn ngữ & Nền tảng:** Java 17 (OpenJDK).
-* **Giao diện (GUI):** JavaFX (FXML), CSS Styling.
-* **Kiến trúc:** MVC (Model-View-Controller) Pattern.
-* **Cơ sở dữ liệu:** MySQL (Kết nối qua JDBC - `mysql-connector-java`).
-* **Real-time & Messaging:** RabbitMQ (Sử dụng thư viện `amqp-client`).
-* **Tiện ích & Thư viện khác:**
-    * **JavaMail API:** Gửi email xác thực OTP và vé điện tử.
-    * **Gson:** Xử lý dữ liệu JSON.
-    * **JBCrypt:** Mã hóa mật khẩu an toàn.
-    * **Scene Builder:** Thiết kế giao diện.
+| Category | Technology | Description |
+| :--- | :--- | :--- |
+| **Language** | **Java 17 (OpenJDK)** | Sử dụng các tính năng mới của Java Core & OOP. |
+| **Frontend/GUI** | **JavaFX / FXML** | Xây dựng giao diện Desktop hiện đại, Responsive. |
+| **Architecture** | **MVC Pattern** | Tách biệt Model, View, Controller giúp code dễ bảo trì. |
+| **Database** | **MySQL & JDBC** | Sử dụng `mysql-connector` để thực thi Raw SQL hiệu năng cao. |
+| **Messaging** | **RabbitMQ** | Message Broker xử lý Chat bất đồng bộ (Asynchronous). |
+| **Security** | **JBCrypt** | Mã hóa mật khẩu (Hashing & Salting). |
+| **Utilities** | **JavaMail API** | Gửi Email xác thực OTP và vé điện tử. |
+| **Libraries** | **Gson, SLF4J** | Xử lý JSON và Logging hệ thống. |
 
 ## ✨ Tính năng chính (Key Features)
 
-### 👤 Dành cho Khách hàng (User Client)
-1.  **Đăng ký & Đăng nhập bảo mật:** Xác thực tài khoản qua Email OTP, hỗ trợ Quên mật khẩu.
-2.  **Đặt vé trực quan:**
-    * Xem danh sách phim đang chiếu/sắp chiếu.
-    * **Giao diện chọn ghế Visual:** Hiển thị sơ đồ ghế thực tế, trạng thái ghế (Trống/Đang chọn/Đã bán) cập nhật theo thời gian thực.
-3.  **Thanh toán & Vé điện tử:** Mô phỏng thanh toán và nhận vé qua Email.
-4.  **Lịch sử giao dịch:** Xem lại các vé đã đặt.
-5.  **Chat hỗ trợ:** Chat trực tiếp với Admin để được hỗ trợ (Real-time).
+### 👤 Dành cho Khách hàng (Client Application)
+1.  **Hệ thống xác thực:** Đăng ký/Đăng nhập, Quên mật khẩu qua OTP Email.
+2.  **Chọn phim & Suất chiếu:** Xem danh sách phim đang chiếu, sắp chiếu với thông tin chi tiết (Trailer, Poster).
+3.  **Đặt ghế trực quan (Visual Seat Selection):**
+    * Hiển thị sơ đồ ghế theo phòng chiếu.
+    * Cập nhật trạng thái ghế: *Trống (Available), Đang chọn (Selected), Đã bán (Sold)*.
+4.  **Thanh toán giả lập:** Tích hợp quy trình thanh toán và gửi vé điện tử qua Email.
+5.  **Live Chat:** Nhắn tin trực tiếp với Admin để được hỗ trợ (sử dụng RabbitMQ).
 
 ### 🛡 Dành cho Quản trị viên (Admin Dashboard)
-1.  **Quản lý Phim (Movies):** Thêm, xóa, sửa thông tin phim, poster, trailer.
-2.  **Quản lý Suất chiếu (Showtimes):** Sắp xếp lịch chiếu phim theo phòng và giờ.
-3.  **Báo cáo & Thống kê:** Xem doanh thu, số lượng vé bán ra theo thời gian.
-4.  **Hệ thống Chat Center:** Nhận và phản hồi tin nhắn từ nhiều khách hàng cùng lúc (sử dụng RabbitMQ).
+1.  **Quản lý Phim (Movies CRUD):** Thêm, sửa, xóa phim, upload poster.
+2.  **Quản lý Lịch chiếu (Showtimes):** Sắp xếp suất chiếu, phòng chiếu, tránh trùng lặp khung giờ.
+3.  **Báo cáo doanh thu (Analytics):** Biểu đồ thống kê doanh thu theo phim, theo ngày.
+4.  **Chat Support Center:** Giao diện nhận tin nhắn từ nhiều khách hàng cùng lúc.
 
-## 🚀 Cài đặt & Chạy ứng dụng (Installation)
+## 🚀 Hướng dẫn Cài đặt & Chạy (Installation)
 
-Để chạy được dự án này trên máy cá nhân, bạn cần cài đặt:
-* **Java JDK 17+**
-* **MySQL Server**
-* **RabbitMQ Server** (Bắt buộc cho tính năng Chat)
+### 1. Yêu cầu hệ thống (Prerequisites)
+* Java JDK 17+
+* MySQL Server (8.0+)
+* RabbitMQ Server (Đang chạy ở port 5672)
+* IDE: IntelliJ IDEA hoặc Eclipse (khuyên dùng IntelliJ)
 
-### Bước 1: Clone dự án
-```bash
-git clone [https://github.com/your-username/cinema-booking-ticket.git](https://github.com/your-username/cinema-booking-ticket.git)
+### 2. Cấu hình Database
+1.  Mở công cụ quản lý MySQL (Workbench/HeidiSQL).
+2.  Tạo database mới: `cinema_booking`.
+3.  Import file SQL trong thư mục `database/cinema_db.sql` (hoặc tên file sql tương ứng trong source).
+4.  Cập nhật cấu hình trong file `src/Cinema/database/DBUtility.java`:
+    ```java
+    private static final String URL = "jdbc:mysql://localhost:3306/cinema_booking";
+    private static final String USER = "root";
+    private static final String PASS = "your_password";
+    ```
+
+### 3. Cấu hình RabbitMQ & Email
+* Đảm bảo **RabbitMQ Service** đã được start.
+* Cập nhật thông tin gửi mail trong `EmailUtility.java`:
+    ```java
+    private static final String EMAIL_FROM = "your_email@gmail.com";
+    private static final String APP_PASSWORD = "your_app_password"; // Lấy từ Google App Password
+    ```
+
+### 4. Cài đặt thư viện (Dependencies)
+* Dự án sử dụng các file `.jar` trong thư mục `src/dbexample`.
+* **IntelliJ:** File -> Project Structure -> Libraries -> Nhấn dấu `+` -> Chọn folder `src/dbexample` -> Apply.
+
+### 5. Chạy ứng dụng
+* Chạy class `src/Cinema/UI/Main.java` để khởi động ứng dụng.
+
+## 📸 Hình ảnh minh họa (Screenshots)
+
+| Màn hình đăng nhập | Chọn ghế |
+|:---:|:---:|
+| ![Login](link_anh_1) | ![Seat](link_anh_2) |
+
+| Dashboard Admin | Chat Support |
+|:---:|:---:|
+| ![Dashboard](link_anh_3) | ![Chat](link_anh_4) |
+
+## 📞 Liên hệ
+* **Developer:** [Tên của bạn]
+* **Email:** [Email của bạn]
+* **LinkedIn:** [Link Profile của bạn]
